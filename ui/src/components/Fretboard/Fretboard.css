@@ -1,0 +1,88 @@
+/* Estilos del mástil. Solo tokens del tema; geometría tomada de la referencia. */
+.fretboard {
+  display: block;
+}
+
+.fretboard__board {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--wood);
+  padding: 8px 6px 2px;
+}
+
+.fretboard__svg {
+  display: block;
+  width: 100%;
+  min-width: 520px;
+  height: auto;
+}
+
+.fretboard__fret {
+  stroke: var(--fret);
+  stroke-width: 2;
+}
+
+.fretboard__nut {
+  stroke: var(--text);
+  stroke-width: 5;
+}
+
+.fretboard__string {
+  stroke: var(--string);
+  opacity: 0.7;
+}
+
+.fretboard__label {
+  fill: var(--muted);
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
+
+.fretboard__inlay {
+  fill: var(--muted);
+}
+
+.fretboard__note--tonic {
+  fill: var(--note-tonic);
+}
+
+.fretboard__note--other {
+  fill: var(--note-other);
+}
+
+.fretboard__note--active {
+  fill: var(--note-active);
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.fretboard__legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 8px 0 12px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.fretboard__swatch {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  vertical-align: -1px;
+  margin-right: 5px;
+}
+
+.fretboard__swatch--tonic {
+  background: var(--note-tonic);
+}
+
+.fretboard__swatch--other {
+  background: var(--note-other);
+}
+
+.fretboard__swatch--active {
+  background: var(--note-active);
+}
