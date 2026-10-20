@@ -17,6 +17,7 @@ Todo lo que se toca (escalas, riffs, arpegios, acordes, rasgueos) se guarda en u
 - **Reglas de validación:**
   - `string` 1 a 6; `fret` 0 a 24; `t >= 0`; `dur > 0` (una nota de duración cero no tiene sentido); `bpm` en (0, 400].
   - `technique` en `h p / \ b r ~ pm x` o `null` (por defecto `null`).
+  - Las técnicas de dos notas (`h`, `p`, `/`, `\`) se anotan en la nota de **destino**; el origen es el evento anterior en la misma cuerda (como en el ejemplo del plan: `h` en el traste 7 que sigue al 5). `b`, `r`, `~`, `pm` y `x` van en la nota misma.
   - `bend` (en tonos, `> 0`) es obligatorio si `technique == "b"` y está prohibido con cualquier otra técnica.
   - `tuning` tiene exactamente 6 notas con octava (`E2`, `Bb3`, `F#3`; octava 0 a 9). `tonic` es una nota sin octava (`A`, `C#`, `Bb`), en mayúscula y con un solo accidental.
   - `chords[].shape` tiene exactamente 6 elementos, cada uno `"x"` (cuerda muteada) o un traste 0 a 24.
