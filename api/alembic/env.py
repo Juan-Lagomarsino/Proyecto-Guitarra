@@ -2,6 +2,7 @@ from logging.config import fileConfig
 
 from alembic import context
 
+import guitarra_api.infra.db.models  # noqa: F401  (registra las tablas en Base.metadata)
 from guitarra_api.config import Settings
 from guitarra_api.infra.db.base import Base
 from guitarra_api.infra.db.session import create_db_engine
