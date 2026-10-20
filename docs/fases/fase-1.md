@@ -32,7 +32,7 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 | Id | Ola | Objetivo | Depende de | Estado |
 | --- | --- | --- | --- | --- |
 | F1-T01 | 0 | Esqueleto del repo, tooling y CI | — | hecha |
-| F1-T02 | 1 | Docker Compose con Postgres, API y migraciones automáticas | T01 | pendiente |
+| F1-T02 | 1 | Docker Compose con Postgres, API y migraciones automáticas | T01 | integrada (falta verificar con Docker) |
 | F1-T03 | 1 | Esquema de notación y su validador | T01 | hecha |
 | F1-T04 | 1 | Modelos SQLAlchemy y migración inicial | T01 | pendiente |
 | F1-T05 | 1 | Dominio: días de práctica y racha | T01 | hecha |

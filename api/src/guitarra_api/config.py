@@ -16,3 +16,5 @@ class Settings(BaseSettings):
     guitar_api_token: str = ""
     # Default solo para desarrollo local; en otros entornos se define por variable.
     database_url: str = "postgresql+psycopg://guitarra:guitarra@localhost:5432/guitarra"
+    # Carpeta con la UI compilada (ui/dist); en Docker la define el Dockerfile.
+    guitar_ui_dist: Path = ENV_FILE.parent / "ui" / "dist"
