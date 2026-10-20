@@ -45,7 +45,7 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 | F1-T12 | 2 | API de ajustes (tema) | T04 | pendiente |
 | F1-T13 | 2 | UI: componente Mástil | T03, T07 | hecha |
 | F1-T14 | 2 | UI: componente Tablatura | T03, T07 | hecha |
-| F1-T15 | 2 | UI: motor de reproducción y metrónomo | T03, T07 | pendiente |
+| F1-T15 | 2 | UI: motor de reproducción y metrónomo | T03, T07 | hecha |
 | F1-T16 | 4 | UI: tarjeta de ejercicio y vistas de Estudio | T10, T13, T14, T15 | pendiente |
 | F1-T17 | 4 | UI: vista de Progreso | T07, T11 | pendiente |
 | F1-T18 | 5 | UI: vista de Sesión del día | T11, T16 | pendiente |
