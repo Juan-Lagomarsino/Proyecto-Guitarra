@@ -141,7 +141,7 @@ Una sola base PostgreSQL con estas entidades; el agente define tipos y restricci
 | `SongPreset` | song_id, preset_id, origen (auto / usuario), confianza | La elección del usuario pisa a la automática. |
 | `Recording` | id, song_id?, fecha, pistas (voz, guitarra_fx, guitarra_di), duración, preset_id | WAV en el escritorio (copia en Naxxon desde la Fase 7). |
 | `ReminderRules` | días_excluidos, umbral_inactividad_días, franja_horaria_preferida | Fila única; la consume Naxxon. |
-| `Settings` | tema (tokens de color), afinación, instrumento por defecto, dispositivo ASIO, canales de entrada, latencia/buffer | Fila única. |
+| `Settings` | tema (tokens de color), afinación, zona horaria (IANA, default America/Montevideo), instrumento por defecto, dispositivo ASIO, canales de entrada, latencia/buffer | Fila única. |
 | `Correction` | id, song_chart_id, qué cambió (diff), fecha | Historial para el aprendizaje. |
 
 ### Formato interno de notación

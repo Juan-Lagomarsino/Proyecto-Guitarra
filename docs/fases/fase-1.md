@@ -1,7 +1,8 @@
 # Fase 1 — Base, Estudio y progreso
 
-Estado: **plan de tareas, esperando aprobación de Juan Pedro**
+Estado: **en curso** (plan aprobado por Juan Pedro el 2026-10-20)
 Referencia: `docs/PLAN.md` § Fase 1, § Modelo de datos, § Formato interno de notación, § Contratos de API, § UI y diseño.
+Referencia visual: `docs/referencias/taller-electrica.html` (HTML original del artefacto). De ahí salen el mástil (`drawBoard`), la tablatura (`drawTab`), la tarjeta de práctica y los colores de `:root` como tema por defecto. **Su notación de tabs (`"6-0+5-2:2"`) es solo referencia visual: el formato oficial es el JSON del plan.**
 
 ## Criterios de aceptación de la fase (del plan)
 
@@ -17,7 +18,7 @@ Referencia: `docs/PLAN.md` § Fase 1, § Modelo de datos, § Formato interno de 
 - **Estructura del repo:** `api/` (FastAPI, paquete `guitarra_api` con `domain/`, `infra/`, `http/`), `ui/` (Vite + React + TS), `curriculum/` (contenido en JSON), `schemas/` (JSON Schema exportado). — ADR en T01.
 - **UI servida por la API:** un solo contenedor `api` con build multi-etapa (Node construye `ui/dist`, FastAPI lo sirve como estáticos). En desarrollo, Vite con proxy a la API. — ADR en T02.
 - **Notación:** la fuente de verdad es el modelo Pydantic en `guitarra_api/domain/notation.py`; de ahí se exporta `schemas/notation.schema.json` y se generan los tipos TS. Un test falla si el JSON Schema commiteado quedó viejo. — ADR en T03.
-- **Zona horaria:** los días de práctica se calculan en `GUITAR_TZ` (por defecto `America/Argentina/Buenos_Aires`); en la base todo en UTC.
+- **Zona horaria:** los días de práctica se calculan en la zona guardada en `Settings.timezone` (IANA, por defecto `America/Montevideo`), editable desde `PUT /settings`. En la base, los timestamps se guardan en UTC.
 - **Días excluidos en Fase 1:** la racha los necesita, así que en esta fase se crea `ReminderRules` con `GET/PUT /reminders/rules`. `GET /reminders/status` queda para la Fase 6.
 - **Semántica de racha:** un día excluido sin práctica no corta ni suma; si se practica, suma. La racha actual sigue viva si hoy todavía no se practicó pero ayer sí (o el último día no excluido).
 - **Nivel actual:** el primer nivel (por orden) que tiene ejercicios nunca completados. **Pendiente:** ejercicio nunca completado o con mejor BPM < objetivo.
@@ -54,7 +55,7 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 ### F1-T01 — Esqueleto del repo, tooling y CI
 
 - **Archivos:** `api/pyproject.toml`, `api/src/guitarra_api/` (app FastAPI con `GET /api/v1/health`), `api/tests/`, `ui/` (Vite + React + TS, vitest + Testing Library, eslint + prettier), `.github/workflows/ci.yml`, `.gitignore`, `.env.example`, `README.md` (sección comandos), `docs/adr/0001-estructura-del-repo.md`.
-- **Config:** `pydantic-settings` leyendo `GUITAR_API_URL`, `GUITAR_API_TOKEN`, `DATABASE_URL`, `GUITAR_TZ`.
+- **Config:** `pydantic-settings` leyendo `GUITAR_API_URL`, `GUITAR_API_TOKEN`, `DATABASE_URL`. (La zona horaria no va por env: vive en `Settings`.)
 - **Criterio:** `pytest` (desde `api/`), `ruff check`, `ruff format --check`, `npm test --prefix ui`, `npm run lint --prefix ui` pasan en local; la CI corre exactamente esos comandos y queda verde en GitHub tras el push.
 
 ### F1-T02 — Docker Compose
@@ -70,13 +71,13 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 ### F1-T04 — Modelos y migración inicial
 
 - **Archivos:** `api/src/guitarra_api/infra/db/` (modelos, sesión), `api/alembic/versions/0001_*.py`.
-- **Entidades:** `Level`, `Lesson`, `Exercise` (con `slug` único estable, `type`, `instrument`, `notation` JSONB, `bpm_start`, `bpm_target`, `duration_min`, `category` para la tarjeta), `ExerciseCompletion` (timestamp UTC), `PracticeSession` (fecha local, ejercicios planificados, estado), `Settings` y `ReminderRules` (fila única cada una).
+- **Entidades:** `Level`, `Lesson`, `Exercise` (con `slug` único estable, `type`, `instrument`, `notation` JSONB, `bpm_start`, `bpm_target`, `duration_min`, `category` para la tarjeta), `ExerciseCompletion` (timestamp UTC), `PracticeSession` (fecha local, ejercicios planificados, estado), `Settings` (incluye `timezone`, default `America/Montevideo`) y `ReminderRules` (fila única cada una).
 - **Criterio:** `alembic upgrade head` y `downgrade base` funcionan contra un Postgres de test (testcontainers o el del compose); tests de repositorio para alta y consulta básica; restricciones (FK, únicos, checks de bpm > 0).
 
 ### F1-T05 — Dominio: días de práctica y racha
 
 - **Archivos:** `api/src/guitarra_api/domain/progress.py` + tests. Funciones puras, sin DB ni FastAPI.
-- **Criterio:** dadas completions (UTC), zona horaria, días de semana excluidos y "hoy" → días practicados, racha actual, racha máxima, total de días. Casos de borde con test: completion a las 23:59 y 00:01 locales (y a las 02:30 UTC que sigue siendo "ayer" en Argentina), día excluido sin práctica en medio de la racha, práctica en día excluido, hoy sin practicar con ayer practicado, hoy excluido, sin completions, varias completions el mismo día, racha máxima en el pasado mayor que la actual.
+- **Criterio:** dadas completions (UTC), zona horaria, días de semana excluidos y "hoy" → días practicados, racha actual, racha máxima, total de días. Casos de borde con test: completion a las 23:59 y 00:01 locales (y a las 02:30 UTC, que sigue siendo "ayer" en Montevideo), la misma completion con dos zonas distintas cae en días distintos, día excluido sin práctica en medio de la racha, práctica en día excluido, hoy sin practicar con ayer practicado, hoy excluido, sin completions, varias completions el mismo día, racha máxima en el pasado mayor que la actual.
 
 ### F1-T06 — Dominio: generador de la sesión del día
 
@@ -85,7 +86,7 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 
 ### F1-T07 — UI: shell, rutas y tema
 
-- **Archivos:** `ui/src/app/` (layout, navegación Estudio / Progreso / Ajustes; Explorar y Rig como entradas deshabilitadas), React Router, `ui/src/theme/tokens.css` con el tema por defecto (azul noche, ámbar, notas violeta oscuro, "suena ahora" blanco), fuentes Anton e IBM Plex Mono, `ui/src/api/client.ts` (URL y token por config), `ThemeProvider` que aplica tokens desde un objeto.
+- **Archivos:** `ui/src/app/` (layout, navegación Estudio / Progreso / Ajustes; Explorar y Rig como entradas deshabilitadas), React Router, `ui/src/theme/tokens.css` con el tema por defecto tomado de `:root` de la referencia (nombres semánticos del plan: `--bg`, `--surface`, `--text`, `--muted`, `--accent`, `--note-tonic`, `--note-other`, `--note-active`, `--string`, `--fret`…, con los valores de la referencia; la correspondencia con `--ground`, `--panel`, `--sodium`, etc. queda comentada en el archivo), fuentes Anton e IBM Plex Mono, `ui/src/api/client.ts` (URL y token por config), `ThemeProvider` que aplica tokens desde un objeto.
 - **Skill:** `frontend-design`.
 - **Criterio:** tests de render del shell y de que `ThemeProvider` escribe las variables CSS; eslint sin colores literales fuera de `tokens.css` (regla o test que lo verifique); responsive sin scroll horizontal a 375 px.
 
@@ -108,26 +109,26 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 
 ### F1-T11 — API de progreso, sesión del día y reglas
 
-- **Archivos:** routers `progress.py`, `sessions.py`, `reminders.py` (solo reglas); adaptadores que alimentan T05 y T06 desde la DB.
+- **Archivos:** routers `progress.py`, `sessions.py`, `reminders.py` (solo reglas); adaptadores que alimentan T05 y T06 desde la DB, usando la zona de `Settings`.
 - **Endpoints:** `GET /progress/summary` (racha actual y máxima, días practicados, avance por nivel), `GET /progress/calendar?from&to`, `GET /sessions/today` (la crea si no existe, persistida en `PracticeSession`), `POST /sessions/today/regenerate`, `GET/PUT /reminders/rules`.
-- **Criterio:** tests de API de punta a punta: completar ejercicios cambia racha y calendario; `sessions/today` es estable en el mismo día y cambia con regenerate; marcar un día excluido en las reglas afecta la racha.
+- **Criterio:** tests de API de punta a punta: completar ejercicios cambia racha y calendario; `sessions/today` es estable en el mismo día y cambia con regenerate; marcar un día excluido en las reglas afecta la racha; cambiar la zona en `Settings` cambia el día en que cae una completion cercana a la medianoche.
 
 ### F1-T12 — API de ajustes
 
 - **Archivos:** router `settings.py`.
-- **Endpoints:** `GET/PUT /settings` (tokens de color, tipografías, instrumento por defecto, afinación). Defaults = tema del artefacto.
-- **Criterio:** tests: GET sin fila devuelve defaults; PUT valida que cada token sea un color CSS válido y que no falte ninguno de la lista conocida; persistencia.
+- **Endpoints:** `GET/PUT /settings` (tokens de color, tipografías, instrumento por defecto, afinación, zona horaria). Defaults = tema del artefacto y `America/Montevideo`.
+- **Criterio:** tests: GET sin fila devuelve defaults; PUT valida que cada token sea un color CSS válido y que no falte ninguno de la lista conocida; zona horaria IANA válida (rechaza `Mars/Base`); persistencia.
 
 ### F1-T13 — UI: Mástil
 
 - **Archivos:** `ui/src/components/Fretboard/`.
-- **Skill:** `frontend-design`. **Requiere la captura del artefacto "Taller de Eléctrica" en `docs/referencias/`.**
+- **Skill:** `frontend-design`. Replicar `drawBoard` de la referencia (geometría, proporciones, estilos) como componente React que recibe eventos en el formato JSON oficial.
 - **Criterio:** SVG horizontal, cuerdas e B G D A E de arriba a abajo con nombre a la izquierda, números de traste abajo, incrustaciones 3/5/7/9 y doble en 12, notas como círculos con estados tónica / otra / suena ahora y leyenda, rango de trastes por props. Solo tokens CSS. Tests: posición de notas, estados, rango.
 
 ### F1-T14 — UI: Tablatura
 
 - **Archivos:** `ui/src/components/Tab/`.
-- **Skill:** `frontend-design`. **Requiere la captura de referencia.**
+- **Skill:** `frontend-design`. Replicar `drawTab` de la referencia como componente React; la entrada es el JSON oficial, no la notación `"6-0+5-2:2"` de la referencia.
 - **Criterio:** seis líneas con nombre de cuerda, números unidos por guiones, partición en sistemas según ancho, anotaciones h p / \ b r ~ pm x, resaltado del evento activo. Tests: partición en sistemas, render de cada técnica, evento activo.
 
 ### F1-T15 — UI: reproducción y metrónomo
@@ -139,7 +140,7 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 
 - **Archivos:** `ui/src/features/study/` (lista de niveles con avance → lección con teoría en markdown → tarjetas de ejercicio), `ExerciseCard`.
 - **Skill:** `frontend-design`.
-- **Criterio:** tarjeta según el plan (categoría en versalitas, título condensado, chips de objetivo / mejor marca / "en la sesión de hoy", descripción con borde de acento, mástil + tab sincronizados con la reproducción, controles de bpm, play, nota por nota y **Terminé** que envía el bpm logrado y actualiza la mejor marca). Tests con API mockeada.
+- **Criterio:** tarjeta según el plan y la tarjeta de práctica de la referencia (categoría en versalitas, título condensado, chips de objetivo / mejor marca / "en la sesión de hoy", descripción con borde de acento, mástil + tab sincronizados con la reproducción, controles de bpm, play, nota por nota y **Terminé** que envía el bpm logrado y actualiza la mejor marca). Tests con API mockeada.
 
 ### F1-T17 — UI: Progreso
 
@@ -154,7 +155,7 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 ### F1-T19 — UI: Ajustes de tema
 
 - **Archivos:** `ui/src/features/settings/`.
-- **Criterio:** selector de color por token y de tipografías, vista previa en vivo con un mástil de ejemplo, guardar persiste vía `PUT /settings` y se aplica al recargar; botón "volver al tema por defecto". Tests.
+- **Criterio:** selector de color por token, de tipografías y de zona horaria, vista previa en vivo con un mástil de ejemplo, guardar persiste vía `PUT /settings` y se aplica al recargar; botón "volver al tema por defecto". Tests.
 
 ### F1-T20 — E2E y README
 
