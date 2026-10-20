@@ -8,6 +8,8 @@ export default defineConfig(({ mode }) => {
   const apiUrl = env.GUITAR_API_URL || 'http://localhost:8000'
 
   return {
+    // Las VITE_* del cliente también salen del .env de la raíz.
+    envDir: '..',
     plugins: [react()],
     server: {
       proxy: { '/api': apiUrl },

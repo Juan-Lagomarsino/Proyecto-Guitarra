@@ -20,6 +20,8 @@ services:
     build:
       context: .
       dockerfile: api/Dockerfile
+      args:
+        VITE_GUITAR_API_TOKEN: ${GUITAR_API_TOKEN:-}
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-guitarra}:${POSTGRES_PASSWORD:-guitarra}@db:5432/${POSTGRES_DB:-guitarra}

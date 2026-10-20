@@ -1,11 +1,13 @@
 # Contexto de build: la raíz del repo (ver docker-compose.yml).
 
 # Etapa 1: compila la UI.
-FROM node:22-slim AS ui
+FROM node:24-slim AS ui
 WORKDIR /ui
 COPY ui/package.json ui/package-lock.json ./
 RUN npm ci
 COPY ui/ ./
+ARG VITE_GUITAR_API_TOKEN=
+ENV VITE_GUITAR_API_TOKEN=$VITE_GUITAR_API_TOKEN
 RUN npm run build
 
 # Etapa 2: API + UI compilada.
