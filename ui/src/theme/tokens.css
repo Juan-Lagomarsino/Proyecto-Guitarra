@@ -1,0 +1,34 @@
+/*
+ * Tema por defecto: valores de :root de docs/referencias/taller-electrica.html.
+ * ThemeProvider los sobreescribe desde un objeto; esto evita el parpadeo antes
+ * de que React monte. Mantener en sync con defaultTheme.ts (hay un test).
+ *
+ * Correspondencia con la referencia:
+ *   --ground -> --bg            --panel -> --surface       --panel2 -> --surface-2
+ *   --ink -> --text             --sodium -> --accent       --sodium-dim -> --accent-dim
+ *   --sodium-ink -> --accent-ink
+ *   --note -> --note-other      --sodium -> --note-tonic   --ink -> --note-active
+ *   --muted -> --string         --line -> --fret
+ */
+:root {
+  color-scheme: dark;
+  --bg: #14121f;
+  --surface: #1f1c30;
+  --surface-2: #262240;
+  --line: #34304d;
+  --text: #f3efe4;
+  --muted: #9a95b3;
+  --accent: #ffb534;
+  --accent-dim: #7a5a22;
+  --accent-ink: #1b1405;
+  --good: #6fd39a;
+  --good-dim: #1f4a35;
+  --wood: #1a1729;
+  --note-tonic: #ffb534;
+  --note-other: #3a3558;
+  --note-active: #f3efe4;
+  --string: #9a95b3;
+  --fret: #34304d;
+  --font-display: 'Anton', Impact, 'Arial Narrow', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+}

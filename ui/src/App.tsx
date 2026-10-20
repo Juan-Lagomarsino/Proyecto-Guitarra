@@ -1,7 +1,11 @@
+import { AppRoutes } from './app/AppRoutes'
+import { ThemeProvider } from './theme/ThemeProvider'
+
+/** Debe renderizarse dentro de un Router (lo pone main.tsx). */
 export default function App() {
   return (
-    <main>
-      <h1>Práctica de Guitarra</h1>
-    </main>
+    <ThemeProvider>
+      <AppRoutes />
+    </ThemeProvider>
   )
 }

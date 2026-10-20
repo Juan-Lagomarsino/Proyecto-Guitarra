@@ -15,6 +15,8 @@ export default defineConfig(({ mode }) => {
     test: {
       environment: 'jsdom',
       globals: true,
+      // Los tests leen los .css como texto (tokens, colores literales).
+      css: { include: /.+/ },
       setupFiles: ['./src/setupTests.ts'],
     },
   }
