@@ -1,0 +1,230 @@
+{
+  "$defs": {
+    "Barre": {
+      "additionalProperties": false,
+      "description": "Cejilla: traste y rango de cuerdas, de la más grave (6) a la más aguda (1).",
+      "properties": {
+        "fret": {
+          "maximum": 24,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "from_string": {
+          "maximum": 6,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "to_string": {
+          "maximum": 6,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "fret",
+        "from_string",
+        "to_string"
+      ],
+      "title": "Barre",
+      "type": "object"
+    },
+    "Chord": {
+      "additionalProperties": false,
+      "properties": {
+        "t": {
+          "minimum": 0,
+          "type": "number"
+        },
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "shape": {
+          "items": {
+            "anyOf": [
+              {
+                "maximum": 24,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "const": "x",
+                "type": "string"
+              }
+            ]
+          },
+          "maxItems": 6,
+          "minItems": 6,
+          "type": "array"
+        },
+        "barre": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Barre"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "t",
+        "name",
+        "shape"
+      ],
+      "title": "Chord",
+      "type": "object"
+    },
+    "NoteEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "t": {
+          "minimum": 0,
+          "type": "number"
+        },
+        "dur": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "string": {
+          "maximum": 6,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "fret": {
+          "maximum": 24,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "technique": {
+          "anyOf": [
+            {
+              "enum": [
+                "h",
+                "p",
+                "/",
+                "\\",
+                "b",
+                "r",
+                "~",
+                "pm",
+                "x"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "bend": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "t",
+        "dur",
+        "string",
+        "fret"
+      ],
+      "title": "NoteEvent",
+      "type": "object"
+    },
+    "Strum": {
+      "additionalProperties": false,
+      "properties": {
+        "t": {
+          "minimum": 0,
+          "type": "number"
+        },
+        "pattern": {
+          "minLength": 1,
+          "pattern": "^[DU-]+$",
+          "type": "string"
+        },
+        "accent": {
+          "items": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "t",
+        "pattern"
+      ],
+      "title": "Strum",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "tuning": {
+      "items": {
+        "pattern": "^[A-G][#b]?[0-9]$",
+        "type": "string"
+      },
+      "maxItems": 6,
+      "minItems": 6,
+      "type": "array"
+    },
+    "bpm": {
+      "exclusiveMinimum": 0,
+      "maximum": 400,
+      "type": "number"
+    },
+    "time_signature": {
+      "default": "4/4",
+      "pattern": "^[1-9][0-9]?/[1-9][0-9]?$",
+      "type": "string"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/NoteEvent"
+      },
+      "type": "array"
+    },
+    "chords": {
+      "items": {
+        "$ref": "#/$defs/Chord"
+      },
+      "type": "array"
+    },
+    "strum": {
+      "items": {
+        "$ref": "#/$defs/Strum"
+      },
+      "type": "array"
+    },
+    "tonic": {
+      "anyOf": [
+        {
+          "pattern": "^[A-G][#b]?$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "bpm"
+  ],
+  "title": "Notation",
+  "type": "object"
+}
