@@ -1,0 +1,1353 @@
+{
+  "level": {
+    "slug": "nivel-01-power-chords",
+    "position": 1,
+    "name": "Power chords y palm mute",
+    "description": "Primer nivel de eléctrica: la forma del power chord, cambios con ritmo, palm mute y tus primeros riffs. Ideal si ya tocás acordes y rasgueos y querés pasar al punteo.",
+    "instrument": "electric"
+  },
+  "lessons": [
+    {
+      "slug": "que-es-un-power-chord",
+      "position": 1,
+      "title": "Qué es un power chord",
+      "content_md": "Un **power chord** son solo dos notas: la **tónica** (la nota que le da el nombre) y su **quinta**, que queda siete trastes más arriba. Si le sumás la tónica una octava arriba, suena más lleno, pero sigue siendo el mismo acorde. Como no tiene tercera, no es ni mayor ni menor: por eso funciona tanto con distorsión.\n\nLa forma es siempre la misma:\n\n- Dedo 1 en la tónica.\n- Dedo 3 dos trastes más arriba, en la cuerda siguiente (la quinta).\n- Dedo 4 (o el 3 con cejilla) en la cuerda que sigue, en el mismo traste (la octava).\n\nHay dos versiones según dónde esté la tónica:\n\n- **Tónica en la 6ta cuerda:** el nombre del acorde es el de la nota del traste que pisás. En el traste 3 es Sol (G5), en el 5 es La (A5). Al aire es Mi (E5).\n- **Tónica en la 5ta cuerda:** lo mismo, pero una cuerda más abajo. En el traste 3 es Do (C5), en el 5 es Re (D5). Al aire es La (A5).\n\nTocá solo las cuerdas de la forma. Las cuerdas que sobran las apagás con el costado de la mano que pisa para que no suenen. Esa limpieza es lo que se trabaja acá.\n\nCuando tengas la forma en las manos, probá con tus canciones: mucho del rock y de la new wave se arma moviendo esta forma por el mástil.\n",
+      "exercises": [
+        {
+          "slug": "calentamiento-cromatico-4-dedos",
+          "title": "Calentamiento cromático 1-2-3-4",
+          "type": "technique",
+          "category": "warmup",
+          "bpm_start": 60,
+          "bpm_target": 100,
+          "duration_min": 3,
+          "notation": {
+            "bpm": 60,
+            "time_signature": "4/4",
+            "tonic": null,
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 1,
+                "technique": null
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 2,
+                "technique": null
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 3,
+                "technique": null
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 4,
+                "technique": null
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 4,
+                "technique": null
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 3,
+                "technique": null
+              },
+              {
+                "t": 3.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 2,
+                "technique": null
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 1,
+                "technique": null
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 1,
+                "technique": null
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 2,
+                "technique": null
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 3,
+                "technique": null
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 4,
+                "technique": null
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 4,
+                "technique": null
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 3,
+                "technique": null
+              },
+              {
+                "t": 7.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 2,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 1,
+                "technique": null
+              }
+            ]
+          }
+        },
+        {
+          "slug": "power-chord-forma-6ta-cuerda",
+          "title": "Power chord con la tónica en la 6ta cuerda",
+          "type": "chords",
+          "category": "technique",
+          "bpm_start": 60,
+          "bpm_target": 90,
+          "duration_min": 4,
+          "notation": {
+            "bpm": 60,
+            "time_signature": "4/4",
+            "tonic": "E",
+            "chords": [
+              {
+                "t": 0,
+                "name": "E5",
+                "shape": [
+                  0,
+                  2,
+                  2,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 4,
+                "name": "G5",
+                "shape": [
+                  3,
+                  5,
+                  5,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 8,
+                "name": "A5",
+                "shape": [
+                  5,
+                  7,
+                  7,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 12,
+                "name": "G5",
+                "shape": [
+                  3,
+                  5,
+                  5,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              }
+            ],
+            "strum": [
+              {
+                "t": 0,
+                "pattern": "D---",
+                "accent": [
+                  0
+                ]
+              },
+              {
+                "t": 4,
+                "pattern": "D---",
+                "accent": [
+                  0
+                ]
+              },
+              {
+                "t": 8,
+                "pattern": "D---",
+                "accent": [
+                  0
+                ]
+              },
+              {
+                "t": 12,
+                "pattern": "D---",
+                "accent": [
+                  0
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "slug": "power-chord-forma-5ta-cuerda",
+          "title": "Power chord con la tónica en la 5ta cuerda",
+          "type": "chords",
+          "category": "technique",
+          "bpm_start": 60,
+          "bpm_target": 90,
+          "duration_min": 4,
+          "notation": {
+            "bpm": 60,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "chords": [
+              {
+                "t": 0,
+                "name": "A5",
+                "shape": [
+                  "x",
+                  0,
+                  2,
+                  2,
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 4,
+                "name": "C5",
+                "shape": [
+                  "x",
+                  3,
+                  5,
+                  5,
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 8,
+                "name": "D5",
+                "shape": [
+                  "x",
+                  5,
+                  7,
+                  7,
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 12,
+                "name": "C5",
+                "shape": [
+                  "x",
+                  3,
+                  5,
+                  5,
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              }
+            ],
+            "strum": [
+              {
+                "t": 0,
+                "pattern": "D---",
+                "accent": [
+                  0
+                ]
+              },
+              {
+                "t": 4,
+                "pattern": "D---",
+                "accent": [
+                  0
+                ]
+              },
+              {
+                "t": 8,
+                "pattern": "D---",
+                "accent": [
+                  0
+                ]
+              },
+              {
+                "t": 12,
+                "pattern": "D---",
+                "accent": [
+                  0
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "slug": "moverse-con-la-forma",
+      "position": 2,
+      "title": "Moverse con la forma",
+      "content_md": "Lo bueno de un power chord es que **la forma no cambia**: para cambiar de acorde la deslizás por el mástil. Si sabés dónde están las notas de la 6ta y la 5ta cuerda, ya sabés dónde está cualquier acorde.\n\nEl truco para que los cambios salgan limpios es **no levantar la mano**: mantené la forma, soltá un poco la presión y deslizá hasta el nuevo traste. Así no perdés el tempo ni hacés ruido de cuerdas sueltas.\n\nUna progresión típica del rock es la de los grados **I - IV - V**. En La son La (A5), Re (D5) y Mi (E5). Fijate que A5 se puede tocar en la 6ta cuerda (traste 5) y D5 en la 5ta (traste 5): la misma posición del brazo, solo cambia la cuerda de la tónica.\n\nEn el ejercicio de cambios, el A5 aparece **dos veces seguidas** (La, La, Re, Mi). Es a propósito: en el rock es muy común que el primer acorde dure dos compases antes de moverse. Aprovechá el segundo compás para repetir el A5 sin apuro y preparar el deslizamiento al D5.\n\nEn los ejercicios de esta lección:\n\n- Contá en voz alta los cuatro tiempos antes de cambiar.\n- Arrancá lento: el cambio tiene que llegar justo en el tiempo 1, no después.\n- Después sumá el rasgueo (`D` es hacia abajo, `U` hacia arriba) y el riff con las notas sueltas.\n",
+      "exercises": [
+        {
+          "slug": "cambios-i-iv-v-en-la",
+          "title": "Cambios La - Re - Mi con power chords",
+          "type": "strumming",
+          "category": "technique",
+          "bpm_start": 70,
+          "bpm_target": 110,
+          "duration_min": 5,
+          "notation": {
+            "bpm": 70,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "chords": [
+              {
+                "t": 0,
+                "name": "A5",
+                "shape": [
+                  5,
+                  7,
+                  7,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 4,
+                "name": "A5",
+                "shape": [
+                  5,
+                  7,
+                  7,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 8,
+                "name": "D5",
+                "shape": [
+                  "x",
+                  5,
+                  7,
+                  7,
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 12,
+                "name": "E5",
+                "shape": [
+                  0,
+                  2,
+                  2,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              }
+            ],
+            "strum": [
+              {
+                "t": 0,
+                "pattern": "D-D-DUDU",
+                "accent": [
+                  0,
+                  4
+                ]
+              },
+              {
+                "t": 4,
+                "pattern": "D-D-DUDU",
+                "accent": [
+                  0,
+                  4
+                ]
+              },
+              {
+                "t": 8,
+                "pattern": "D-D-DUDU",
+                "accent": [
+                  0,
+                  4
+                ]
+              },
+              {
+                "t": 12,
+                "pattern": "D-D-DUDU",
+                "accent": [
+                  0,
+                  4
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "slug": "riff-rock-con-power-chords-en-mi",
+          "title": "Riff de rock en Mi con power chords",
+          "type": "riff",
+          "category": "riff",
+          "bpm_start": 70,
+          "bpm_target": 110,
+          "duration_min": 5,
+          "notation": {
+            "bpm": 70,
+            "time_signature": "4/4",
+            "tonic": "E",
+            "events": [
+              {
+                "t": 0,
+                "dur": 1.0,
+                "string": 6,
+                "fret": 0,
+                "technique": null
+              },
+              {
+                "t": 0,
+                "dur": 1.0,
+                "string": 5,
+                "fret": 2,
+                "technique": null
+              },
+              {
+                "t": 1,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": null
+              },
+              {
+                "t": 1,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 2,
+                "technique": null
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": null
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 2,
+                "technique": null
+              },
+              {
+                "t": 2,
+                "dur": 1.0,
+                "string": 6,
+                "fret": 3,
+                "technique": null
+              },
+              {
+                "t": 2,
+                "dur": 1.0,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 3,
+                "dur": 1.0,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 3,
+                "dur": 1.0,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 4,
+                "dur": 1.0,
+                "string": 6,
+                "fret": 0,
+                "technique": null
+              },
+              {
+                "t": 4,
+                "dur": 1.0,
+                "string": 5,
+                "fret": 2,
+                "technique": null
+              },
+              {
+                "t": 5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": null
+              },
+              {
+                "t": 5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 2,
+                "technique": null
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": null
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 2,
+                "technique": null
+              },
+              {
+                "t": 6,
+                "dur": 1.0,
+                "string": 6,
+                "fret": 3,
+                "technique": null
+              },
+              {
+                "t": 6,
+                "dur": 1.0,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 7,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 7,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 3,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "slug": "palm-mute",
+      "position": 3,
+      "title": "Palm mute",
+      "content_md": "El **palm mute** (o apagado con la palma) es apoyar el borde de la mano derecha sobre las cuerdas, justo al lado del puente, mientras tocás con la púa. Las notas suenan cortas y secas, con un golpe percusivo. Es el sonido de la base de muchísimo rock y de la new wave.\n\nCómo hacerlo:\n\n- Apoyá el borde de la palma sobre las cuerdas, pegado al puente, sin apretar. Si apoyás de más, no suena nada; si te quedás corto, suena casi abierto.\n- Tocá con púa, con movimiento de muñeca, alternando abajo y arriba.\n- Levantá un poco la palma para dejar sonar una nota **abierta** y acentuarla. Vas a ver que el palm mute en la tablatura se escribe `pm` y la nota abierta sin marca.\n\nEjercitá primero el **pulso parejo de corcheas** sobre una sola cuerda: es lo que te da el control. Después alterná notas muteadas y abiertas, y por último armá un riff con acentos de power chords sobre la base muteada, como en un tema new wave.\n",
+      "exercises": [
+        {
+          "slug": "palm-mute-pulso-de-corcheas",
+          "title": "Palm mute: pulso parejo de corcheas",
+          "type": "technique",
+          "category": "warmup",
+          "bpm_start": 70,
+          "bpm_target": 120,
+          "duration_min": 3,
+          "notation": {
+            "bpm": 70,
+            "time_signature": "4/4",
+            "tonic": "E",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 3.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 7.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 0,
+                "technique": "pm"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "palm-mute-muteado-y-abierto",
+          "title": "Palm mute: alternar muteado y abierto",
+          "type": "technique",
+          "category": "technique",
+          "bpm_start": 70,
+          "bpm_target": 110,
+          "duration_min": 4,
+          "notation": {
+            "bpm": 70,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": null
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 3.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": null
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": null
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 7.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": null
+              }
+            ]
+          }
+        },
+        {
+          "slug": "riff-new-wave-con-palm-mute",
+          "title": "Riff al estilo new wave: pulso muteado y acentos",
+          "type": "riff",
+          "category": "riff",
+          "bpm_start": 80,
+          "bpm_target": 120,
+          "duration_min": 5,
+          "notation": {
+            "bpm": 80,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 3,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 3,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 9,
+                "technique": null
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 0,
+                "technique": "pm"
+              },
+              {
+                "t": 7,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 7,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "slug": "ritmo-cambios-e-improvisacion",
+      "position": 4,
+      "title": "Ritmo, cambios e improvisación",
+      "content_md": "Ahora juntamos todo: power chords, cambios y ritmo. Lo que hace que suene a canción no es solo qué acordes tocás, sino **cómo** los tocás.\n\n- Un rasgueo con corcheas (`D-DUD-DU`) tiene un acento en el primer golpe de cada compás. Acentuá el `D` del tiempo 1 y vas a sentir el pulso.\n- Mantené la mano derecha moviéndose siempre, aunque no toques las cuerdas: el movimiento parejo es lo que te da el tempo.\n- Con power chords podés dejar silencios y tocar más corto, como en el rock de Cerati o Babasónicos: menos notas, más groove.\n\nCerramos con **improvisar**. No hace falta saber teoría: elegí una progresión (por ejemplo La - Do - Re - Mi) y probá ritmos distintos moviendo la forma. También podés hacer una **pregunta y respuesta**: dos compases que plantean una idea y dos que la contestan, con otros ritmos o con palm mute. Si algo suena bien, repetilo: ese es el comienzo de tu propio riff.\n",
+      "exercises": [
+        {
+          "slug": "cambios-con-ritmo-de-corcheas",
+          "title": "Cambios de power chord con ritmo de corcheas",
+          "type": "strumming",
+          "category": "technique",
+          "bpm_start": 70,
+          "bpm_target": 110,
+          "duration_min": 5,
+          "notation": {
+            "bpm": 70,
+            "time_signature": "4/4",
+            "tonic": "E",
+            "chords": [
+              {
+                "t": 0,
+                "name": "E5",
+                "shape": [
+                  0,
+                  2,
+                  2,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 4,
+                "name": "G5",
+                "shape": [
+                  3,
+                  5,
+                  5,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 8,
+                "name": "A5",
+                "shape": [
+                  5,
+                  7,
+                  7,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 12,
+                "name": "E5",
+                "shape": [
+                  0,
+                  2,
+                  2,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              }
+            ],
+            "strum": [
+              {
+                "t": 0,
+                "pattern": "D-DUD-DU",
+                "accent": [
+                  0,
+                  4
+                ]
+              },
+              {
+                "t": 4,
+                "pattern": "D-DUD-DU",
+                "accent": [
+                  0,
+                  4
+                ]
+              },
+              {
+                "t": 8,
+                "pattern": "D-DUD-DU",
+                "accent": [
+                  0,
+                  4
+                ]
+              },
+              {
+                "t": 12,
+                "pattern": "D-DUD-DU",
+                "accent": [
+                  0,
+                  4
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "slug": "improvisar-moviendo-la-forma-en-la",
+          "title": "Improvisar ritmos moviendo la forma en La",
+          "type": "improvisation",
+          "category": "improvisation",
+          "bpm_start": 70,
+          "bpm_target": 100,
+          "duration_min": 5,
+          "notation": {
+            "bpm": 70,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "chords": [
+              {
+                "t": 0,
+                "name": "A5",
+                "shape": [
+                  5,
+                  7,
+                  7,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 4,
+                "name": "C5",
+                "shape": [
+                  "x",
+                  3,
+                  5,
+                  5,
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 8,
+                "name": "D5",
+                "shape": [
+                  "x",
+                  5,
+                  7,
+                  7,
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 12,
+                "name": "E5",
+                "shape": [
+                  0,
+                  2,
+                  2,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              }
+            ],
+            "strum": [
+              {
+                "t": 0,
+                "pattern": "D-D-DUDU",
+                "accent": [
+                  0
+                ]
+              },
+              {
+                "t": 4,
+                "pattern": "D-D-DUDU",
+                "accent": [
+                  0
+                ]
+              },
+              {
+                "t": 8,
+                "pattern": "D-D-DUDU",
+                "accent": [
+                  0
+                ]
+              },
+              {
+                "t": 12,
+                "pattern": "D-D-DUDU",
+                "accent": [
+                  0
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "slug": "improvisar-pregunta-y-respuesta-en-mi",
+          "title": "Pregunta y respuesta con power chords en Mi",
+          "type": "improvisation",
+          "category": "improvisation",
+          "bpm_start": 70,
+          "bpm_target": 100,
+          "duration_min": 5,
+          "notation": {
+            "bpm": 70,
+            "time_signature": "4/4",
+            "tonic": "E",
+            "chords": [
+              {
+                "t": 0,
+                "name": "E5",
+                "shape": [
+                  0,
+                  2,
+                  2,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 4,
+                "name": "G5",
+                "shape": [
+                  3,
+                  5,
+                  5,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 8,
+                "name": "A5",
+                "shape": [
+                  5,
+                  7,
+                  7,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              },
+              {
+                "t": 12,
+                "name": "E5",
+                "shape": [
+                  0,
+                  2,
+                  2,
+                  "x",
+                  "x",
+                  "x"
+                ],
+                "barre": null
+              }
+            ],
+            "strum": [
+              {
+                "t": 0,
+                "pattern": "D---D---",
+                "accent": [
+                  0,
+                  4
+                ]
+              },
+              {
+                "t": 4,
+                "pattern": "D---D---",
+                "accent": [
+                  0,
+                  4
+                ]
+              },
+              {
+                "t": 8,
+                "pattern": "D---D---",
+                "accent": [
+                  0,
+                  4
+                ]
+              },
+              {
+                "t": 12,
+                "pattern": "D---D---",
+                "accent": [
+                  0,
+                  4
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

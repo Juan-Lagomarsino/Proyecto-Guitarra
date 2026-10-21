@@ -24,10 +24,12 @@ def upgrade() -> None:
         "levels",
         sa.Column("id", sa.Integer()),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_levels")),
+        sa.Column("slug", sa.String(120), nullable=False),
         sa.Column("position", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(120), nullable=False),
         sa.Column("description", sa.Text(), nullable=False),
         sa.Column("instrument", sa.String(20), nullable=False),
+        sa.UniqueConstraint("slug", name=op.f("uq_levels_slug")),
         sa.UniqueConstraint("position", name=op.f("uq_levels_position")),
         sa.CheckConstraint(
             f"instrument IN ({INSTRUMENTS})", name=op.f("ck_levels_instrument_valid")
@@ -43,9 +45,11 @@ def upgrade() -> None:
             sa.ForeignKey("levels.id", ondelete="CASCADE", name=op.f("fk_lessons_level_id_levels")),
             nullable=False,
         ),
+        sa.Column("slug", sa.String(120), nullable=False),
         sa.Column("position", sa.Integer(), nullable=False),
         sa.Column("title", sa.String(200), nullable=False),
         sa.Column("content_md", sa.Text(), nullable=False),
+        sa.UniqueConstraint("level_id", "slug", name=op.f("uq_lessons_level_slug")),
         sa.UniqueConstraint("level_id", "position", name=op.f("uq_lessons_level_position")),
     )
     op.create_table(

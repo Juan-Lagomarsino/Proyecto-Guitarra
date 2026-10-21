@@ -14,13 +14,15 @@ RUN npm run build
 FROM python:3.12-slim
 WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \
-    GUITAR_UI_DIST=/app/ui-dist
+    GUITAR_UI_DIST=/app/ui-dist \
+    GUITAR_CURRICULUM_DIR=/app/curriculum
 COPY api/pyproject.toml ./
 COPY api/src ./src
 RUN pip install --no-cache-dir .
 COPY api/alembic.ini ./
 COPY api/alembic ./alembic
 COPY api/entrypoint.sh ./
+COPY curriculum/*.json ./curriculum/
 COPY --from=ui /ui/dist ./ui-dist
 EXPOSE 8000
 ENTRYPOINT ["sh", "/app/entrypoint.sh"]

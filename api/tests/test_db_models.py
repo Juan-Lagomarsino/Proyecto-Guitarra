@@ -16,8 +16,10 @@ from guitarra_api.infra.db.repositories.curriculum import CurriculumRepository
 
 
 def make_lesson(session) -> Lesson:
-    level = Level(position=1, name="Inicial", description="", instrument="electric")
-    lesson = Lesson(level=level, position=1, title="Primeras notas", content_md="# Hola")
+    level = Level(slug="inicial", position=1, name="Inicial", description="", instrument="electric")
+    lesson = Lesson(
+        level=level, slug="primeras-notas", position=1, title="Primeras notas", content_md="# Hola"
+    )
     session.add(lesson)
     session.flush()
     return lesson
@@ -103,7 +105,9 @@ def test_ejercicio_exige_leccion_existente(session):
 
 def test_orden_de_leccion_es_unico_dentro_del_nivel(session):
     lesson = make_lesson(session)
-    session.add(Lesson(level_id=lesson.level_id, position=1, title="Otra", content_md=""))
+    session.add(
+        Lesson(level_id=lesson.level_id, slug="otra", position=1, title="Otra", content_md="")
+    )
     with pytest.raises(IntegrityError):
         session.flush()
 
@@ -179,7 +183,7 @@ def test_reminder_rules_rechaza_dia_fuera_de_rango(session):
 
 
 def test_nivel_rechaza_instrumento_invalido(session):
-    session.add(Level(position=1, name="x", description="", instrument="guitar"))
+    session.add(Level(slug="x", position=1, name="x", description="", instrument="guitar"))
     with pytest.raises(IntegrityError):
         session.flush()
 

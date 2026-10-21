@@ -36,11 +36,13 @@ def _in_list(column: str, values: tuple[str, ...]) -> str:
 class Level(Base):
     __tablename__ = "levels"
     __table_args__ = (
+        UniqueConstraint("slug", name="uq_levels_slug"),
         UniqueConstraint("position", name="uq_levels_position"),
         CheckConstraint(_in_list("instrument", INSTRUMENTS), name="instrument_valid"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    slug: Mapped[str] = mapped_column(String(120))
     position: Mapped[int] = mapped_column(Integer)
     name: Mapped[str] = mapped_column(String(120))
     description: Mapped[str] = mapped_column(Text, default="")
@@ -53,10 +55,14 @@ class Level(Base):
 
 class Lesson(Base):
     __tablename__ = "lessons"
-    __table_args__ = (UniqueConstraint("level_id", "position", name="uq_lessons_level_position"),)
+    __table_args__ = (
+        UniqueConstraint("level_id", "slug", name="uq_lessons_level_slug"),
+        UniqueConstraint("level_id", "position", name="uq_lessons_level_position"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     level_id: Mapped[int] = mapped_column(ForeignKey("levels.id", ondelete="CASCADE"))
+    slug: Mapped[str] = mapped_column(String(120))
     position: Mapped[int] = mapped_column(Integer)
     title: Mapped[str] = mapped_column(String(200))
     content_md: Mapped[str] = mapped_column(Text, default="")

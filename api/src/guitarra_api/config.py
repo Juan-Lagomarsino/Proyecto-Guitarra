@@ -18,3 +18,5 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://guitarra:guitarra@localhost:5432/guitarra"
     # Carpeta con la UI compilada (ui/dist); en Docker la define el Dockerfile.
     guitar_ui_dist: Path = ENV_FILE.parent / "ui" / "dist"
+    # Carpeta con los `*.json` del currículum; en Docker la define el Dockerfile.
+    guitar_curriculum_dir: Path = ENV_FILE.parent / "curriculum"
