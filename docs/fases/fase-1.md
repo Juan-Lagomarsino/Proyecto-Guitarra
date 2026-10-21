@@ -32,13 +32,13 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 | Id | Ola | Objetivo | Depende de | Estado |
 | --- | --- | --- | --- | --- |
 | F1-T01 | 0 | Esqueleto del repo, tooling y CI | — | hecha |
-| F1-T02 | 1 | Docker Compose con Postgres, API y migraciones automáticas | T01 | integrada (falta verificar con Docker) |
+| F1-T02 | 1 | Docker Compose con Postgres, API y migraciones automáticas | T01 | hecha |
 | F1-T03 | 1 | Esquema de notación y su validador | T01 | hecha |
-| F1-T04 | 1 | Modelos SQLAlchemy y migración inicial | T01 | integrada (tests de DB pendientes de Docker) |
+| F1-T04 | 1 | Modelos SQLAlchemy y migración inicial | T01 | hecha |
 | F1-T05 | 1 | Dominio: días de práctica y racha | T01 | hecha |
 | F1-T06 | 1 | Dominio: generador de la sesión del día | T01 | hecha |
 | F1-T07 | 1 | UI: shell, rutas, tokens de tema y cliente de API | T01 | hecha |
-| F1-T08 | 2 | Currículum nivel 1 + cargador idempotente | T03, T04 | integrada (test de DB del cargador pendiente de Docker) |
+| F1-T08 | 2 | Currículum nivel 1 + cargador idempotente | T03, T04 | hecha |
 | F1-T09 | 3 | Currículum niveles 2 y 3 | T08 | hecha |
 | F1-T10 | 2 | API de Estudio y "Terminé" | T03, T04 | pendiente |
 | F1-T11 | 3 | API de progreso, sesión del día y reglas | T05, T06, T10 | pendiente |
