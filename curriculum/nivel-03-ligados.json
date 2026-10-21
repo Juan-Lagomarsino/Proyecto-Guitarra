@@ -1,0 +1,1128 @@
+{
+  "level": {
+    "slug": "nivel-03-ligados",
+    "position": 3,
+    "name": "Ligados",
+    "description": "Hammer-on, pull-off y slide sobre la pentatónica de La: cómo hacer que las notas fluyan sin picar cada una, con un riff y una improvisación.",
+    "instrument": "electric"
+  },
+  "lessons": [
+    {
+      "slug": "hammer-on-y-pull-off",
+      "position": 1,
+      "title": "Hammer-on y pull-off",
+      "content_md": "Un **ligado** es pasar de una nota a otra en la misma cuerda sin volver a picar. Sirve para que la frase fluya y para tocar rápido sin cansar la mano derecha.\n\n- **Hammer-on (h):** picás una nota y \"martillás\" con otro dedo en un traste más agudo. Por ejemplo, 5 y h al 8 en la 6ta cuerda.\n- **Pull-off (p):** picás la nota aguda y al soltar tirás de la cuerda con el dedo hacia abajo, así suena la nota más grave que ya tenías pisada.\n\nEn la tablatura el ligado se escribe en la nota de **llegada**: la que suena sin picarse.\n\nTrabajalos por separado: primero los hammer-ons, después los pull-offs, y recién después juntalos en el trino (nota, pull-off, hammer-on). Si la nota ligada suena débil, no es la mano derecha: es que falta fuerza y precisión en el dedo que martilla o tira.\n",
+      "exercises": [
+        {
+          "slug": "hammer-on-en-la-caja-1",
+          "title": "Hammer-on en la caja 1, cuerda por cuerda",
+          "type": "technique",
+          "category": "warmup",
+          "bpm_start": 50,
+          "bpm_target": 90,
+          "duration_min": 3,
+          "notation": {
+            "bpm": 50,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": "h"
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 3.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": "h"
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 8,
+                "technique": "h"
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": "h"
+              },
+              {
+                "t": 7.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": "h"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "pull-off-en-la-caja-1",
+          "title": "Pull-off en la caja 1, cuerda por cuerda",
+          "type": "technique",
+          "category": "technique",
+          "bpm_start": 50,
+          "bpm_target": 90,
+          "duration_min": 3,
+          "notation": {
+            "bpm": 50,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 3.0,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 7.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": "p"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "trino-con-ligados-en-la-caja-1",
+          "title": "Trino: nota, pull-off y hammer-on",
+          "type": "technique",
+          "category": "technique",
+          "bpm_start": 50,
+          "bpm_target": 90,
+          "duration_min": 4,
+          "notation": {
+            "bpm": 50,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 3.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": "h"
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 8,
+                "technique": "h"
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 7.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": "h"
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 8.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 8.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 9.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 9.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 10.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 10.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 11.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 11.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": "h"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "slug": "slides",
+      "position": 2,
+      "title": "Slide",
+      "content_md": "El **slide** es deslizar el dedo por la cuerda de un traste a otro sin soltarla. Si subís es ascendente (`/`) y si bajás es descendente (`\\`). Como en los otros ligados, se anota en la nota de llegada.\n\nEl slide cambia el carácter: en el blues y en el classic rock se usa para \"entrar\" a una nota con un arrastre, y para dar un gesto lento y cantado a una frase.\n\nCuidá que el dedo no se despegue de la cuerda ni apriete de más: tiene que ir rozando el mástil y llegar justo al traste, no a medio camino. En el ejercicio vas por cuatro cuerdas con dos slides por cuerda.\n",
+      "exercises": [
+        {
+          "slug": "slides-en-la-caja-1",
+          "title": "Slides ascendentes y descendentes en la caja 1",
+          "type": "technique",
+          "category": "technique",
+          "bpm_start": 50,
+          "bpm_target": 90,
+          "duration_min": 4,
+          "notation": {
+            "bpm": 50,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": "/"
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": "\\"
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": "/"
+              },
+              {
+                "t": 3.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": "\\"
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": "/"
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": "\\"
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": "/"
+              },
+              {
+                "t": 7.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": "\\"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "slug": "ligados-en-la-pentatonica",
+      "position": 3,
+      "title": "Ligados en la pentatónica",
+      "content_md": "En la caja 1 casi todas las cuerdas tienen dos notas, así que cada par es un ligado natural: 5 y 8 en las cuerdas 6, 2 y 1, y 5 y 7 en las cuerdas 5, 4 y 3. Con ellos podés pasar de una cuerda a otra sin picar de más.\n\nLa idea es usar el ligado como un adorno al principio de la frase, o para armar un patrón repetido que se vuelve riff. Mezclalos: hammer-on para subir, pull-off para bajar, slide para conectar.\n\nEn el ejercicio cambiás de cuerda en medio de la frase, que es lo que más se usa en solos reales y lo que más cuesta al principio.\n",
+      "exercises": [
+        {
+          "slug": "ligados-cambiando-de-cuerda",
+          "title": "Ligados cambiando de cuerda",
+          "type": "technique",
+          "category": "technique",
+          "bpm_start": 55,
+          "bpm_target": 95,
+          "duration_min": 4,
+          "notation": {
+            "bpm": 55,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": "h"
+              },
+              {
+                "t": 3.0,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 8,
+                "technique": "h"
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 7.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": "p"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "slug": "riff-e-improvisacion-con-ligados",
+      "position": 4,
+      "title": "Riff e improvisación con ligados",
+      "content_md": "Para cerrar el nivel, un riff con hammer-ons, pull-offs y slides, y una improvisación donde vos elegís dónde ligar.\n\nEl riff está pensado en La, con el espíritu del hard rock: la nota grave sirve de ancla y los ligados la rodean. Tocalo despacio y después subí el metrónomo de a 5 pulsos.\n\nPara improvisar, repasá las tres reglas: quedate en una caja, arrancá y cerrá en La, y animate a meter por lo menos un ligado por compás. Probá hacerlos distintos cada vez.\n",
+      "exercises": [
+        {
+          "slug": "riff-con-ligados-en-la",
+          "title": "Riff con ligados en La menor",
+          "type": "riff",
+          "category": "riff",
+          "bpm_start": 70,
+          "bpm_target": 110,
+          "duration_min": 4,
+          "notation": {
+            "bpm": 70,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": "h"
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 3.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": "h"
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": "/"
+              },
+              {
+                "t": 7.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 8.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 8.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 9.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 9.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 10.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 10.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 11.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 11.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": "/"
+              },
+              {
+                "t": 12.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 12.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": "h"
+              },
+              {
+                "t": 13.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 13.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": "h"
+              },
+              {
+                "t": 14.0,
+                "dur": 1,
+                "string": 6,
+                "fret": 10,
+                "technique": "/"
+              },
+              {
+                "t": 15.0,
+                "dur": 1.0,
+                "string": 6,
+                "fret": 5,
+                "technique": "\\"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "improvisacion-con-ligados-sobre-la",
+          "title": "Improvisación con ligados sobre La",
+          "type": "improvisation",
+          "category": "improvisation",
+          "bpm_start": 60,
+          "bpm_target": 90,
+          "duration_min": 5,
+          "notation": {
+            "bpm": 60,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 1,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 3.0,
+                "dur": 1,
+                "string": 3,
+                "fret": 5,
+                "technique": "\\"
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": "h"
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 8,
+                "technique": "/"
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 5,
+                "technique": "\\"
+              },
+              {
+                "t": 7.0,
+                "dur": 1,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 8.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 8.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 9.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 9.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 10.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": "p"
+              },
+              {
+                "t": 10.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": "h"
+              },
+              {
+                "t": 11.0,
+                "dur": 1,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 12.0,
+                "dur": 4.0,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

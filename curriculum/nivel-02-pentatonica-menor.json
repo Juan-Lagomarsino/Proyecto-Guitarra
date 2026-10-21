@@ -1,0 +1,1417 @@
+{
+  "level": {
+    "slug": "nivel-02-pentatonica-menor",
+    "position": 2,
+    "name": "Pentatónica menor",
+    "description": "Tus primeras escalas: la pentatónica menor de La en las cajas 1 y 2, cómo se conectan, un riff y una improvisación sobre la tónica. Es el paso natural después de los power chords.",
+    "instrument": "electric"
+  },
+  "lessons": [
+    {
+      "slug": "la-caja-1",
+      "position": 1,
+      "title": "La caja 1 en el traste 5",
+      "content_md": "Una **escala** es un grupo de notas ordenadas que suenan bien juntas. La **pentatónica menor** tiene solo cinco: en La son **A, C, D, E, G**. Es la escala de casi todo el rock: la vas a escuchar en solos de classic rock, en el rock argentino y hasta en líneas de new wave.\n\nLa **tónica** es la nota que da el nombre y donde la melodía \"descansa\": acá es La (A). Siempre buscala: es la nota con la que conviene arrancar y cerrar.\n\nUna **caja** es una forma fija de la escala en el mástil, con la mano quieta en una zona de trastes. La **caja 1** se apoya en el traste 5:\n\n- Cuerdas 6, 2 y 1: trastes 5 y 8.\n- Cuerdas 5, 4 y 3: trastes 5 y 7.\n\nTocala con un dedo por traste: dedo 1 en el 5, dedo 3 en el 7 y dedo 4 en el 8. Las tónicas (La) están en la 6ta cuerda traste 5, en la 4ta traste 7 y en la 1ra traste 5.\n\nPrimero mirá dónde están las tónicas, después subí y bajá la caja entera, y por último probá la secuencia de a cuatro notas, que te obliga a pensar la forma y no solo a repetirla.\n",
+      "exercises": [
+        {
+          "slug": "tonicas-en-la-caja-1",
+          "title": "Las tónicas de la caja 1",
+          "type": "scale",
+          "category": "warmup",
+          "bpm_start": 60,
+          "bpm_target": 90,
+          "duration_min": 3,
+          "notation": {
+            "bpm": 60,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 1,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 1.0,
+                "dur": 1,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 2.0,
+                "dur": 1,
+                "string": 1,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 3.0,
+                "dur": 1,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 4.0,
+                "dur": 1,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 5.0,
+                "dur": 1,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 6.0,
+                "dur": 1,
+                "string": 1,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 7.0,
+                "dur": 1.0,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              }
+            ]
+          }
+        },
+        {
+          "slug": "pentatonica-la-caja-1-subiendo-y-bajando",
+          "title": "Caja 1 de La, subiendo y bajando",
+          "type": "scale",
+          "category": "technique",
+          "bpm_start": 60,
+          "bpm_target": 100,
+          "duration_min": 4,
+          "notation": {
+            "bpm": 60,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 3.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 7.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 8.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 8.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 9.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 9.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 10.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 10.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 11.0,
+                "dur": 1.0,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              }
+            ]
+          }
+        },
+        {
+          "slug": "pentatonica-la-caja-1-secuencia-de-cuatro",
+          "title": "Caja 1 de La, secuencia de a cuatro notas",
+          "type": "scale",
+          "category": "technique",
+          "bpm_start": 50,
+          "bpm_target": 90,
+          "duration_min": 4,
+          "notation": {
+            "bpm": 50,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 3.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 7.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 8.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 8.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 9.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 9.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 10.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 10.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 11.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 11.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 12.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 12.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 13.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 13.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 14.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 14.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 15.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 15.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 5,
+                "technique": null
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "slug": "la-caja-2",
+      "position": 2,
+      "title": "La caja 2: la que sigue",
+      "content_md": "La **caja 2** es la forma que está justo arriba de la caja 1. Comparte con ella la mitad de sus notas: los trastes 7 y 8 que tocabas en la caja 1 vuelven a aparecer en la caja 2.\n\nLa caja 2 se apoya entre los trastes 7 y 10:\n\n- Cuerdas 6, 2 y 1: trastes 8 y 10.\n- Cuerdas 5 y 4: trastes 7 y 10.\n- Cuerda 3: trastes 7 y 9.\n\nLos nombres de las notas son los mismos de siempre (A, C, D, E, G); lo que cambia es dónde las encontrás. Ahora la tónica La queda en la 4ta cuerda, traste 7, y en la 2da cuerda, traste 10.\n\nEn el ejercicio arrancás en esa tónica de la 4ta cuerda, recorrés toda la caja para arriba y para abajo, y volvés a descansar en La. Tocá lento y fijate que la mano no se mueva de la zona.\n",
+      "exercises": [
+        {
+          "slug": "pentatonica-la-caja-2-subiendo-y-bajando",
+          "title": "Caja 2 de La, desde la tónica",
+          "type": "scale",
+          "category": "technique",
+          "bpm_start": 60,
+          "bpm_target": 100,
+          "duration_min": 4,
+          "notation": {
+            "bpm": 60,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 9,
+                "technique": null
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 3.0,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 9,
+                "technique": null
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 7.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 8.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 8.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 9.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 9.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 10.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 10.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 11.0,
+                "dur": 1.0,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "slug": "unir-las-cajas",
+      "position": 3,
+      "title": "Unir las cajas 1 y 2",
+      "content_md": "La caja 1 y la caja 2 **comparten notas**: el mástil es un mosaico donde cada caja se pega con la siguiente. Eso significa que no hay que \"saltar\": subís por una cuerda y de golpe ya estás en la otra caja.\n\nPara sentirlo, tocá una cuerda de punta a punta: en la 6ta cuerda, por ejemplo, tocás 5, 8 y 10, que son A, C y D. El 5 y el 8 son de la caja 1, el 8 y el 10 son de la caja 2; el 8 es el que está en las dos.\n\nEn el primer ejercicio recorrés todo el mástil de a una cuerda, con las notas de ambas cajas. En el segundo subís por la caja 1 y bajás por la caja 2, para que el oído y la mano aprendan el camino.\n",
+      "exercises": [
+        {
+          "slug": "pentatonica-la-cuerda-por-cuerda",
+          "title": "Las dos cajas, cuerda por cuerda",
+          "type": "scale",
+          "category": "technique",
+          "bpm_start": 50,
+          "bpm_target": 90,
+          "duration_min": 4,
+          "notation": {
+            "bpm": 50,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 3.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 9,
+                "technique": null
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 7.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 8.0,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 8.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 9.0,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 9.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 10.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 10.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 11.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 11.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 9,
+                "technique": null
+              },
+              {
+                "t": 12.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 12.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 13.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 13.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 14.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 14.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 15.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 15.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 16.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 16.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 17.0,
+                "dur": 3.0,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              }
+            ]
+          }
+        },
+        {
+          "slug": "pentatonica-la-sube-por-una-baja-por-otra",
+          "title": "Subir por la caja 1 y bajar por la caja 2",
+          "type": "scale",
+          "category": "technique",
+          "bpm_start": 55,
+          "bpm_target": 95,
+          "duration_min": 4,
+          "notation": {
+            "bpm": 55,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 2.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 2.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 3.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 3.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 1,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 6.0,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 6.5,
+                "dur": 0.5,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 7.0,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 9,
+                "technique": null
+              },
+              {
+                "t": 7.5,
+                "dur": 0.5,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 8.0,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 8.5,
+                "dur": 0.5,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 9.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 9.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 10.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 10.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 11.0,
+                "dur": 1.0,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "slug": "riff-e-improvisacion",
+      "position": 4,
+      "title": "Un riff y una improvisación",
+      "content_md": "Hora de usar la escala. Hay dos ejercicios:\n\n- Un **riff** en La menor pentatónica, al estilo del rock de estadio: repite la nota grave (la tónica) y le va agregando la quinta y el Re como colores. Es corto y se toca en loop.\n- Una **improvisación guiada**: una frase modelo para arrancar. Tocala una vez y después inventá la tuya con tres reglas: quedate en una caja, arrancá en La y cerrá en La.\n\nImprovisar no es tocar rápido, es **elegir** qué nota viene. Cantá la frase antes de tocarla; si te la podés cantar, suena a música y no a ejercicio.\n",
+      "exercises": [
+        {
+          "slug": "riff-la-menor-al-estilo-del-rock",
+          "title": "Riff en La menor pentatónica",
+          "type": "riff",
+          "category": "riff",
+          "bpm_start": 70,
+          "bpm_target": 110,
+          "duration_min": 4,
+          "notation": {
+            "bpm": 70,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 0.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 1.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 1.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 2.0,
+                "dur": 1,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 3.0,
+                "dur": 1,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 4.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 4.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 5.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 5.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 10,
+                "technique": null
+              },
+              {
+                "t": 6.0,
+                "dur": 1,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 7.0,
+                "dur": 1,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 8.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 8.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 9.0,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 9.5,
+                "dur": 0.5,
+                "string": 5,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 10.0,
+                "dur": 1,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 11.0,
+                "dur": 1,
+                "string": 5,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 12.0,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 12.5,
+                "dur": 0.5,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 13.0,
+                "dur": 1,
+                "string": 6,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 14.0,
+                "dur": 2.0,
+                "string": 6,
+                "fret": 5,
+                "technique": null
+              }
+            ]
+          }
+        },
+        {
+          "slug": "improvisacion-guiada-sobre-la-tonica",
+          "title": "Improvisación guiada sobre La",
+          "type": "improvisation",
+          "category": "improvisation",
+          "bpm_start": 60,
+          "bpm_target": 90,
+          "duration_min": 5,
+          "notation": {
+            "bpm": 60,
+            "time_signature": "4/4",
+            "tonic": "A",
+            "events": [
+              {
+                "t": 0.0,
+                "dur": 1,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 1.0,
+                "dur": 1,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 2.0,
+                "dur": 1,
+                "string": 3,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 3.0,
+                "dur": 1,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 4.0,
+                "dur": 1,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 5.0,
+                "dur": 1,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 6.0,
+                "dur": 2,
+                "string": 1,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 8.0,
+                "dur": 1,
+                "string": 1,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 9.0,
+                "dur": 1,
+                "string": 2,
+                "fret": 8,
+                "technique": null
+              },
+              {
+                "t": 10.0,
+                "dur": 1,
+                "string": 2,
+                "fret": 5,
+                "technique": null
+              },
+              {
+                "t": 11.0,
+                "dur": 1,
+                "string": 3,
+                "fret": 7,
+                "technique": null
+              },
+              {
+                "t": 12.0,
+                "dur": 4.0,
+                "string": 4,
+                "fret": 7,
+                "technique": null
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

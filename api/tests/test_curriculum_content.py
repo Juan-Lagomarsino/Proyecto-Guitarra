@@ -63,6 +63,96 @@ def test_nivel_1_cubre_las_cuatro_categorias(levels):
     assert found == CATEGORIES
 
 
+def _level_exercises(level):
+    return [ex for lesson in level.lessons for ex in lesson.exercises]
+
+
+def _level_by_position(levels, position):
+    return next(level for level in levels if level.position == position)
+
+
+def test_hay_tres_niveles_en_orden(levels):
+    assert [level.position for level in levels][:3] == [1, 2, 3]
+    assert all(level.instrument == "electric" for level in levels)
+
+
+@pytest.mark.parametrize("position", [1, 2, 3])
+def test_cada_nivel_tiene_3_lecciones_con_teoria_y_3_categorias(levels, position):
+    level = _level_by_position(levels, position)
+    assert len(level.lessons) >= 3
+    assert all(lesson.content_md.strip() for lesson in level.lessons)
+    assert len({ex.category for ex in _level_exercises(level)}) >= 3
+
+
+@pytest.mark.parametrize("position", [1, 2, 3])
+def test_las_escalas_de_cada_nivel_marcan_la_tonica(levels, position):
+    for ex in _level_exercises(_level_by_position(levels, position)):
+        if ex.type == "scale":
+            assert ex.notation.tonic is not None, ex.slug
+
+
+def test_nivel_2_es_pentatonica_menor_y_tiene_las_dos_cajas(levels):
+    level = _level_by_position(levels, 2)
+    scales = [ex for ex in _level_exercises(level) if ex.type == "scale"]
+    assert len(scales) >= 3
+    assert {ex.notation.tonic for ex in scales} == {"A"}
+    assert any("caja-1" in ex.slug for ex in scales)
+    assert any("caja-2" in ex.slug for ex in scales)
+
+
+def test_nivel_2_cada_nota_de_las_escalas_es_de_la_pentatonica_menor(levels):
+    for ex in _level_exercises(_level_by_position(levels, 2)):
+        if ex.type != "scale":
+            continue
+        tonic = midi(f"{ex.notation.tonic}0") % 12
+        allowed = {(tonic + step) % 12 for step in (0, 3, 5, 7, 10)}
+        for event in ex.notation.events:
+            value = fretted_pitch(ex.notation, event.string, event.fret) % 12
+            assert value in allowed, f"{ex.slug}: {pitch_class(value)} fuera de la pentatónica"
+
+
+def test_nivel_2_las_cajas_estan_en_su_posicion(levels):
+    level = _level_by_position(levels, 2)
+    for ex in _level_exercises(level):
+        if "caja-1" in ex.slug and ex.type == "scale":
+            assert {e.fret for e in ex.notation.events} <= {5, 7, 8}, ex.slug
+        if "caja-2" in ex.slug and ex.type == "scale":
+            assert {e.fret for e in ex.notation.events} <= {7, 8, 9, 10}, ex.slug
+
+
+TWO_NOTE_TECHNIQUES = {"h": 1, "/": 1, "p": -1, "\\": -1}
+
+
+def _previous_on_string(events, index):
+    event = events[index]
+    earlier = [other for other in events if other.string == event.string and other.t < event.t]
+    return max(earlier, key=lambda other: other.t) if earlier else None
+
+
+def test_nivel_3_tiene_ligados_de_los_tres_tipos(levels):
+    used = {
+        e.technique
+        for ex in _level_exercises(_level_by_position(levels, 3))
+        for e in ex.notation.events
+    }
+    assert {"h", "p"} <= used
+    assert used & {"/", "\\"}
+
+
+def test_nivel_3_los_ligados_van_en_la_nota_de_destino_con_origen_en_la_cuerda(levels):
+    for ex in _level_exercises(_level_by_position(levels, 3)):
+        events = sorted(ex.notation.events, key=lambda e: e.t)
+        for index, event in enumerate(events):
+            if event.technique not in TWO_NOTE_TECHNIQUES:
+                continue
+            origin = _previous_on_string(events, index)
+            assert origin is not None, f"{ex.slug}: {event.technique} sin origen en t={event.t}"
+            direction = TWO_NOTE_TECHNIQUES[event.technique]
+            assert (event.fret - origin.fret) * direction > 0, (
+                f"{ex.slug}: {event.technique} de {origin.fret} a {event.fret} en t={event.t}"
+            )
+
+
 def test_slugs_unicos(levels):
     slugs = [ex.slug for level in levels for lesson in level.lessons for ex in lesson.exercises]
     assert len(slugs) == len(set(slugs))
