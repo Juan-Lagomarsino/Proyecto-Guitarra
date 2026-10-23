@@ -1,6 +1,6 @@
 # Fase 1 — Base, Estudio y progreso
 
-Estado: **cerrada, pendiente de demo** (plan aprobado por Juan Pedro el 2026-10-20; cierre técnico el 2026-10-23)
+Estado: **cerrada** (plan aprobado por Juan Pedro el 2026-10-20; cierre técnico el 2026-10-23; demo aprobada por Juan Pedro el 2026-10-23)
 Referencia: `docs/PLAN.md` § Fase 1, § Modelo de datos, § Formato interno de notación, § Contratos de API, § UI y diseño.
 Referencia visual: `docs/referencias/taller-electrica.html` (HTML original del artefacto). De ahí salen el mástil (`drawBoard`), la tablatura (`drawTab`), la tarjeta de práctica y los colores de `:root` como tema por defecto. **Su notación de tabs (`"6-0+5-2:2"`) es solo referencia visual: el formato oficial es el JSON del plan.**
 
