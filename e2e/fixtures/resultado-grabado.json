@@ -1,0 +1,415 @@
+{
+  "metadata": {
+    "bpm": 96,
+    "key": "A minor",
+    "duration_s": 60,
+    "title": "Canción de prueba",
+    "artist": "Artista E2E"
+  },
+  "sections": [
+    {
+      "slug": "intro",
+      "name": "Intro",
+      "start_s": 0,
+      "end_s": 12,
+      "position": 0
+    },
+    {
+      "slug": "estrofa",
+      "name": "Estrofa",
+      "start_s": 12,
+      "end_s": 40,
+      "position": 1
+    },
+    {
+      "slug": "estribillo",
+      "name": "Estribillo",
+      "start_s": 40,
+      "end_s": 60,
+      "position": 2
+    }
+  ],
+  "charts": [
+    {
+      "instrument": "classical",
+      "key": {
+        "tonic": "A",
+        "mode": "minor",
+        "confidence": 0.7
+      },
+      "bpm": 96,
+      "bpm_confidence": 0.9,
+      "time_signature": "4/4",
+      "capo": 0,
+      "sections": [
+        {
+          "id": "intro",
+          "name": "Intro",
+          "start_s": 0,
+          "end_s": 12,
+          "order": 0,
+          "chord_source": "detected",
+          "chords": [
+            {
+              "t_s": 1,
+              "name": "Am",
+              "shape": [
+                "x",
+                0,
+                2,
+                2,
+                1,
+                0
+              ],
+              "confidence": 0.9
+            },
+            {
+              "t_s": 7,
+              "name": "G",
+              "shape": [
+                3,
+                2,
+                0,
+                0,
+                0,
+                3
+              ],
+              "confidence": 0.9
+            }
+          ],
+          "arpeggio": {
+            "pattern_id": "arpegio-4-basico",
+            "pattern": "p-i-m-i",
+            "confidence": 0.8
+          }
+        },
+        {
+          "id": "estrofa",
+          "name": "Estrofa",
+          "start_s": 12,
+          "end_s": 40,
+          "order": 1,
+          "chord_source": "detected",
+          "chords": [
+            {
+              "t_s": 13,
+              "name": "C",
+              "shape": [
+                "x",
+                3,
+                2,
+                0,
+                1,
+                0
+              ],
+              "confidence": 0.9
+            },
+            {
+              "t_s": 20,
+              "name": "G",
+              "shape": [
+                3,
+                2,
+                0,
+                0,
+                0,
+                3
+              ],
+              "confidence": 0.9
+            },
+            {
+              "t_s": 27,
+              "name": "Am",
+              "shape": [
+                "x",
+                0,
+                2,
+                2,
+                1,
+                0
+              ],
+              "confidence": 0.9
+            },
+            {
+              "t_s": 34,
+              "name": "F",
+              "shape": [
+                1,
+                3,
+                3,
+                2,
+                1,
+                1
+              ],
+              "confidence": 0.4
+            }
+          ],
+          "arpeggio": {
+            "pattern_id": "arpegio-4-basico",
+            "pattern": "p-i-m-i",
+            "confidence": 0.8
+          }
+        },
+        {
+          "id": "estribillo",
+          "name": "Estribillo",
+          "start_s": 40,
+          "end_s": 60,
+          "order": 2,
+          "chord_source": "detected",
+          "chords": [
+            {
+              "t_s": 41,
+              "name": "F",
+              "shape": [
+                1,
+                3,
+                3,
+                2,
+                1,
+                1
+              ],
+              "confidence": 0.9
+            },
+            {
+              "t_s": 48,
+              "name": "C",
+              "shape": [
+                "x",
+                3,
+                2,
+                0,
+                1,
+                0
+              ],
+              "confidence": 0.9
+            },
+            {
+              "t_s": 54,
+              "name": "G",
+              "shape": [
+                3,
+                2,
+                0,
+                0,
+                0,
+                3
+              ],
+              "confidence": 0.9
+            }
+          ],
+          "arpeggio": {
+            "pattern_id": "arpegio-4-basico",
+            "pattern": "p-i-m-i",
+            "confidence": 0.8
+          }
+        }
+      ],
+      "sources": [
+        {
+          "step": "chords",
+          "tool": "grabado",
+          "version": "1"
+        }
+      ]
+    },
+    {
+      "instrument": "electric",
+      "key": {
+        "tonic": "A",
+        "mode": "minor",
+        "confidence": 0.7
+      },
+      "bpm": 96,
+      "bpm_confidence": 0.9,
+      "time_signature": "4/4",
+      "capo": 0,
+      "sections": [
+        {
+          "id": "intro",
+          "name": "Intro",
+          "start_s": 0,
+          "end_s": 12,
+          "order": 0,
+          "chord_source": "detected",
+          "chords": [
+            {
+              "t_s": 1,
+              "name": "Am",
+              "shape": [
+                "x",
+                0,
+                2,
+                2,
+                1,
+                0
+              ],
+              "confidence": 0.9
+            },
+            {
+              "t_s": 7,
+              "name": "G",
+              "shape": [
+                3,
+                2,
+                0,
+                0,
+                0,
+                3
+              ],
+              "confidence": 0.9
+            }
+          ],
+          "strum": {
+            "pattern": "D-DU-UDU",
+            "accent": [
+              0,
+              4
+            ],
+            "beats_per_cycle": 4,
+            "pattern_id": "rasgueo-4-folk",
+            "confidence": 0.8
+          }
+        },
+        {
+          "id": "estrofa",
+          "name": "Estrofa",
+          "start_s": 12,
+          "end_s": 40,
+          "order": 1,
+          "chord_source": "detected",
+          "chords": [
+            {
+              "t_s": 13,
+              "name": "C",
+              "shape": [
+                "x",
+                3,
+                2,
+                0,
+                1,
+                0
+              ],
+              "confidence": 0.9
+            },
+            {
+              "t_s": 20,
+              "name": "G",
+              "shape": [
+                3,
+                2,
+                0,
+                0,
+                0,
+                3
+              ],
+              "confidence": 0.9
+            },
+            {
+              "t_s": 27,
+              "name": "Am",
+              "shape": [
+                "x",
+                0,
+                2,
+                2,
+                1,
+                0
+              ],
+              "confidence": 0.9
+            },
+            {
+              "t_s": 34,
+              "name": "F",
+              "shape": [
+                1,
+                3,
+                3,
+                2,
+                1,
+                1
+              ],
+              "confidence": 0.4
+            }
+          ],
+          "strum": {
+            "pattern": "D-DU-UDU",
+            "accent": [
+              0,
+              4
+            ],
+            "beats_per_cycle": 4,
+            "pattern_id": "rasgueo-4-folk",
+            "confidence": 0.8
+          }
+        },
+        {
+          "id": "estribillo",
+          "name": "Estribillo",
+          "start_s": 40,
+          "end_s": 60,
+          "order": 2,
+          "chord_source": "detected",
+          "chords": [
+            {
+              "t_s": 41,
+              "name": "F",
+              "shape": [
+                1,
+                3,
+                3,
+                2,
+                1,
+                1
+              ],
+              "confidence": 0.9
+            },
+            {
+              "t_s": 48,
+              "name": "C",
+              "shape": [
+                "x",
+                3,
+                2,
+                0,
+                1,
+                0
+              ],
+              "confidence": 0.9
+            },
+            {
+              "t_s": 54,
+              "name": "G",
+              "shape": [
+                3,
+                2,
+                0,
+                0,
+                0,
+                3
+              ],
+              "confidence": 0.9
+            }
+          ],
+          "strum": {
+            "pattern": "D-DU-UDU",
+            "accent": [
+              0,
+              4
+            ],
+            "beats_per_cycle": 4,
+            "pattern_id": "rasgueo-4-folk",
+            "confidence": 0.8
+          }
+        }
+      ],
+      "sources": [
+        {
+          "step": "chords",
+          "tool": "grabado",
+          "version": "1"
+        }
+      ]
+    }
+  ]
+}
