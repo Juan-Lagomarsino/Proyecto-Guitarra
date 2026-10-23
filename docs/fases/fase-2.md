@@ -1,6 +1,6 @@
 # Fase 2 — Explorar: análisis de canciones
 
-Estado: **en curso** (plan aprobado por Juan Pedro el 2026-10-23)
+Estado: **cerrada, pendiente de demo** (plan aprobado por Juan Pedro el 2026-10-23)
 Referencia: `docs/PLAN.md` § Explorar, § Pipeline de análisis de canciones, § Modelo de datos (`Song*`, `AudioAsset`, `AnalysisJob`, `Correction`), § Contratos de API, § UI y diseño (diagramas de acordes, vista de canción).
 
 ## Criterios de aceptación de la fase (del plan)
@@ -189,4 +189,27 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 
 ## Resumen de cierre
 
-(Se completa al cerrar la fase.)
+Cierre el 2026-10-23. Tareas F2-T01 a F2-T21 hechas; F2-T20 (carga manual de la cifra) y F2-T21 (ajustes de la validación) se agregaron durante la fase.
+
+### Criterios, uno por uno
+
+| # | Criterio | Estado | Evidencia |
+| --- | --- | --- | --- |
+| 1 | Pegar un link crea la canción y el worker la procesa | Cumple (YouTube y nombre + artista; Spotify listo pero inactivo hasta tener credenciales, como decidió Juan Pedro) | Corrida real por la API con "Flaca": `POST /songs`, `python -m guitarra_worker --once`, 37 s con descarga (`fase-2/validacion.md`). E2E `e2e/tests/z-canciones.spec.ts` con resultado grabado. |
+| 2 | BPM, tonalidad, secciones con tiempos, acordes con diagramas, rasgueo; clásica y eléctrica | Cumple | `GET /songs/{id}/chart` de clásica (rasgueo y arpegio) y de eléctrica en la corrida real; capturas en `fase-2/capturas/`. |
+| 3 | Cruce con Cifra Club cuando el usuario cargó la cifra; sin cifra el pipeline termina igual (ADR 0012) | Cumple | Con la cifra de "Flaca" cargada, las 6 secciones quedan con `chord_source: "cifraclub"`. Con la cifra corta, 5 de 6 (F2-T21). Sin cifra, el análisis termina con lo detectado y, si la cifra no coincide, la UI lo avisa. |
+| 4 | 5 canciones; los acordes coinciden con Cifra Club en la mayoría de las secciones | Cumple, con dos salvedades | Flaca 100 %, De música ligera 90 %, Boys Don't Cry 100 %, No voy en tren 60 % (contra una cifra plana sin secciones). Cerca del fuego no tiene cifra en Cifra Club: solo se validaron el BPM y el tiempo. BPM de las 5 dentro de ±2 %. Detalle en `fase-2/validacion.md`. |
+| 5 | Edición de acordes y rasgueo en la UI; la versión del usuario gana | Cumple | F2-T17: tests de API (gana aunque llegue un `auto` nuevo, diff guardado, volver a la automática). E2E: editar un acorde y ver "Editado por vos" tras recargar. |
+| 6 | Una canción se parte en ejercicios que suman al progreso | Cumple | F2-T18: tests de API (Terminé suma a racha y calendario, "canciones en curso", fuera del planificador). E2E: "Practicar esta sección", "Terminé" y Progreso. |
+
+### Suites al cierre
+
+Core 350, worker 337 (con torch, beat_this y BTC reales, sin omitidos), API 745, UI 400, E2E 14 de 14 (`scripts/e2e.ps1`). Vistas a 375 px sin scroll horizontal (E2E y captura `cancion-375px.png`).
+
+### Quedó pendiente o a vigilar
+
+- La confianza de la estructura (secciones) no tiene campo en el esquema del chart; si hace falta mostrarla, es un cambio de esquema con ADR.
+- Si dos secciones de la cifra tienen el mismo ciclo, el nombre de sección puede quedar cruzado.
+- "Boys Don't Cry" sin cifra sugiere capo 2 en clásica (evita las cejillas de Bm y C#m); es coherente con el modelo de dificultad.
+- No hay endpoint para borrar canciones.
+- Spotify se activa cuando estén `SPOTIFY_CLIENT_ID` y `SPOTIFY_CLIENT_SECRET` en el `.env`.
