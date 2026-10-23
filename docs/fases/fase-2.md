@@ -55,7 +55,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F2-T16 | 3 | UI: vista de canción (secciones, acordes, rasgueo, clásica/eléctrica, confianza) | T03, T14 | hecha |
 | F2-T17 | 4 | Correcciones: editar acordes y rasgueo, versión de usuario, historial | T16 | pendiente |
 | F2-T18 | 4 | Canción → ejercicios que suman al progreso | T03, T16 | pendiente |
-| F2-T20 | 4 | Carga manual de la cifra: API, migración y UI en la vista de canción | T03, T16 | en curso |
+| F2-T20 | 4 | Carga manual de la cifra: API, migración y UI en la vista de canción | T03, T16 | hecha |
 | F2-T19 | 5 | Validación con las 5 canciones, ajuste fino, E2E y README | todas | pendiente |
 
 > **Nota F2-T10 (2026-10-23):** Cifra Club responde 403 (Akamai, "Access Denied") a todo pedido automático, aun con User-Agent de navegador. El parser, la alineación y el "sin datos" están hechos y probados con HTML grabado; Juan Pedro eligió la carga manual (ADR 0012): T13 parsea el texto que llega en el trabajo y T20 hace la carga en la API y la UI.
