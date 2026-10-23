@@ -1,6 +1,6 @@
 # Fase 1 — Base, Estudio y progreso
 
-Estado: **en curso** (plan aprobado por Juan Pedro el 2026-10-20)
+Estado: **cerrada, pendiente de demo** (plan aprobado por Juan Pedro el 2026-10-20; cierre técnico el 2026-10-23)
 Referencia: `docs/PLAN.md` § Fase 1, § Modelo de datos, § Formato interno de notación, § Contratos de API, § UI y diseño.
 Referencia visual: `docs/referencias/taller-electrica.html` (HTML original del artefacto). De ahí salen el mástil (`drawBoard`), la tablatura (`drawTab`), la tarjeta de práctica y los colores de `:root` como tema por defecto. **Su notación de tabs (`"6-0+5-2:2"`) es solo referencia visual: el formato oficial es el JSON del plan.**
 
@@ -182,4 +182,36 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 
 ## Resumen de cierre
 
-(Se completa al cerrar la fase.)
+Cierre técnico: 2026-10-23. Las 21 tareas (T01–T20 + T16b) están hechas, revisadas por un `revisor` e integradas en `main`.
+
+### Criterios de aceptación, con evidencia
+
+| # | Criterio | Evidencia |
+| --- | --- | --- |
+| 1 | `docker compose up` levanta API + Postgres + UI; migraciones automáticas; CI con tests | `docker compose up -d --build` → `GET /api/v1/health` = `{"status":"ok","db":"ok"}`, `GET /` sirve la UI, `alembic_version` = `0002`, `/levels` sin token = 401. CI de GitHub en verde con pytest, ruff, vitest, eslint y prettier. |
+| 2 | Currículum con los 3 primeros niveles completos | Niveles cargados: Power chords y palm mute (11 ejercicios), Pentatónica menor (8), Ligados (7). Cada ejercicio con notación válida y descripción (`tests/test_curriculum_content.py`, test de notas de la pentatónica). |
+| 3 | Mástil y tab con el estilo del artefacto; reproducción automática y nota por nota; metrónomo | E2E 2 y 3 (la nota activa avanza en tab y mástil; Siguiente/Anterior). Captura `fase-1/capturas/tarjeta-reproduciendo.png`. Tests de `usePlayback` y metrónomo con reloj falso. |
+| 4 | "Terminé" registra; racha, heatmap y avance correctos; tests de racha | E2E 4 y 5 (hecho hoy persiste; racha 1 y día marcado). `tests/domain/test_progress.py` (medianoche, días excluidos, zonas) y `tests/http/test_progress_api.py` (zona y día excluido de punta a punta). Captura `progreso-despues-de-termine.png`. |
+| 5 | Sesión del día según nivel y pendientes | `domain/session_planner.py` + tests; `GET /sessions/today` estable en el día y distinta con regenerate (tests de API); E2E 1. Captura `sesion-del-dia.png`. |
+| 6 | Tema editable con vista previa, persistido en el server | E2E 6 (cambio de `--accent`, guardar, recargar, persiste). Tests de `PUT /settings` (colores CSS, zona IANA). Captura `ajustes-color-cambiado.png`. |
+
+Además: sin scroll horizontal de página a 375 px en `/`, `/estudio`, `/progreso` y `/ajustes` (E2E 7, captura `vista-375px.png`).
+
+### Números al cierre
+
+- Backend: 439 tests (pytest con Postgres de testcontainers), ruff limpio.
+- Frontend: 258 tests (vitest), eslint y prettier limpios.
+- E2E: 7/7 con `scripts/e2e.ps1` sobre un compose aislado (`guitarra-e2e`, volumen y puertos propios; no toca los datos reales).
+
+### Desvíos y decisiones durante la fase
+
+- **T16b (nueva):** la revisión de T16 encontró que ninguna capa tenía la "explicación corta" por ejercicio que pide el plan. Se agregó `Exercise.description` (migración 0002) y se escribieron las 26 descripciones; un revisor las contrastó con la notación y se corrigieron 9.
+- ADR 0005: react-markdown (sin HTML crudo) para la teoría de las lecciones.
+- `PracticeSession.planned` guarda `[{block, exercise_id, minutes}]`; `status` queda en `planned` (no hay endpoint que lo cambie en esta fase).
+
+### Deuda conocida (no bloqueante)
+
+- El rango del heatmap usa la fecha del navegador, no `Settings.timezone`: puede correrse un día si el navegador está en otra zona.
+- Progreso y calendario se calculan en Python sobre todas las completions; alcanza para un usuario, pasar a SQL si crece.
+- La UI no valida en el cliente los colores del tema (el 422 del server se muestra legible).
+- Las tipografías alternativas de Ajustes dependen de lo instalado en el sistema; solo Anton e IBM Plex Mono vienen empaquetadas.
