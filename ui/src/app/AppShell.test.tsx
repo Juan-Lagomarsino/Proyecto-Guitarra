@@ -20,6 +20,7 @@ describe('AppShell', () => {
 
   it.each([
     ['/estudio', /estudio/i],
+    ['/explorar', /explorar/i],
     ['/progreso', /progreso/i],
     ['/ajustes', /ajustes/i],
   ])('muestra la página de %s', (path, name) => {
@@ -30,19 +31,14 @@ describe('AppShell', () => {
   it('la navegación tiene Hoy, Estudio, Progreso y Ajustes como enlaces', () => {
     renderAt('/')
     const nav = screen.getByRole('navigation', { name: /principal/i })
-    for (const name of ['Hoy', 'Estudio', 'Progreso', 'Ajustes']) {
+    for (const name of ['Hoy', 'Estudio', 'Explorar', 'Progreso', 'Ajustes']) {
       expect(nav).toContainElement(screen.getByRole('link', { name }))
     }
   })
 
-  it('Explorar y Rig están deshabilitadas y no son enlaces', () => {
+  it('Rig está deshabilitada y no es enlace', () => {
     renderAt('/')
-    expect(screen.queryByRole('link', { name: 'Explorar' })).toBeNull()
     expect(screen.queryByRole('link', { name: 'Rig' })).toBeNull()
-    expect(screen.getByText('Explorar')).toHaveAttribute(
-      'aria-disabled',
-      'true',
-    )
     expect(screen.getByText('Rig')).toHaveAttribute('aria-disabled', 'true')
   })
 

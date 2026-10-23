@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 from guitarra_api.application.song_service import (
     AnalysisAlreadyActiveError,
     ChartNotFoundError,
-    SongDetail,
     SongEntry,
     SongNotFoundError,
     SongService,
@@ -45,17 +44,17 @@ def _summary(entry: SongEntry) -> SongSummaryOut:
         bpm=song.bpm,
         key=song.key,
         created_at=song.created_at,
+        url=song.url,
+        error=entry.error,
     )
 
 
-def _detail(detail: SongDetail) -> SongDetailOut:
+def _detail(detail: SongEntry) -> SongDetailOut:
     song = detail.song
     return SongDetailOut(
         **_summary(detail).model_dump(),
-        url=song.url,
         duration_s=song.duration_s,
         year=song.year,
-        error=detail.error,
         sections=song.sections,
     )
 

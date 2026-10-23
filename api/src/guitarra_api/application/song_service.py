@@ -29,15 +29,11 @@ class AnalysisAlreadyActiveError(Exception):
 
 @dataclass(frozen=True)
 class SongEntry:
-    """Una canción con el paso del análisis activo (si lo hay)."""
+    """Una canción con el paso del análisis activo y el error del último trabajo."""
 
     song: Song
     current_step: str | None
-
-
-@dataclass(frozen=True)
-class SongDetail(SongEntry):
-    error: str | None
+    error: str | None = None
 
 
 @dataclass(frozen=True)
@@ -76,11 +72,8 @@ class SongService:
     def list_songs(self) -> list[SongEntry]:
         return [self._entry(song) for song in self._repo.list_songs()]
 
-    def get_detail(self, song_id: int) -> SongDetail:
-        song = self._get(song_id)
-        entry = self._entry(song)
-        latest = self._repo.latest_job(song_id)
-        return SongDetail(song, entry.current_step, latest.error if latest else None)
+    def get_detail(self, song_id: int) -> SongEntry:
+        return self._entry(self._get(song_id))
 
     def current_chart(self, song_id: int, instrument: str) -> SongChart:
         self._get(song_id)
@@ -133,5 +126,10 @@ class SongService:
         return song
 
     def _entry(self, song: Song) -> SongEntry:
-        job = self._repo.active_job(song.id)
-        return SongEntry(song, job.current_step if job else None)
+        active = self._repo.active_job(song.id)
+        latest = self._repo.latest_job(song.id)
+        return SongEntry(
+            song,
+            current_step=active.current_step if active else None,
+            error=latest.error if latest else None,
+        )

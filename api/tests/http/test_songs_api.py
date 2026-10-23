@@ -151,8 +151,18 @@ def test_lista_mas_reciente_primero_con_paso_actual(client, session):
     assert body[1]["current_step"] is None
     assert set(body[0]) == {
         "id", "title", "artist", "source", "analysis_status", "current_step", "bpm", "key",
-        "created_at",
+        "created_at", "url", "error",
     }  # fmt: skip
+
+
+def test_lista_trae_url_y_error_del_ultimo_trabajo(client, session):
+    created = post_song(client, {"url": f"https://youtu.be/{YT}"}).json()
+    job = session.query(AnalysisJob).filter_by(song_id=created["id"]).one()
+    job.status, job.error = "error", "yt-dlp falló"
+    session.commit()
+    (item,) = client.get("/api/v1/songs", headers=AUTH).json()
+    assert item["url"] == f"https://youtu.be/{YT}"
+    assert item["error"] == "yt-dlp falló"
 
 
 def test_detalle(client, session):

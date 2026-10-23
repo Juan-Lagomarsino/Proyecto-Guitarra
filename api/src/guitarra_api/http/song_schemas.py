@@ -38,6 +38,8 @@ class SongSummaryOut(BaseModel):
     bpm: float | None
     key: str | None
     created_at: dt.datetime
+    url: str | None
+    error: str | None = Field(description="Error del último trabajo de análisis, si falló")
 
 
 class SongSectionOut(BaseModel):
@@ -51,10 +53,8 @@ class SongSectionOut(BaseModel):
 
 
 class SongDetailOut(SongSummaryOut):
-    url: str | None
     duration_s: float | None
     year: int | None
-    error: str | None = Field(description="Error del último trabajo de análisis, si falló")
     sections: list[SongSectionOut]
 
 

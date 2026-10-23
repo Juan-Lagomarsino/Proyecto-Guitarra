@@ -1,4 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
+import { ExploreScreen } from '../features/explore/ExploreScreen'
+import { SongPlaceholder } from '../features/explore/SongPlaceholder'
 import { TodayScreen } from '../features/session/TodayScreen'
 import { ProgressScreen } from '../features/progress/ProgressScreen'
 import { SettingsScreen } from '../features/settings/SettingsScreen'
@@ -11,6 +13,8 @@ export function AppRoutes() {
       <Route element={<AppShell />}>
         <Route index element={<TodayScreen />} />
         <Route path="estudio/*" element={<StudyRoutes />} />
+        <Route path="explorar" element={<ExploreScreen />} />
+        <Route path="explorar/canciones/:id" element={<SongPlaceholder />} />
         <Route path="progreso" element={<ProgressScreen />} />
         <Route path="ajustes" element={<SettingsScreen />} />
       </Route>

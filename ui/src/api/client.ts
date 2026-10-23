@@ -36,8 +36,16 @@ async function readError(
 /** fetch tipado contra /api/v1 con el token Bearer de la config de build. */
 export async function apiFetch<T = unknown>(
   path: string,
-  { method = 'GET', body, signal }: ApiRequestOptions = {},
+  options: ApiRequestOptions = {},
 ): Promise<T> {
+  return (await apiFetchWithStatus<T>(path, options)).data
+}
+
+/** Igual que `apiFetch` pero devuelve también el status HTTP (200 vs 201). */
+export async function apiFetchWithStatus<T = unknown>(
+  path: string,
+  { method = 'GET', body, signal }: ApiRequestOptions = {},
+): Promise<{ status: number; data: T }> {
   const headers = new Headers({
     Authorization: `Bearer ${import.meta.env.VITE_GUITAR_API_TOKEN ?? ''}`,
   })
@@ -54,6 +62,7 @@ export async function apiFetch<T = unknown>(
     const { message, detail } = await readError(response)
     throw new ApiError(response.status, message, detail)
   }
-  if (response.status === 204) return undefined as T
-  return (await response.json()) as T
+  if (response.status === 204)
+    return { status: response.status, data: undefined as T }
+  return { status: response.status, data: (await response.json()) as T }
 }

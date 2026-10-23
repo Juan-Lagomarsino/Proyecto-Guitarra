@@ -3,11 +3,12 @@ import { NavLink, Outlet } from 'react-router-dom'
 const ENABLED_ITEMS = [
   { to: '/', label: 'Hoy', end: true },
   { to: '/estudio', label: 'Estudio', end: false },
+  { to: '/explorar', label: 'Explorar', end: false },
   { to: '/progreso', label: 'Progreso', end: false },
   { to: '/ajustes', label: 'Ajustes', end: false },
 ]
 
-const DISABLED_ITEMS = ['Explorar', 'Rig']
+const DISABLED_ITEMS = ['Rig']
 
 export function AppShell() {
   return (
