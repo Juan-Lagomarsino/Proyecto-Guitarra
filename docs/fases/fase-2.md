@@ -41,7 +41,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F2-T02 | 0 | Modelo de datos de canciones, esquema del `SongChart` y migración | — | hecha |
 | F2-T03 | 1 | API de canciones (alta por link o nombre, biblioteca, detalle, chart) | T02 | hecha |
 | F2-T04 | 1 | API de la cola de trabajos para el worker | T02 | pendiente |
-| F2-T05 | 1 | Worker: esqueleto, pipeline por pasos con caché, cliente de API, `install.ps1` | T02 | pendiente |
+| F2-T05 | 1 | Worker: esqueleto, pipeline por pasos con caché, cliente de API, `install.ps1` | T02 | hecha |
 | F2-T06 | 2 | Pasos de fuente y descarga: YouTube, Spotify y búsqueda por duración | T05 | pendiente |
 | F2-T07 | 2 | Paso de tempo y compases | T01, T05 | pendiente |
 | F2-T08 | 2 | Paso de tonalidad y acordes | T01, T05 | pendiente |

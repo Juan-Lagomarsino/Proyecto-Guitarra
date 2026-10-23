@@ -1,0 +1,48 @@
+"""Interfaz de los pasos del pipeline y su contexto."""
+
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Protocol
+
+from guitarra_worker.api_client import Job
+
+ProgressCallback = Callable[[str], None]
+
+
+class RetryableStepError(Exception):
+    """Error transitorio (red, timeout): la API puede reencolar el trabajo."""
+
+
+def _ignore_progress(message: str) -> None:
+    return None
+
+
+@dataclass
+class PipelineContext:
+    """Lo que ve cada paso.
+
+    - job: datos del trabajo reclamado.
+    - song_dir: carpeta de caché de la canción (por youtube_id; si no hay, por song_id).
+      Los pasos pueden dejar ahí archivos grandes (audio, etc.); la salida JSON la guarda el runner.
+    - outputs: salidas de los pasos anteriores, por nombre de paso.
+    - progress: callback para avisar avance en pasos largos (loguea y aborta si se perdió el lease).
+    """
+
+    job: Job
+    song_dir: Path
+    outputs: dict[str, dict[str, Any]] = field(default_factory=dict)
+    progress: ProgressCallback = _ignore_progress
+
+
+class Step(Protocol):
+    name: str
+    version: str
+
+    def run(self, ctx: PipelineContext) -> dict[str, Any]:
+        """Devuelve un dict serializable a JSON. 'Sin datos' es un resultado válido, no un error."""
+        ...
+
+
+def cache_key(job: Job) -> str:
+    return job.youtube_id or f"song-{job.song_id}"

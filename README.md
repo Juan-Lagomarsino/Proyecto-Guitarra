@@ -82,6 +82,20 @@ Tus datos viven en el volumen `pgdata` de Docker; reiniciar el compose no los pi
 
 El script levanta un compose **aparte** (proyecto `guitarra-e2e`, con su propio volumen, la API en `127.0.0.1:18000`, Postgres en `127.0.0.1:15432` y el token de `.env.e2e`), espera `/api/v1/health`, corre Playwright (Chromium) y lo baja todo con `down -v`, también si algo falla. No toca tu base real. Deja capturas en `docs/fases/fase-1/capturas/` y el reporte HTML en `e2e/playwright-report/`.
 
+## Worker de análisis
+
+El worker analiza las canciones (descarga, tempo, acordes, estructura). Corre **nativo** en Windows con Python 3.12, nunca en Docker, y habla con la API por `GUITAR_API_URL` + `GUITAR_WORKER_TOKEN` (en el `.env` de la raíz; es distinto del token de la UI).
+
+```powershell
+.\scripts\install.ps1                      # venv en worker\.venv, ffmpeg, carpetas de caché y logs (idempotente)
+.\worker\.venv\Scripts\python -m guitarra_worker          # a mano; Ctrl+C lo corta
+.\worker\.venv\Scripts\python -m guitarra_worker --once   # procesa un solo trabajo y sale
+.\scripts\worker-tarea.ps1                 # lo registra para que arranque al iniciar sesión
+.\scripts\worker-tarea.ps1 -Remove         # borra la tarea programada
+```
+
+La caché vive en `%USERPROFILE%\GuitarApp\cache` (`GUITAR_CACHE_DIR`) y los logs en `%USERPROFILE%\GuitarApp\logs\worker.log`. Tests: `cd worker; .venv\Scripts\pytest`.
+
 ## Arrancar una fase
 
 > Leé `docs/PLAN.md` y `CLAUDE.md`. Arrancá la Fase 1 siguiendo la metodología de `CLAUDE.md`: armá el plan de tareas y mostrámelo antes de delegar.

@@ -1,4 +1,4 @@
-# Corre las pruebas E2E contra un compose aislado (proyecto "guitarra-e2e"):
+﻿# Corre las pruebas E2E contra un compose aislado (proyecto "guitarra-e2e"):
 # volumen, puertos y token propios. No toca los datos reales del compose por defecto.
 # 'Continue' a propósito: en Windows PowerShell 5.1, con 'Stop', el progreso que docker escribe
 # en stderr se vuelve error terminante si se redirige la salida. Los fallos se detectan por $LASTEXITCODE.
