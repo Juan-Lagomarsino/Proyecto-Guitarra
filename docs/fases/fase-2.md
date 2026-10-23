@@ -49,7 +49,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F2-T10 | 2 | Adaptador de Cifra Club y alineación con lo detectado | T05 | hecha (acceso al sitio: ver ADR 0012) |
 | F2-T11 | 2 | Diccionario de acordes y adaptación al instrumento (clásica / eléctrica) | T02 | hecha |
 | F2-T12 | 3 | Rasgueo y arpegio: catálogo, reglas y elección con Ollama | T05, T07 | hecha |
-| F2-T13 | 4 | Armado del `SongChart`, pipeline de punta a punta y Cifra Club desde texto cargado | T06–T12 | en curso |
+| F2-T13 | 4 | Armado del `SongChart`, pipeline de punta a punta y Cifra Club desde texto cargado | T06–T12 | hecha (corrida real en T19) |
 | F2-T14 | 1 | UI: diagrama de acorde vertical con cejilla | T02 | hecha |
 | F2-T15 | 2 | UI: Explorar (pegar link, biblioteca con estado del análisis) | T03 | hecha |
 | F2-T16 | 3 | UI: vista de canción (secciones, acordes, rasgueo, clásica/eléctrica, confianza) | T03, T14 | hecha |
