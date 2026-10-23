@@ -52,7 +52,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F2-T13 | 3 | Armado del `SongChart` y pipeline de punta a punta | T06–T12 | pendiente |
 | F2-T14 | 1 | UI: diagrama de acorde vertical con cejilla | T02 | hecha |
 | F2-T15 | 2 | UI: Explorar (pegar link, biblioteca con estado del análisis) | T03 | hecha |
-| F2-T16 | 3 | UI: vista de canción (secciones, acordes, rasgueo, clásica/eléctrica, confianza) | T03, T14 | pendiente |
+| F2-T16 | 3 | UI: vista de canción (secciones, acordes, rasgueo, clásica/eléctrica, confianza) | T03, T14 | hecha |
 | F2-T17 | 4 | Correcciones: editar acordes y rasgueo, versión de usuario, historial | T16 | pendiente |
 | F2-T18 | 4 | Canción → ejercicios que suman al progreso | T03, T16 | pendiente |
 | F2-T19 | 5 | Validación con las 5 canciones, ajuste fino, E2E y README | todas | pendiente |
