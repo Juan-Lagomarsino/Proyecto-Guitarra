@@ -19,11 +19,12 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from guitarra_api.domain.app_settings import INSTRUMENTS
+
 from .base import Base
 
 EXERCISE_TYPES = ("scale", "riff", "chords", "strumming", "arpeggio", "technique", "improvisation")
 CATEGORIES = ("warmup", "technique", "riff", "improvisation")
-INSTRUMENTS = ("classical", "electric")
 SESSION_STATUSES = ("planned", "in_progress", "completed", "skipped")
 DEFAULT_TUNING = ["E2", "A2", "D3", "G3", "B3", "E4"]
 
