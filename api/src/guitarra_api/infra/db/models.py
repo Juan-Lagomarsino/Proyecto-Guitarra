@@ -282,6 +282,8 @@ class SongChart(Base):
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+    # Versión de usuario descartada al volver a la automática: se conserva para el historial.
+    discarded_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
 
     @validates("content")
     def _validate_content(self, _key: str, value: dict[str, Any]) -> dict[str, Any]:

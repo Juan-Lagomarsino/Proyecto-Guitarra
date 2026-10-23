@@ -1,4 +1,4 @@
-import type { SongChartContent } from '../songs/types'
+import type { Barre, ChartChord, SongChartContent } from '../songs/types'
 import type { Exercise } from '../features/study/types'
 import { apiFetch, apiFetchWithStatus } from './client'
 
@@ -97,6 +97,55 @@ export const saveCifra = (id: number, body: CifraInput) =>
 
 export const deleteCifra = (id: number) =>
   apiFetch<void>(`/songs/${id}/cifra`, { method: 'DELETE' })
+/** Guarda el chart editado completo como versión de usuario (o devuelve la vigente si no cambió). */
+export const saveUserChart = (
+  id: number,
+  instrument: ChartInstrument,
+  content: SongChartContent,
+) =>
+  apiFetch<SongChartResponse>(`/songs/${id}/chart?instrument=${instrument}`, {
+    method: 'PUT',
+    body: content,
+  })
+
+/** Descarta la versión de usuario y devuelve el chart automático vigente. */
+export const discardUserChart = (id: number, instrument: ChartInstrument) =>
+  apiFetch<SongChartResponse>(
+    `/songs/${id}/chart/user?instrument=${instrument}`,
+    { method: 'DELETE' },
+  )
+
+/** Entrada del catálogo de rasgueos y arpegios (`GET /strum-patterns`). */
+export interface StrumPatternEntry {
+  id: string
+  name: string
+  kind: 'strum' | 'arpeggio'
+  beats_per_bar: number
+  style: string
+  complexity: number
+  pattern: string
+  accent: number[]
+  beats_per_cycle: number
+}
+
+export const fetchStrumPatterns = (signal?: AbortSignal) =>
+  apiFetch<StrumPatternEntry[]>('/strum-patterns', { signal })
+
+/** Forma de un acorde del diccionario (`GET /chords/shapes`), de la más fácil a la más difícil. */
+export interface ChordShapeOption {
+  name: string
+  chord: string
+  fallback: string | null
+  difficulty: number
+  shape: ChartChord['shape']
+  barre: Barre | null
+}
+
+export const fetchChordShapes = (name: string, signal?: AbortSignal) =>
+  apiFetch<ChordShapeOption[]>(
+    `/chords/shapes?name=${encodeURIComponent(name)}`,
+    { signal },
+  )
 
 export const reanalyzeSong = (id: number) =>
   apiFetch<unknown>(`/songs/${id}/reanalyze`, { method: 'POST' })

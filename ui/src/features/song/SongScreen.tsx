@@ -6,6 +6,7 @@ import {
   fetchSongChart,
   type ChartInstrument,
   type SongDetail,
+  type SongChartResponse,
   type SongSectionInfo,
 } from '../../api/songs'
 import type { SongChartContent } from '../../songs/types'
@@ -14,6 +15,7 @@ import { useAsyncData } from '../study/useAsyncData'
 import { CifraPanel } from './CifraPanel'
 import { PracticeSection } from './PracticeSection'
 import { SectionDetail } from './SectionDetail'
+import { SectionEditing } from './SectionEditing'
 import { SectionTimeline } from './SectionTimeline'
 import { SongExercises } from './SongExercises'
 import {
@@ -34,9 +36,9 @@ async function loadChart(
   id: number,
   instrument: ChartInstrument,
   signal: AbortSignal,
-): Promise<SongChartContent | null> {
+): Promise<SongChartResponse | null> {
   try {
-    return (await fetchSongChart(id, instrument, signal)).content
+    return await fetchSongChart(id, instrument, signal)
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) return null
     throw error
@@ -142,13 +144,15 @@ function StaleSections({ sections }: { sections: SongSectionInfo[] }) {
 
 function Chart({
   song,
-  content,
+  initial,
   onCreated,
 }: {
   song: SongDetail
-  content: SongChartContent
+  initial: SongChartResponse
   onCreated: () => void
 }) {
+  const [chart, setChart] = useState(initial)
+  const content = chart.content
   const sections = timelineSections(content)
   const [selectedId, setSelectedId] = useState(sections[0]?.id ?? '')
   const selected = sections.find((s) => s.id === selectedId) ?? sections[0]
@@ -163,7 +167,14 @@ function Chart({
         onSelect={setSelectedId}
       />
       <Legend />
-      <SectionDetail section={selected} instrument={content.instrument} />
+      <SectionEditing
+        songId={song.id}
+        chart={chart}
+        section={selected}
+        onChange={setChart}
+      >
+        <SectionDetail section={selected} instrument={content.instrument} />
+      </SectionEditing>
       {stored && (
         <PracticeSection
           key={stored.id}
@@ -191,7 +202,8 @@ function SongBody({
     [song.id, instrument],
   )
   const chart = useAsyncData(load)
-  const content = chart.status === 'ready' ? chart.data : null
+  const content =
+    chart.status === 'ready' ? (chart.data?.content ?? null) : null
   const stale = song.sections.filter((s) => s.stale)
   const [exercisesKey, setExercisesKey] = useState(0)
 
@@ -205,7 +217,7 @@ function SongBody({
             <Chart
               key={`${song.id}-${instrument}`}
               song={song}
-              content={data}
+              initial={data}
               onCreated={() => setExercisesKey((key) => key + 1)}
             />
           ) : (

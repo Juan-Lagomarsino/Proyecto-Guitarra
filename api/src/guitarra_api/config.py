@@ -25,3 +25,8 @@ class Settings(BaseSettings):
     guitar_ui_dist: Path = ENV_FILE.parent / "ui" / "dist"
     # Carpeta con los `*.json` del currículum; en Docker la define el Dockerfile.
     guitar_curriculum_dir: Path = ENV_FILE.parent / "curriculum"
+    # Catálogo de rasgueos y arpegios (el mismo JSON que usa el worker); en Docker lo fija el
+    # Dockerfile.
+    guitar_strum_catalog: Path = (
+        ENV_FILE.parent / "worker" / "src" / "guitarra_worker" / "strum" / "catalog.json"
+    )

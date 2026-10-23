@@ -1,10 +1,18 @@
+import datetime as dt
 import unicodedata
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from guitarra_api.domain.song_chart import SongChartContent, overall_confidence
-from guitarra_api.infra.db.models import AnalysisJob, Exercise, Song, SongChart, SongSection
+from guitarra_api.infra.db.models import (
+    AnalysisJob,
+    Correction,
+    Exercise,
+    Song,
+    SongChart,
+    SongSection,
+)
 
 USER_ORIGIN = "user"
 ACTIVE_JOB_STATUSES = ("queued", "running")
@@ -106,9 +114,8 @@ class SongRepository:
             SongChart.song_id == song_id, SongChart.instrument == instrument
         )
         latest = SongChart.version.desc()
-        return self._session.scalar(
-            base.where(SongChart.origin == USER_ORIGIN).order_by(latest).limit(1)
-        ) or self._session.scalar(
+        active_user = base.where(SongChart.origin == USER_ORIGIN, SongChart.discarded_at.is_(None))
+        return self._session.scalar(active_user.order_by(latest).limit(1)) or self._session.scalar(
             base.where(SongChart.origin != USER_ORIGIN).order_by(latest).limit(1)
         )
 
@@ -133,6 +140,28 @@ class SongRepository:
             .order_by(Exercise.id)
         )
         return list(self._session.scalars(query))
+
+    def stage_correction(self, chart: SongChart, diff: dict) -> Correction:
+        """Historial: qué cambió el usuario en `chart` respecto de la versión vigente anterior."""
+        correction = Correction(song_chart_id=chart.id, diff=diff)
+        self._session.add(correction)
+        self._session.flush()
+        return correction
+
+    def discard_user_charts(self, song_id: int, instrument: str) -> int:
+        """Descarta (sin borrar) las versiones de usuario vigentes; devuelve cuántas eran."""
+        charts = self._session.scalars(
+            select(SongChart).where(
+                SongChart.song_id == song_id,
+                SongChart.instrument == instrument,
+                SongChart.origin == USER_ORIGIN,
+                SongChart.discarded_at.is_(None),
+            )
+        ).all()
+        for chart in charts:
+            chart.discarded_at = dt.datetime.now(dt.UTC)
+        self._session.flush()
+        return len(charts)
 
     def active_job(self, song_id: int) -> AnalysisJob | None:
         """El trabajo `queued` o `running` de la canción, si hay."""

@@ -9,7 +9,7 @@ import bisect
 from statistics import fmean
 from typing import Annotated, Any, Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from guitarra_api.domain.app_settings import Instrument
 from guitarra_api.domain.notation import (
@@ -82,6 +82,13 @@ class ChartSection(_Strict):
     chords: list[ChartChord] = Field(default_factory=list)
     strum: SectionStrum | None = None
     arpeggio: SectionArpeggio | None = None
+
+    @field_validator("name")
+    @classmethod
+    def _name_is_not_blank(cls, name: str) -> str:
+        if not name.strip():
+            raise ValueError("el nombre de la sección no puede ser solo espacios")
+        return name
 
     @model_validator(mode="after")
     def _start_is_before_end(self) -> Self:

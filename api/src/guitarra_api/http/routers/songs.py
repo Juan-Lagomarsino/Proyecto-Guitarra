@@ -10,10 +10,14 @@ from guitarra_api.application.song_exercise_service import (
 from guitarra_api.application.song_service import (
     AnalysisAlreadyActiveError,
     ChartNotFoundError,
+    InstrumentMismatchError,
+    NoUserChartError,
+    SectionsRemovedError,
     SongEntry,
     SongNotFoundError,
     SongService,
 )
+from guitarra_api.domain.song_chart import SongChartContent
 from guitarra_api.domain.song_exercise import (
     SectionNotFoundInChartError,
     SectionNotPlayableError,
@@ -124,6 +128,34 @@ def get_chart(song_id: int, instrument: Annotated[Instrument, Query()], service:
     try:
         return service.current_chart(song_id, instrument)
     except (SongNotFoundError, ChartNotFoundError) as error:
+        raise _not_found(error) from error
+
+
+@router.put(
+    "/songs/{song_id}/chart",
+    response_model=SongChartOut,
+    responses={200: {"description": "Chart vigente; sin cambios no se crea una versión nueva"}},
+)
+def put_chart(
+    song_id: int,
+    instrument: Annotated[Instrument, Query()],
+    content: SongChartContent,
+    service: Service,
+):
+    try:
+        return service.save_user_chart(song_id, instrument, content)
+    except (SongNotFoundError, ChartNotFoundError) as error:
+        raise _not_found(error) from error
+    except (InstrumentMismatchError, SectionsRemovedError) as error:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(error)) from error
+
+
+@router.delete("/songs/{song_id}/chart/user", response_model=SongChartOut)
+def discard_user_chart(song_id: int, instrument: Annotated[Instrument, Query()], service: Service):
+    """Vuelve a la versión automática; la edición queda en el historial pero deja de ganar."""
+    try:
+        return service.discard_user_chart(song_id, instrument)
+    except (SongNotFoundError, NoUserChartError) as error:
         raise _not_found(error) from error
 
 

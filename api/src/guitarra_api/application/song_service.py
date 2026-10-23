@@ -6,10 +6,12 @@ from dataclasses import dataclass
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from guitarra_api.domain.chart_diff import diff_charts
+from guitarra_api.domain.song_chart import SongChartContent
 from guitarra_api.domain.song_source import ParsedSongUrl, parse_song_url
 from guitarra_api.infra.db.models import Song, SongChart
 from guitarra_api.infra.db.repositories.jobs import JobRepository
-from guitarra_api.infra.db.repositories.songs import SongRepository
+from guitarra_api.infra.db.repositories.songs import USER_ORIGIN, SongRepository
 
 
 class SongNotFoundError(Exception):
@@ -20,6 +22,24 @@ class SongNotFoundError(Exception):
 class ChartNotFoundError(Exception):
     def __init__(self, song_id: int, instrument: str) -> None:
         super().__init__(f"La canción {song_id} todavía no tiene chart para {instrument}")
+
+
+class InstrumentMismatchError(Exception):
+    def __init__(self, expected: str, received: str) -> None:
+        super().__init__(f"El chart es de {received} pero se pidió {expected}")
+
+
+class SectionsRemovedError(Exception):
+    def __init__(self, section_ids: list[str]) -> None:
+        names = ", ".join(f"'{section_id}'" for section_id in section_ids)
+        super().__init__(
+            f"No se puede quitar ni cambiar el id de las secciones existentes: {names}"
+        )
+
+
+class NoUserChartError(Exception):
+    def __init__(self, song_id: int, instrument: str) -> None:
+        super().__init__(f"La canción {song_id} no tiene una versión editada para {instrument}")
 
 
 class AnalysisAlreadyActiveError(Exception):
@@ -87,6 +107,39 @@ class SongService:
         if chart is None:
             raise ChartNotFoundError(song_id, instrument)
         return chart
+
+    def save_user_chart(
+        self, song_id: int, instrument: str, content: SongChartContent
+    ) -> SongChart:
+        """Guarda el chart editado como versión de usuario y registra qué cambió.
+
+        Sin cambios respecto de la versión vigente no crea nada y devuelve la vigente.
+        Raises: ChartNotFoundError si todavía no hay chart que corregir; InstrumentMismatchError.
+        """
+        if content.instrument != instrument:
+            raise InstrumentMismatchError(instrument, content.instrument)
+        current = self.current_chart(song_id, instrument)
+        diff = diff_charts(current.content, content.model_dump(mode="json"))
+        if removed := diff.get("sections_removed"):
+            raise SectionsRemovedError(removed)
+        if not diff:
+            return current
+        try:
+            chart = self._repo.stage_chart(song_id, USER_ORIGIN, content)
+            self._repo.stage_correction(chart, diff)
+            self._session.commit()
+        except Exception:
+            self._session.rollback()
+            raise
+        return chart
+
+    def discard_user_chart(self, song_id: int, instrument: str) -> SongChart:
+        """Vuelve a la versión automática. Raises: NoUserChartError si no había edición."""
+        self._get(song_id)
+        if self._repo.discard_user_charts(song_id, instrument) == 0:
+            raise NoUserChartError(song_id, instrument)
+        self._session.commit()
+        return self.current_chart(song_id, instrument)
 
     def reanalyze(self, song_id: int) -> Song:
         song = self._get(song_id)

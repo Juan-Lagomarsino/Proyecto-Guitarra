@@ -16,3 +16,6 @@ e2e/test-results/
 e2e/playwright-report/
 e2e/blob-report/
 spikes/analisis/.venv/
+
+# tsc -b
+ui/tsconfig.tsbuildinfo
