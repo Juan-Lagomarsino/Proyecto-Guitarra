@@ -1,0 +1,56 @@
+{
+  "beat_this": {
+    "flaca": {
+      "cambios_en_beat": 0.704,
+      "en_downbeats_declarados": 0.884,
+      "mejor_fase": 0.884
+    },
+    "de-musica-ligera": {
+      "cambios_en_beat": 0.823,
+      "en_downbeats_declarados": 0.5,
+      "mejor_fase": 0.5
+    },
+    "boys-dont-cry": {
+      "cambios_en_beat": 0.788,
+      "en_downbeats_declarados": 1.0,
+      "mejor_fase": 0.756
+    },
+    "cerca-del-fuego": {
+      "cambios_en_beat": 0.354,
+      "en_downbeats_declarados": 0.286,
+      "mejor_fase": 0.4
+    },
+    "no-voy-en-tren": {
+      "cambios_en_beat": 0.56,
+      "en_downbeats_declarados": 0.804,
+      "mejor_fase": 0.804
+    }
+  },
+  "librosa": {
+    "flaca": {
+      "cambios_en_beat": 0.6,
+      "en_downbeats_declarados": 0.889,
+      "mejor_fase": 0.889
+    },
+    "de-musica-ligera": {
+      "cambios_en_beat": 0.656,
+      "en_downbeats_declarados": 0.476,
+      "mejor_fase": 0.5
+    },
+    "boys-dont-cry": {
+      "cambios_en_beat": 0.058,
+      "en_downbeats_declarados": 0.333,
+      "mejor_fase": 0.333
+    },
+    "cerca-del-fuego": {
+      "cambios_en_beat": 0.364,
+      "en_downbeats_declarados": 0.472,
+      "mejor_fase": 0.472
+    },
+    "no-voy-en-tren": {
+      "cambios_en_beat": 0.516,
+      "en_downbeats_declarados": 0.723,
+      "mejor_fase": 0.723
+    }
+  }
+}

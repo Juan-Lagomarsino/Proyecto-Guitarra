@@ -1,0 +1,76 @@
+{
+  "beat_this": {
+    "flaca": {
+      "bpm": 111.1111111111069,
+      "beats_por_compas": 4.0,
+      "primer_beat": 2.46,
+      "n_beats": 490,
+      "segundos": 7.9098874000010255
+    },
+    "de-musica-ligera": {
+      "bpm": 124.99999999999896,
+      "beats_por_compas": 4.0,
+      "primer_beat": 0.78,
+      "n_beats": 402,
+      "segundos": 5.0395222999995894
+    },
+    "boys-dont-cry": {
+      "bpm": 166.66666666666694,
+      "beats_por_compas": 4.0,
+      "primer_beat": 0.62,
+      "n_beats": 419,
+      "segundos": 3.7698624999993626
+    },
+    "cerca-del-fuego": {
+      "bpm": 115.38461538461549,
+      "beats_por_compas": 4.0,
+      "primer_beat": 12.5,
+      "n_beats": 236,
+      "segundos": 3.191696199999569
+    },
+    "no-voy-en-tren": {
+      "bpm": 124.99999999999896,
+      "beats_por_compas": 4.0,
+      "primer_beat": 1.02,
+      "n_beats": 373,
+      "segundos": 4.400970200000302
+    }
+  },
+  "librosa": {
+    "flaca": {
+      "bpm": 107.66601562500054,
+      "beats_por_compas": 4.0,
+      "primer_beat": 5.317369614512471,
+      "n_beats": 484,
+      "segundos": 3.283358299999236
+    },
+    "de-musica-ligera": {
+      "bpm": 123.04687499999972,
+      "beats_por_compas": 4.0,
+      "primer_beat": 0.7894784580498866,
+      "n_beats": 402,
+      "segundos": 0.5083931999997731
+    },
+    "boys-dont-cry": {
+      "bpm": 83.35433467741929,
+      "beats_por_compas": 4.0,
+      "primer_beat": 0.626938775510204,
+      "n_beats": 211,
+      "segundos": 0.4313407999998162
+    },
+    "cerca-del-fuego": {
+      "bpm": 117.45383522727278,
+      "beats_por_compas": 4.0,
+      "primer_beat": 0.13931972789115646,
+      "n_beats": 263,
+      "segundos": 0.3586822999986907
+    },
+    "no-voy-en-tren": {
+      "bpm": 123.04687499999972,
+      "beats_por_compas": 4.0,
+      "primer_beat": 1.0448979591836736,
+      "n_beats": 360,
+      "segundos": 0.4435027999988961
+    }
+  }
+}

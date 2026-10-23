@@ -1,0 +1,250 @@
+{
+  "btc_majmin": {
+    "flaca": {
+      "n_secciones": 5,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "libre": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "control_exacta": 0.0
+    },
+    "de-musica-ligera": {
+      "n_secciones": 10,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "libre": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "control_exacta": 0.009
+    },
+    "boys-dont-cry": {
+      "n_secciones": 12,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "libre": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "control_exacta": 0.0
+    },
+    "no-voy-en-tren": {
+      "n_secciones": 1,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 0.0,
+        "exacta": 0.0,
+        "puntaje_medio": 0.636
+      },
+      "libre": {
+        "coincide": 0.0,
+        "exacta": 0.0,
+        "puntaje_medio": 0.636
+      },
+      "control_exacta": 0.0
+    }
+  },
+  "btc_voca": {
+    "flaca": {
+      "n_secciones": 5,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "libre": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "control_exacta": 0.0
+    },
+    "de-musica-ligera": {
+      "n_secciones": 10,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "libre": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "control_exacta": 0.009
+    },
+    "boys-dont-cry": {
+      "n_secciones": 12,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "libre": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "control_exacta": 0.0
+    },
+    "no-voy-en-tren": {
+      "n_secciones": 1,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 0.0,
+        "exacta": 0.0,
+        "puntaje_medio": 0.636
+      },
+      "libre": {
+        "coincide": 0.0,
+        "exacta": 0.0,
+        "puntaje_medio": 0.636
+      },
+      "control_exacta": 0.0
+    }
+  },
+  "chordino": {
+    "flaca": {
+      "n_secciones": 5,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "libre": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "control_exacta": 0.0
+    },
+    "de-musica-ligera": {
+      "n_secciones": 10,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "libre": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "control_exacta": 0.018
+    },
+    "boys-dont-cry": {
+      "n_secciones": 12,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 1.0,
+        "exacta": 0.417,
+        "puntaje_medio": 0.911
+      },
+      "libre": {
+        "coincide": 1.0,
+        "exacta": 0.417,
+        "puntaje_medio": 0.911
+      },
+      "control_exacta": 0.0
+    },
+    "no-voy-en-tren": {
+      "n_secciones": 1,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 0.0,
+        "exacta": 0.0,
+        "puntaje_medio": 0.545
+      },
+      "libre": {
+        "coincide": 0.0,
+        "exacta": 0.0,
+        "puntaje_medio": 0.545
+      },
+      "control_exacta": 0.0
+    }
+  },
+  "plantillas": {
+    "flaca": {
+      "n_secciones": 5,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "libre": {
+        "coincide": 1.0,
+        "exacta": 1.0,
+        "puntaje_medio": 1.0
+      },
+      "control_exacta": 0.0
+    },
+    "de-musica-ligera": {
+      "n_secciones": 10,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 1.0,
+        "exacta": 0.1,
+        "puntaje_medio": 0.775
+      },
+      "libre": {
+        "coincide": 1.0,
+        "exacta": 0.1,
+        "puntaje_medio": 0.775
+      },
+      "control_exacta": 0.009
+    },
+    "boys-dont-cry": {
+      "n_secciones": 12,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 1.0,
+        "exacta": 0.417,
+        "puntaje_medio": 0.906
+      },
+      "libre": {
+        "coincide": 1.0,
+        "exacta": 0.417,
+        "puntaje_medio": 0.906
+      },
+      "control_exacta": 0.0
+    },
+    "no-voy-en-tren": {
+      "n_secciones": 1,
+      "desplazamiento_libre": 0,
+      "capo": {
+        "coincide": 0.0,
+        "exacta": 0.0,
+        "puntaje_medio": 0.455
+      },
+      "libre": {
+        "coincide": 0.0,
+        "exacta": 0.0,
+        "puntaje_medio": 0.455
+      },
+      "control_exacta": 0.0
+    }
+  }
+}

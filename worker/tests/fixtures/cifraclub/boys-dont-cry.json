@@ -1,0 +1,200 @@
+{
+  "title": "Boys Don't Cry",
+  "artist": "The Cure",
+  "url": "https://www.cifraclub.com.br/the-cure/boys-dont-cry/",
+  "snapshot": "https://web.archive.org/web/20250906114824/https://www.cifraclub.com.br/the-cure/boys-dont-cry/",
+  "tonalidad": "A",
+  "capo": 0,
+  "capo_texto": "",
+  "sections": [
+    {
+      "name": "Intro",
+      "chords": [
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "C#m",
+        "Bm"
+      ]
+    },
+    {
+      "name": "Solo",
+      "chords": [
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "C#m",
+        "Bm",
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "C#m",
+        "Bm",
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "C#m",
+        "Bm"
+      ]
+    },
+    {
+      "name": "Primeira Parte",
+      "chords": [
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "A",
+        "Bm",
+        "C#m",
+        "D"
+      ]
+    },
+    {
+      "name": "Pré-Refrão",
+      "chords": [
+        "C#m",
+        "Bm",
+        "C#m",
+        "Bm",
+        "C#m",
+        "Bm",
+        "C#m",
+        "Bm"
+      ]
+    },
+    {
+      "name": "Refrão",
+      "chords": [
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "C#m",
+        "Bm",
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "C#m",
+        "Bm"
+      ]
+    },
+    {
+      "name": "Segunda Parte",
+      "chords": [
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "A",
+        "Bm",
+        "C#m",
+        "D"
+      ]
+    },
+    {
+      "name": "Pré-Refrão",
+      "chords": [
+        "C#m",
+        "Bm",
+        "C#m",
+        "Bm",
+        "C#m",
+        "Bm",
+        "C#m",
+        "Bm"
+      ]
+    },
+    {
+      "name": "Refrão",
+      "chords": [
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "C#m",
+        "Bm",
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "C#m",
+        "Bm"
+      ]
+    },
+    {
+      "name": "Terceira Parte",
+      "chords": [
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "A",
+        "Bm",
+        "C#m",
+        "D"
+      ]
+    },
+    {
+      "name": "Ponte",
+      "chords": [
+        "E",
+        "F#m",
+        "E",
+        "F#m",
+        "E",
+        "F#m",
+        "D",
+        "E",
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "A",
+        "Bm",
+        "C#m",
+        "D"
+      ]
+    },
+    {
+      "name": "Refrão",
+      "chords": [
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "C#m",
+        "Bm",
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "C#m",
+        "Bm",
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "C#m",
+        "Bm"
+      ]
+    },
+    {
+      "name": "Final",
+      "chords": [
+        "A",
+        "Bm",
+        "C#m",
+        "D",
+        "C#m",
+        "Bm",
+        "A"
+      ]
+    }
+  ]
+}

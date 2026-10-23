@@ -1,0 +1,82 @@
+{
+  "flaca": {
+    "referencia_cifraclub": "G",
+    "segundos_ks_chroma": 3.0,
+    "ks_chroma": {
+      "clave": "G",
+      "vs_referencia": "exacta"
+    },
+    "ks_btc_voca": {
+      "clave": "G",
+      "vs_referencia": "exacta"
+    },
+    "ks_plantillas": {
+      "clave": "G",
+      "vs_referencia": "exacta"
+    }
+  },
+  "de-musica-ligera": {
+    "referencia_cifraclub": "Bm",
+    "segundos_ks_chroma": 1.1,
+    "ks_chroma": {
+      "clave": "D",
+      "vs_referencia": "relativa"
+    },
+    "ks_btc_voca": {
+      "clave": "D",
+      "vs_referencia": "relativa"
+    },
+    "ks_plantillas": {
+      "clave": "D",
+      "vs_referencia": "relativa"
+    }
+  },
+  "boys-dont-cry": {
+    "referencia_cifraclub": "A",
+    "segundos_ks_chroma": 0.9,
+    "ks_chroma": {
+      "clave": "A",
+      "vs_referencia": "exacta"
+    },
+    "ks_btc_voca": {
+      "clave": "A",
+      "vs_referencia": "exacta"
+    },
+    "ks_plantillas": {
+      "clave": "A",
+      "vs_referencia": "exacta"
+    }
+  },
+  "cerca-del-fuego": {
+    "referencia_cifraclub": null,
+    "segundos_ks_chroma": 0.7,
+    "ks_chroma": {
+      "clave": "C",
+      "vs_referencia": "sin referencia"
+    },
+    "ks_btc_voca": {
+      "clave": "Am",
+      "vs_referencia": "sin referencia"
+    },
+    "ks_plantillas": {
+      "clave": "Am",
+      "vs_referencia": "sin referencia"
+    }
+  },
+  "no-voy-en-tren": {
+    "referencia_cifraclub": "A",
+    "segundos_ks_chroma": 0.9,
+    "ks_chroma": {
+      "clave": "A",
+      "vs_referencia": "exacta"
+    },
+    "ks_btc_voca": {
+      "clave": "A",
+      "vs_referencia": "exacta"
+    },
+    "ks_plantillas": {
+      "clave": "A",
+      "vs_referencia": "exacta"
+    }
+  }
+}

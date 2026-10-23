@@ -1,0 +1,197 @@
+{
+  "flaca": {
+    "duracion": 272.1,
+    "segundos": 29.5,
+    "novedad": {
+      "n_secciones": 7,
+      "limites": [
+        5.3,
+        25.3,
+        62.9,
+        148.3,
+        181.1,
+        218.2
+      ],
+      "acuerdo_con_progresion_btc": 0.182
+    },
+    "agglomerative": {
+      "n_secciones": 15,
+      "limites": [
+        5.3,
+        9.8,
+        16.4,
+        18.6,
+        23.1,
+        25.3,
+        141.7,
+        152.6,
+        159.2,
+        170.2,
+        174.5,
+        242.2,
+        244.4,
+        268.4
+      ],
+      "acuerdo_con_progresion_btc": 0.105
+    },
+    "acuerdo_entre_variantes": 0.2,
+    "limites_progresion_btc": [
+      23.0,
+      118.1,
+      137.4,
+      191.9,
+      224.9
+    ]
+  },
+  "de-musica-ligera": {
+    "duracion": 210.0,
+    "segundos": 1.3,
+    "novedad": {
+      "n_secciones": 11,
+      "limites": [
+        8.5,
+        24.0,
+        41.4,
+        54.9,
+        70.3,
+        85.8,
+        101.2,
+        116.7,
+        147.6,
+        186.3
+      ],
+      "acuerdo_con_progresion_btc": 0.0
+    },
+    "agglomerative": {
+      "n_secciones": 12,
+      "limites": [
+        8.5,
+        24.0,
+        49.1,
+        89.7,
+        91.6,
+        116.7,
+        145.7,
+        186.3,
+        192.4,
+        194.8,
+        195.3
+      ],
+      "acuerdo_con_progresion_btc": 0.0
+    },
+    "acuerdo_entre_variantes": 0.476,
+    "limites_progresion_btc": []
+  },
+  "boys-dont-cry": {
+    "duracion": 174.2,
+    "segundos": 1.1,
+    "novedad": {
+      "n_secciones": 12,
+      "limites": [
+        6.5,
+        23.7,
+        35.1,
+        46.6,
+        56.7,
+        69.6,
+        81.1,
+        104.0,
+        115.3,
+        126.8,
+        144.4
+      ],
+      "acuerdo_con_progresion_btc": 0.154
+    },
+    "agglomerative": {
+      "n_secciones": 13,
+      "limites": [
+        2.1,
+        5.0,
+        6.5,
+        23.7,
+        69.6,
+        81.1,
+        104.0,
+        112.5,
+        118.2,
+        134.1,
+        135.6,
+        144.4
+      ],
+      "acuerdo_con_progresion_btc": 0.0
+    },
+    "acuerdo_entre_variantes": 0.609,
+    "limites_progresion_btc": [
+      46.6,
+      99.6
+    ]
+  },
+  "cerca-del-fuego": {
+    "duracion": 145.4,
+    "segundos": 0.9,
+    "novedad": {
+      "n_secciones": 2,
+      "limites": [
+        29.2
+      ],
+      "acuerdo_con_progresion_btc": 0.0
+    },
+    "agglomerative": {
+      "n_secciones": 7,
+      "limites": [
+        25.0,
+        91.7,
+        93.8,
+        102.2,
+        104.2,
+        135.5
+      ],
+      "acuerdo_con_progresion_btc": 0.0
+    },
+    "acuerdo_entre_variantes": 0.0,
+    "limites_progresion_btc": [
+      51.4,
+      120.0
+    ]
+  },
+  "no-voy-en-tren": {
+    "duracion": 183.2,
+    "segundos": 1.2,
+    "novedad": {
+      "n_secciones": 10,
+      "limites": [
+        20.4,
+        36.0,
+        49.6,
+        65.1,
+        82.6,
+        113.7,
+        131.2,
+        146.7,
+        162.2
+      ],
+      "acuerdo_con_progresion_btc": 0.333
+    },
+    "agglomerative": {
+      "n_secciones": 10,
+      "limites": [
+        20.4,
+        36.0,
+        51.5,
+        67.1,
+        80.7,
+        90.4,
+        111.7,
+        133.1,
+        181.6
+      ],
+      "acuerdo_con_progresion_btc": 0.5
+    },
+    "acuerdo_entre_variantes": 0.778,
+    "limites_progresion_btc": [
+      37.8,
+      51.2,
+      78.7
+    ]
+  }
+}
