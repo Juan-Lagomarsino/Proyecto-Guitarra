@@ -4,11 +4,14 @@ from typing import Any
 
 from guitarra_worker.adapters.audio_features import LibrosaSelfSimilarity
 from guitarra_worker.adapters.beat_this import BeatThisTracker
+from guitarra_worker.adapters.btc import BtcChordRecognizer
 from guitarra_worker.adapters.spotify import SpotifyAdapter
 from guitarra_worker.adapters.youtube import YoutubeAdapter
 from guitarra_worker.config import Settings
 from guitarra_worker.pipeline.step import PipelineContext, Step
+from guitarra_worker.steps.chords import ChordsStep
 from guitarra_worker.steps.download import DownloadStep
+from guitarra_worker.steps.key import KeyStep
 from guitarra_worker.steps.source import SourceStep
 from guitarra_worker.steps.structure import StructureStep
 from guitarra_worker.steps.strum import StrumStep
@@ -50,5 +53,7 @@ def default_steps(settings: Settings | None = None) -> list[Step]:
         DownloadStep(youtube),
         TempoStep(beat_tracker),
         StructureStep(LibrosaSelfSimilarity()),
+        ChordsStep(BtcChordRecognizer(settings.btc_path)),
+        KeyStep(),
         StrumStep(chooser),
     ]

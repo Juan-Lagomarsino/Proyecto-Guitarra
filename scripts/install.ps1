@@ -41,6 +41,28 @@ function Install-WorkerVenv {
     if ($LASTEXITCODE -ne 0) { throw 'pip install del worker falló' }
 }
 
+function Install-Btc {
+    # BTC (acordes, MIT) no es un paquete: se clona en un commit fijo. Los parches de compatibilidad
+    # (yaml.safe_load, np.float) los aplica el adaptador al cargarlo, así el clon queda limpio.
+    $btcCommit = '2682317be668032e6e4b269ded36adaa2ad57df0'
+    $btcDir = if ($env:GUITAR_BTC_DIR) { $env:GUITAR_BTC_DIR } else { Join-Path $cacheDir 'btc' }
+    if (-not (Test-Path (Join-Path $btcDir '.git'))) {
+        Write-Host "Clonando BTC en $btcDir ..."
+        & git clone --quiet https://github.com/jayg996/BTC-ISMIR19.git $btcDir
+        if ($LASTEXITCODE -ne 0) { throw 'git clone de BTC falló' }
+    }
+    $head = (& git -C $btcDir rev-parse HEAD).Trim()
+    if ($head -ne $btcCommit) {
+        Write-Host "Fijando BTC en $btcCommit ..."
+        & git -C $btcDir fetch --quiet origin $btcCommit
+        & git -C $btcDir checkout --quiet $btcCommit
+        if ($LASTEXITCODE -ne 0) { throw "No se pudo fijar BTC en $btcCommit" }
+    }
+    $weights = Join-Path $btcDir 'test\btc_model_large_voca.pt'
+    if (-not (Test-Path $weights)) { throw "BTC no trae los pesos esperados: $weights" }
+    Write-Host "BTC listo en $btcDir"
+}
+
 function Update-SessionPath {
     # winget actualiza el PATH del registro, pero no el de esta sesión: lo releemos.
     $machine = [Environment]::GetEnvironmentVariable('Path', 'Machine')
@@ -94,6 +116,7 @@ function Test-WorkerToken {
 
 try {
     Install-WorkerVenv
+    Install-Btc
     Install-Ffmpeg
     Update-YtDlp
     New-WorkerFolders

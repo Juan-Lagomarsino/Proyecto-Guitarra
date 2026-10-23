@@ -174,7 +174,15 @@ def test_registro_en_orden_source_download_tempo():
     from guitarra_worker.config import Settings
 
     steps = default_steps(Settings(_env_file=None))
-    assert [s.name for s in steps] == ["source", "download", "tempo", "structure", "strum"]
+    assert [s.name for s in steps] == [
+        "source",
+        "download",
+        "tempo",
+        "structure",
+        "chords",
+        "key",
+        "strum",
+    ]
 
 
 @pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="ffmpeg no está en el PATH")

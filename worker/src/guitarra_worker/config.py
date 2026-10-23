@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     # Spotify es opcional; sin credenciales los links de Spotify fallan con un mensaje claro.
     spotify_client_id: str = Field(default="", validation_alias="SPOTIFY_CLIENT_ID")
     spotify_client_secret: str = Field(default="", validation_alias="SPOTIFY_CLIENT_SECRET")
+    btc_dir: Path | None = None  # GUITAR_BTC_DIR: clon de BTC; vacío = <cache_dir>/btc
     cifraclub_base_url: str = "https://www.cifraclub.com"
     cifraclub_min_interval_s: float = 3.0
 
@@ -54,6 +55,10 @@ class Settings(BaseSettings):
     @property
     def beat_this_checkpoint_path(self) -> Path:
         return self.beat_this_checkpoint or self.models_dir / "beat_this-final0.ckpt"
+
+    @property
+    def btc_path(self) -> Path:
+        return self.btc_dir or self.cache_dir / "btc"
 
     @property
     def logs_dir(self) -> Path:

@@ -101,6 +101,7 @@ Todo instala con pip (más el clon de BTC) y corre en Windows 11 + Python 3.12 +
 ## Consecuencias
 
 - Los pasos F2-T07, T08 y T09 usan estas herramientas. BTC se instala desde su repo fijando un commit (MIT) y aplicando los dos parches, desde el `install.ps1` del worker; hay que fijar el commit.
+- Desvío de implementación (F2-T08): los dos parches de BTC (`yaml.safe_load` y el alias `np.float`) no los aplica `install.ps1` sobre el clon; los aplica `adapters/btc.py` en tiempo de ejecución al cargar el modelo. `install.ps1` solo clona BTC en el commit fijo `2682317`, y el clon queda limpio.
 - **beat_this: el host oficial de los pesos (`cloud.cp.jku.at`) devolvió 503** durante el spike. Se usó un espejo safetensors y `beat_this_checkpoint.py` completó los buffers `rotary_embed.freqs`. `install.ps1` tiene que bajar el checkpoint con reintentos y caer al espejo; vigilar.
 - Cifra Club es la referencia para nombres de secciones y acordes y pesa más que cualquier modelo de audio. Sin cifra, esperar tonalidad y acordes razonables y estructura pobre, y mostrar la confianza.
 - **Sin referencia de Cifra Club para `cerca-del-fuego`**: la página no existe en el archivo web (Wayback no tiene la URL), el sitio devuelve 403 a pedidos automáticos y el archivo de 2015 de la página del artista lista 0 cifras. La fixture queda marcada `disponible: false`. F2-T19 tiene que cargar la progresión a mano o validar esa canción solo por oído.

@@ -15,8 +15,16 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.6"]
-# Modelos de análisis (torch CPU lo instala install.ps1 desde el índice de PyTorch)
-analysis = ["beat-this>=1.1", "safetensors>=0.4"]
+# Modelos de análisis: beat_this (tempo) y BTC (acordes). torch CPU lo instala install.ps1
+# desde el índice de PyTorch.
+analysis = [
+    "beat-this>=1.1",
+    "safetensors>=0.4",
+    "numpy>=2",
+    "librosa>=0.10",
+    "mir_eval>=0.7",
+    "pyyaml>=6",
+]
 
 [build-system]
 requires = ["setuptools>=68"]
