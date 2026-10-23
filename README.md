@@ -43,6 +43,45 @@ npm run dev --prefix ui      # Vite con proxy a la API
 
 Configuración: copiá `.env.example` a `.env` y completá los valores.
 
+```powershell
+docker compose up -d --build   # API + Postgres + UI
+.\scripts\e2e.ps1              # pruebas E2E con Playwright en un compose aparte
+```
+
+## Levantar la app
+
+1. Copiá el archivo de ejemplo y poné tu token:
+
+   ```powershell
+   Copy-Item .env.example .env
+   ```
+
+   Cambiá `GUITAR_API_TOKEN` (y dejá `VITE_GUITAR_API_TOKEN` igual: la UI lo usa para hablar con la API).
+2. Levantá todo (la primera vez compila la UI y tarda unos minutos):
+
+   ```powershell
+   docker compose up -d --build
+   ```
+
+3. Abrí <http://localhost:8000>. La API migra la base y carga el currículum sola al arrancar.
+
+Qué ver:
+
+- **Hoy** (`/`): la sesión del día, con bloques de ejercicios. Reproducí, probá "Nota por nota" y marcá "Terminé".
+- **Estudio** (`/estudio`): niveles, lecciones con su teoría y las tarjetas de ejercicio con mástil y tablatura.
+- **Progreso** (`/progreso`): racha actual y máxima, heatmap del último año y avance por nivel.
+- **Ajustes** (`/ajustes`): colores del tema, tipografías y zona horaria.
+
+Tus datos viven en el volumen `pgdata` de Docker; reiniciar el compose no los pierde.
+
+## Pruebas E2E
+
+```powershell
+.\scripts\e2e.ps1
+```
+
+El script levanta un compose **aparte** (proyecto `guitarra-e2e`, con su propio volumen, la API en `127.0.0.1:18000`, Postgres en `127.0.0.1:15432` y el token de `.env.e2e`), espera `/api/v1/health`, corre Playwright (Chromium) y lo baja todo con `down -v`, también si algo falla. No toca tu base real. Deja capturas en `docs/fases/fase-1/capturas/` y el reporte HTML en `e2e/playwright-report/`.
+
 ## Arrancar una fase
 
 > Leé `docs/PLAN.md` y `CLAUDE.md`. Arrancá la Fase 1 siguiendo la metodología de `CLAUDE.md`: armá el plan de tareas y mostrámelo antes de delegar.

@@ -51,7 +51,7 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 | F1-T17 | 4 | UI: vista de Progreso | T07, T11 | hecha |
 | F1-T18 | 5 | UI: vista de Sesión del día | T11, T16 | hecha |
 | F1-T19 | 4 | UI: ajustes de tema con vista previa | T12, T13 | hecha |
-| F1-T20 | 6 | Pruebas E2E con Playwright y README | todas | pendiente |
+| F1-T20 | 6 | Pruebas E2E con Playwright y README | todas | hecha |
 
 ### F1-T01 — Esqueleto del repo, tooling y CI
 

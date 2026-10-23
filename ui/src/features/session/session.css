@@ -15,7 +15,10 @@
   margin: 0;
   color: var(--muted);
   font-size: 13px;
-  text-transform: capitalize;
+}
+
+.session-meta::first-letter {
+  text-transform: uppercase;
 }
 
 .session-summary {
