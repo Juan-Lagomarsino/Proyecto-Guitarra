@@ -16,6 +16,8 @@ WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \
     GUITAR_UI_DIST=/app/ui-dist \
     GUITAR_CURRICULUM_DIR=/app/curriculum
+COPY core /tmp/core
+RUN pip install --no-cache-dir /tmp/core && rm -rf /tmp/core
 COPY api/pyproject.toml ./
 COPY api/src ./src
 RUN pip install --no-cache-dir .

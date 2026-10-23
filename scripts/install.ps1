@@ -15,6 +15,9 @@ function Install-WorkerVenv {
         if ($LASTEXITCODE -ne 0) { throw 'No se pudo crear el venv (¿está instalado Python 3.12 y el lanzador py?)' }
     }
     Write-Host 'Instalando worker[dev] en modo editable ...'
+    $coreDir = Join-Path (Split-Path -Parent $workerDir) 'core'
+    & $venvPython -m pip install --quiet --disable-pip-version-check -e $coreDir
+    if ($LASTEXITCODE -ne 0) { throw 'pip install de core falló' }
     & $venvPython -m pip install --quiet --disable-pip-version-check -e "$workerDir[dev]"
     if ($LASTEXITCODE -ne 0) { throw 'pip install del worker falló' }
 }
