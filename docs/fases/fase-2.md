@@ -1,6 +1,6 @@
 # Fase 2 — Explorar: análisis de canciones
 
-Estado: **plan propuesto** (pendiente de aprobación de Juan Pedro)
+Estado: **en curso** (plan aprobado por Juan Pedro el 2026-10-23)
 Referencia: `docs/PLAN.md` § Explorar, § Pipeline de análisis de canciones, § Modelo de datos (`Song*`, `AudioAsset`, `AnalysisJob`, `Correction`), § Contratos de API, § UI y diseño (diagramas de acordes, vista de canción).
 
 ## Criterios de aceptación de la fase (del plan)
@@ -24,6 +24,12 @@ Referencia: `docs/PLAN.md` § Explorar, § Pipeline de análisis de canciones, �
 - **Rasgueo:** catálogo de patrones (rasgueos y arpegios p-i-m-a) + reglas por compás y tempo + densidad de ataques; Ollama elige del catálogo con salida JSON validada. **Si Ollama no responde, se usan solo las reglas**: el pipeline nunca falla por el LLM.
 - **Canción → ejercicios:** `Exercise.song_section_id` (exclusivo con `lesson_id`, con check en la base). Un ejercicio de canción se completa con el mismo "Terminé" y suma a la racha igual que los de Estudio.
 - **Fuera de la Fase 2:** audio y acompañamiento (Fase 3), separación de pistas (Fase 3), riffs en tablatura (Fase 5), presets (Fase 4b).
+
+### Decisiones de Juan Pedro al aprobar (2026-10-23)
+
+- **Spotify después:** el adaptador se hace completo, pero se activa cuando estén `SPOTIFY_CLIENT_ID` y `SPOTIFY_CLIENT_SECRET` en el `.env`. Mientras tanto, YouTube y nombre + artista.
+- **Ollama con modelo chico** (~2 GB, tipo `qwen2.5:3b`), y fallback por reglas siempre.
+- **Demucs a la Fase 3** (ADR en T01).
 
 ## Tareas
 
