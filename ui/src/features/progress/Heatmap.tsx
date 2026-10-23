@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import type { CalendarDay } from '../../api/progress'
 import { WEEKDAY_LABELS, buildWeeks, cellLabel } from './heatGrid'
 
@@ -9,8 +10,13 @@ interface HeatmapProps {
 
 export function Heatmap({ from, to, days }: HeatmapProps) {
   const weeks = buildWeeks(from, to, days)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const el = scrollRef.current
+    if (el) el.scrollLeft = el.scrollWidth // arranca en lo más reciente
+  }, [])
   return (
-    <div className="heatmap-scroll">
+    <div className="heatmap-scroll" ref={scrollRef}>
       <div className="heatmap" role="group" aria-label="Días practicados">
         <div className="heatmap-weekdays" aria-hidden="true">
           <span className="heatmap-month" />

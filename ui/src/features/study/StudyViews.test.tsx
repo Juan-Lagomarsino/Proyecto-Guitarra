@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -52,11 +52,28 @@ const lesson = {
   ],
 }
 
+const progressSummary = {
+  current_streak: 0,
+  max_streak: 0,
+  practiced_days: 0,
+  levels: [
+    {
+      level_id: 1,
+      slug: 'n1',
+      position: 1,
+      name: 'Primeros pasos',
+      completed: 3,
+      total: 8,
+    },
+  ],
+}
+
 function routeApi(overrides: Record<string, unknown> = {}) {
   const table: Record<string, unknown> = {
     '/levels': levels,
     '/levels/1/lessons': lessons,
     '/lessons/10': lesson,
+    '/progress/summary': progressSummary,
     '/exercises/7': { ...lesson.exercises[0], best_bpm: 70 },
     ...overrides,
   }
@@ -90,6 +107,30 @@ describe('vistas de Estudio', () => {
       await screen.findByRole('link', { name: /primeros pasos/i }),
     ).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /escalas/i })).toBeInTheDocument()
+  })
+
+  it('muestra el avance por nivel cruzando por level_id', async () => {
+    routeApi()
+    renderAt('/estudio')
+    expect(await screen.findByText('3/8 completados')).toBeInTheDocument()
+    const bar = screen.getByRole('progressbar', {
+      name: /avance de primeros pasos/i,
+    })
+    expect(bar).toHaveAttribute('value', '3')
+    expect(bar).toHaveAttribute('max', '8')
+    expect(screen.getAllByRole('progressbar')).toHaveLength(1)
+  })
+
+  it('si falla el summary, la lista se ve igual sin avance', async () => {
+    routeApi({ '/progress/summary': new Error('caído') })
+    renderAt('/estudio')
+    expect(
+      await screen.findByRole('link', { name: /primeros pasos/i }),
+    ).toBeInTheDocument()
+    await waitFor(() =>
+      expect(apiFetchMock).toHaveBeenCalledWith('/progress/summary'),
+    )
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
   })
 
   it('muestra un error si fallan los niveles', async () => {

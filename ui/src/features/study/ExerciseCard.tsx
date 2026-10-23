@@ -13,7 +13,7 @@ const MIN_BPM = 20
 const MAX_BPM_FLOOR = 240
 
 export interface ExerciseCardProps {
-  exercise: Exercise
+  exercise: Exercise & { best_bpm?: number | null }
   /** Muestra el chip "en la sesión de hoy". */
   inTodaySession?: boolean
   /** Se llama después de registrar el Terminé en la API. */
@@ -78,9 +78,13 @@ export function ExerciseCard({
     audio,
   })
 
+  const knownBest = exercise.best_bpm
   const load = useCallback(
-    (signal: AbortSignal) => fetchExercise(exercise.id, signal),
-    [exercise.id],
+    (signal: AbortSignal): Promise<{ best_bpm: number | null }> =>
+      knownBest === undefined
+        ? fetchExercise(exercise.id, signal)
+        : Promise.resolve({ best_bpm: knownBest }),
+    [exercise.id, knownBest],
   )
   const detail = useAsyncData(load)
   const [recordedBest, setRecordedBest] = useState<number | null>(null)

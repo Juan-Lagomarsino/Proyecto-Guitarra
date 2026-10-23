@@ -49,7 +49,7 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 | F1-T16 | 4 | UI: tarjeta de ejercicio y vistas de Estudio | T10, T13, T14, T15 | hecha |
 | F1-T16b | 4 | Descripción corta por ejercicio (modelo, migración, loader, API y textos del currículum) | T10, T09 | hecha |
 | F1-T17 | 4 | UI: vista de Progreso | T07, T11 | hecha |
-| F1-T18 | 5 | UI: vista de Sesión del día | T11, T16 | pendiente |
+| F1-T18 | 5 | UI: vista de Sesión del día | T11, T16 | hecha |
 | F1-T19 | 4 | UI: ajustes de tema con vista previa | T12, T13 | hecha |
 | F1-T20 | 6 | Pruebas E2E con Playwright y README | todas | pendiente |
 

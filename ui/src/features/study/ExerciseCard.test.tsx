@@ -55,6 +55,19 @@ beforeEach(() => {
 })
 
 describe('ExerciseCard', () => {
+  it('con best_bpm ya conocido no pide el ejercicio y usa ese valor', async () => {
+    renderCard({ exercise: { ...exercise, best_bpm: 90 } })
+    expect(await screen.findByText(/tu mejor/i)).toHaveTextContent('90 bpm')
+    expect(apiFetchMock).not.toHaveBeenCalled()
+  })
+
+  it('sin best_bpm lo pide a la API', async () => {
+    apiFetchMock.mockResolvedValue(detail(70))
+    renderCard()
+    expect(await screen.findByText(/tu mejor/i)).toHaveTextContent('70 bpm')
+    expect(apiFetchMock).toHaveBeenCalledTimes(1)
+  })
+
   it('sin descripción no muestra el bloque', async () => {
     apiFetchMock.mockResolvedValue(detail(null))
     const { container } = renderCard({

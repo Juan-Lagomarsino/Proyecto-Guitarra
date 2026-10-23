@@ -34,11 +34,17 @@ export function ProgressScreen() {
 
   useEffect(() => {
     const { from, to } = yearRange(new Date())
+    let active = true
     Promise.all([fetchProgressSummary(), fetchProgressCalendar(from, to)])
-      .then(([summary, calendar]) =>
-        setData({ summary, days: calendar.days, from, to }),
-      )
-      .catch(() => setFailed(true))
+      .then(([summary, calendar]) => {
+        if (active) setData({ summary, days: calendar.days, from, to })
+      })
+      .catch(() => {
+        if (active) setFailed(true)
+      })
+    return () => {
+      active = false
+    }
   }, [])
 
   return (

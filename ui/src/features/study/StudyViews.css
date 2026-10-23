@@ -80,3 +80,39 @@
   gap: 18px;
   min-width: 0;
 }
+
+.study-item__progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.study-item__bar {
+  flex: 1;
+  min-width: 0;
+  max-width: 220px;
+  height: 6px;
+  accent-color: var(--accent);
+}
+
+.study-item__bar {
+  appearance: none;
+  border: 0;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.study-item__bar::-webkit-progress-bar {
+  background: var(--surface-2);
+}
+
+.study-item__bar::-webkit-progress-value {
+  background: var(--accent);
+}
+
+.study-item__bar::-moz-progress-bar {
+  background: var(--accent);
+}

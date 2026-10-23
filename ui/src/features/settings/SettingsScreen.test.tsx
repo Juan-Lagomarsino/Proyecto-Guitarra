@@ -208,7 +208,7 @@ describe('tema guardado al iniciar', () => {
   it('App aplica el tema de GET /settings', async () => {
     mockApi(stored())
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={['/ajustes']}>
         <App />
       </MemoryRouter>,
     )

@@ -1,6 +1,7 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Markdown from 'react-markdown'
 import { Link, useParams } from 'react-router-dom'
+import { fetchProgressSummary, type LevelProgress } from '../../api/progress'
 import { AsyncView } from './AsyncView'
 import { ExerciseCard } from './ExerciseCard'
 import { fetchLesson, fetchLessons, fetchLevels } from './studyApi'
@@ -11,9 +12,45 @@ function useIdParam(name: string): number {
   return Number(useParams()[name])
 }
 
-/** Lista de niveles. La API de /levels aún no trae avance; ver GET /progress/summary (T11). */
+/** Avance por nivel (level_id -> progreso). Si falla, queda vacío y la lista se ve sin avance. */
+function useLevelProgress(): Map<number, LevelProgress> {
+  const [byLevel, setByLevel] = useState(new Map<number, LevelProgress>())
+  useEffect(() => {
+    let active = true
+    fetchProgressSummary().then(
+      (summary) => {
+        if (active)
+          setByLevel(new Map(summary.levels.map((l) => [l.level_id, l])))
+      },
+      () => undefined,
+    )
+    return () => {
+      active = false
+    }
+  }, [])
+  return byLevel
+}
+
+function LevelProgressBar({ progress }: { progress: LevelProgress }) {
+  return (
+    <span className="study-item__progress">
+      <progress
+        className="study-item__bar"
+        max={progress.total || 1}
+        value={progress.completed}
+        aria-label={`Avance de ${progress.name}`}
+      />
+      <span>
+        {progress.completed}/{progress.total} completados
+      </span>
+    </span>
+  )
+}
+
+/** Lista de niveles con su avance (de GET /progress/summary). */
 export function LevelsView() {
   const state = useAsyncData(fetchLevels)
+  const progressByLevel = useLevelProgress()
   return (
     <section className="page study">
       <h2 className="display page-title">Estudio</h2>
@@ -34,6 +71,11 @@ export function LevelsView() {
                     <span className="study-item__desc">
                       {level.description}
                     </span>
+                    {progressByLevel.has(level.id) && (
+                      <LevelProgressBar
+                        progress={progressByLevel.get(level.id)!}
+                      />
+                    )}
                   </span>
                 </Link>
               </li>
