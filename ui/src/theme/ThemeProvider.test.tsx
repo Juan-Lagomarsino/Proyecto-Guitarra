@@ -36,6 +36,7 @@ describe('ThemeProvider', () => {
       '--accent-ink',
       '--good',
       '--good-dim',
+      '--warn',
       '--note-tonic',
       '--note-other',
       '--note-active',

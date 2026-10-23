@@ -50,6 +50,9 @@ class SongSectionOut(BaseModel):
     start_s: float
     end_s: float
     position: int
+    stale: bool = Field(
+        default=False, description="Desapareció en un reanálisis pero conserva ejercicios"
+    )
 
 
 class SongDetailOut(SongSummaryOut):

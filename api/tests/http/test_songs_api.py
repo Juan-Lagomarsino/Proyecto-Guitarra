@@ -169,7 +169,10 @@ def test_detalle(client, session):
     created = post_song(client, {"url": f"https://youtu.be/{YT}"}).json()
     song = SongRepository(session).get(created["id"])
     song.duration_s, song.year, song.bpm, song.key = 215.5, 1987, 113.0, "A minor"
-    song.sections = [SongSection(slug="intro", name="Intro", start_s=0, end_s=10, position=0)]
+    song.sections = [
+        SongSection(slug="intro", name="Intro", start_s=0, end_s=10, position=0),
+        SongSection(slug="viejo", name="Viejo", start_s=10, end_s=20, position=-5, stale=True),
+    ]
     job = session.query(AnalysisJob).one()
     job.status, job.error = "error", "yt-dlp falló"
     song.analysis_status = "error"
@@ -182,7 +185,22 @@ def test_detalle(client, session):
     assert body["error"] == "yt-dlp falló"
     assert body["analysis_status"] == "error"
     assert body["sections"] == [
-        {"slug": "intro", "name": "Intro", "start_s": 0, "end_s": 10, "position": 0}
+        {
+            "slug": "viejo",
+            "name": "Viejo",
+            "start_s": 10,
+            "end_s": 20,
+            "position": -5,
+            "stale": True,
+        },
+        {
+            "slug": "intro",
+            "name": "Intro",
+            "start_s": 0,
+            "end_s": 10,
+            "position": 0,
+            "stale": False,
+        },
     ]
 
 

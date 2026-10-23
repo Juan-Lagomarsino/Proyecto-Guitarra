@@ -27,6 +27,7 @@ export const defaultTheme = {
   '--accent-ink': '#1b1405',
   '--good': '#6fd39a',
   '--good-dim': '#1f4a35',
+  '--warn': '#ff7a6b',
   '--wood': '#1a1729',
   '--note-tonic': '#ffb534',
   '--note-other': '#3a3558',

@@ -12,6 +12,7 @@ export const COLOR_FIELDS: ReadonlyArray<{ token: string; label: string }> = [
   { token: '--accent-ink', label: 'Tinta sobre acento' },
   { token: '--good', label: 'Acierto' },
   { token: '--good-dim', label: 'Acierto tenue' },
+  { token: '--warn', label: 'Dato dudoso' },
   { token: '--wood', label: 'Madera del mástil' },
   { token: '--note-tonic', label: 'Nota tónica' },
   { token: '--note-other', label: 'Otras notas' },
