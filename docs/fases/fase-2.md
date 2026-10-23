@@ -56,6 +56,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F2-T17 | 4 | Correcciones: editar acordes y rasgueo, versión de usuario, historial | T16 | hecha |
 | F2-T18 | 4 | Canción → ejercicios que suman al progreso | T03, T16 | hecha |
 | F2-T20 | 4 | Carga manual de la cifra: API, migración y UI en la vista de canción | T03, T16 | hecha |
+| F2-T21 | 5 | Ajustes de la validación: cifra por sección, aviso si la cifra no se usó, capo sugerido | T13, T19 | en curso |
 | F2-T19 | 5 | Validación con las 5 canciones, ajuste fino, E2E y README | todas | pendiente |
 
 > **Nota F2-T10 (2026-10-23):** Cifra Club responde 403 (Akamai, "Access Denied") a todo pedido automático, aun con User-Agent de navegador. El parser, la alineación y el "sin datos" están hechos y probados con HTML grabado; Juan Pedro eligió la carga manual (ADR 0012): T13 parsea el texto que llega en el trabajo y T20 hace la carga en la API y la UI.
@@ -135,6 +136,11 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 
 - **Archivos:** migración `0004` (`songs.cifra_text` Text, `songs.cifra_url` Text, ambos opcionales), `PUT /songs/{id}/cifra` (`{text, url?}`, guarda y encola reanálisis si no hay uno activo) y `DELETE /songs/{id}/cifra`, `cifra_text` en el trabajo reclamado (`ClaimedJobOut`), `has_cifra` y `cifra_url` en el detalle; UI en `ui/src/features/song/`: "Cargar cifra de Cifra Club" con textarea y link opcional.
 - **Criterio:** tests de API (guarda, valida largo máximo, encola reanálisis, el claim lleva el texto, borrar la cifra); UI con la API mockeada; 375 px.
+
+### F2-T21 — Ajustes de la validación (surge de T19)
+
+- **Motivo:** la validación (`docs/fases/fase-2/validacion.md`) mostró tres problemas. La alineación con la cifra es global y descarta, sin avisar, una cifra que escribe cada sección una sola vez. `best_capo` propone capo 7 en canciones que salen con acordes abiertos. Y el parser pierde `A/`.
+- **Criterio:** si la alineación global no alcanza, se alinea el ciclo de cada sección de la cifra contra las secciones detectadas, y se usan los nombres donde la coincidencia es buena. La UI avisa cuando hay cifra cargada pero ninguna sección la usó. El capo sugerido prefiere 0 ante empate y no propone capo si las formas abiertas no requieren cejilla. Se re-corre la validación (modos a y b, más la cifra corta de Flaca) y se actualiza el reporte.
 
 ### F2-T14 — UI: diagrama de acorde
 
