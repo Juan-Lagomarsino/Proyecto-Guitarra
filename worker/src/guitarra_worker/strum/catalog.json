@@ -1,0 +1,201 @@
+[
+  {
+    "id": "rasgueo-4-negras",
+    "name": "Negras abajo",
+    "kind": "strum",
+    "beats_per_bar": 4,
+    "style": "balada",
+    "complexity": 1,
+    "pattern": "D-D-D-D-",
+    "accent": [
+      0,
+      4
+    ],
+    "beats_per_cycle": 4
+  },
+  {
+    "id": "rasgueo-4-balada",
+    "name": "Balada",
+    "kind": "strum",
+    "beats_per_bar": 4,
+    "style": "balada",
+    "complexity": 2,
+    "pattern": "D-D-DU-U",
+    "accent": [
+      0,
+      4
+    ],
+    "beats_per_cycle": 4
+  },
+  {
+    "id": "rasgueo-4-folk",
+    "name": "Folk clásico",
+    "kind": "strum",
+    "beats_per_bar": 4,
+    "style": "folk",
+    "complexity": 3,
+    "pattern": "D-DU-UDU",
+    "accent": [
+      0,
+      4
+    ],
+    "beats_per_cycle": 4
+  },
+  {
+    "id": "rasgueo-4-pop",
+    "name": "Pop con contratiempo",
+    "kind": "strum",
+    "beats_per_bar": 4,
+    "style": "pop",
+    "complexity": 3,
+    "pattern": "D--UDU-U",
+    "accent": [
+      0,
+      4
+    ],
+    "beats_per_cycle": 4
+  },
+  {
+    "id": "rasgueo-4-corcheas",
+    "name": "Corcheas continuas",
+    "kind": "strum",
+    "beats_per_bar": 4,
+    "style": "rock",
+    "complexity": 4,
+    "pattern": "DUDUDUDU",
+    "accent": [
+      0,
+      4
+    ],
+    "beats_per_cycle": 4
+  },
+  {
+    "id": "rasgueo-3-negras",
+    "name": "Vals en negras",
+    "kind": "strum",
+    "beats_per_bar": 3,
+    "style": "vals",
+    "complexity": 1,
+    "pattern": "D-D-D-",
+    "accent": [
+      0
+    ],
+    "beats_per_cycle": 3
+  },
+  {
+    "id": "rasgueo-3-balada",
+    "name": "Vals balada",
+    "kind": "strum",
+    "beats_per_bar": 3,
+    "style": "balada",
+    "complexity": 2,
+    "pattern": "D-D-DU",
+    "accent": [
+      0
+    ],
+    "beats_per_cycle": 3
+  },
+  {
+    "id": "rasgueo-3-folk",
+    "name": "Vals folk",
+    "kind": "strum",
+    "beats_per_bar": 3,
+    "style": "folk",
+    "complexity": 3,
+    "pattern": "D-DUDU",
+    "accent": [
+      0
+    ],
+    "beats_per_cycle": 3
+  },
+  {
+    "id": "rasgueo-3-corcheas",
+    "name": "Vals en corcheas",
+    "kind": "strum",
+    "beats_per_bar": 3,
+    "style": "vals",
+    "complexity": 4,
+    "pattern": "DUDUDU",
+    "accent": [
+      0
+    ],
+    "beats_per_cycle": 3
+  },
+  {
+    "id": "arpegio-4-basico",
+    "name": "Arpegio básico",
+    "kind": "arpeggio",
+    "beats_per_bar": 4,
+    "style": "balada",
+    "complexity": 1,
+    "pattern": "p-i-m-i",
+    "accent": [],
+    "beats_per_cycle": 4
+  },
+  {
+    "id": "arpegio-4-alterno",
+    "name": "Arpegio alternado",
+    "kind": "arpeggio",
+    "beats_per_bar": 4,
+    "style": "balada",
+    "complexity": 2,
+    "pattern": "p-i-m-i-m-i-m-i",
+    "accent": [],
+    "beats_per_cycle": 4
+  },
+  {
+    "id": "arpegio-4-pima",
+    "name": "Arpegio p-i-m-a",
+    "kind": "arpeggio",
+    "beats_per_bar": 4,
+    "style": "clasico",
+    "complexity": 3,
+    "pattern": "p-i-m-a-m-i-m-a",
+    "accent": [],
+    "beats_per_cycle": 4
+  },
+  {
+    "id": "arpegio-4-ida-vuelta",
+    "name": "Arpegio ida y vuelta",
+    "kind": "arpeggio",
+    "beats_per_bar": 4,
+    "style": "clasico",
+    "complexity": 3,
+    "pattern": "p-i-m-a-m-i-p-i",
+    "accent": [],
+    "beats_per_cycle": 4
+  },
+  {
+    "id": "arpegio-3-basico",
+    "name": "Arpegio de vals básico",
+    "kind": "arpeggio",
+    "beats_per_bar": 3,
+    "style": "vals",
+    "complexity": 1,
+    "pattern": "p-i-m",
+    "accent": [],
+    "beats_per_cycle": 3
+  },
+  {
+    "id": "arpegio-3-vals",
+    "name": "Arpegio de vals",
+    "kind": "arpeggio",
+    "beats_per_bar": 3,
+    "style": "vals",
+    "complexity": 2,
+    "pattern": "p-i-m-i-m-i",
+    "accent": [],
+    "beats_per_cycle": 3
+  },
+  {
+    "id": "arpegio-3-pima",
+    "name": "Arpegio de vals p-i-m-a",
+    "kind": "arpeggio",
+    "beats_per_bar": 3,
+    "style": "clasico",
+    "complexity": 3,
+    "pattern": "p-i-m-a-m-i",
+    "accent": [],
+    "beats_per_cycle": 3
+  }
+]

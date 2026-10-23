@@ -42,6 +42,11 @@ class Settings(BaseSettings):
         "https://huggingface.co/safe-models/beat-this-final0/resolve/main/model.safetensors"
     )
 
+    # Ollama (elección de rasgueo del catálogo); GUITAR_OLLAMA_URL vacío = solo reglas
+    ollama_url: str = "http://localhost:11434"
+    ollama_model: str = "qwen2.5:3b"
+    ollama_timeout_s: float = 30.0
+
     @property
     def models_dir(self) -> Path:
         return self.cache_dir.parent / "models"

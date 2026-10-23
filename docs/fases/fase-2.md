@@ -120,10 +120,12 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 
 ### F2-T12 — Rasgueo y arpegio
 
-- **Archivos:** `worker/.../strum/catalog.json` (patrones con nombre, compás, estilo, versión p-i-m-a para clásica), `strum/rules.py`, `strum/ollama_chooser.py` (prompt acotado, salida JSON validada contra el catálogo, timeout), `docs/adr/0009-modelo-local-para-rasgueo.md`.
+- **Archivos:** `worker/.../strum/catalog.json` (patrones con nombre, compás, estilo, versión p-i-m-a para clásica), `strum/rules.py`, `strum/ollama_chooser.py` (prompt acotado, salida JSON validada contra el catálogo, timeout), `docs/adr/0011-modelo-local-para-rasgueo.md`.
 - **Criterio:** reglas puras testeadas (compás 3/4 no recibe patrones de 4/4, tempos altos reciben patrones más simples); el chooser con un Ollama falso valida y rechaza salidas fuera del catálogo; sin Ollama, cae a reglas sin error.
 
 ### F2-T13 — Armado del chart y pipeline completo
+
+- **Nota de T12:** el paso de rasgueo elige un patrón (y un arpegio para clásica) por canción; T13 lo copia a cada sección. Es una simplificación: el patrón por sección se corrige a mano en T17 o se afina en T19.
 
 - **Archivos:** `steps/assemble.py`, registro de todos los pasos en el orden del plan.
 - **Criterio:** dado lo de los pasos anteriores, arma un `SongChart` por instrumento (clásica y eléctrica) que valida con el esquema; prioriza nombres de Cifra Club con tiempos detectados cuando la alineación es buena; corrida de punta a punta con una canción real en local (no en la CI), con el resultado visible en `GET /songs/{id}/chart`.
