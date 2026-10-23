@@ -47,7 +47,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F2-T08 | 2 | Paso de tonalidad y acordes | T01, T05 | pendiente |
 | F2-T09 | 2 | Paso de estructura (secciones con tiempos y nombres) | T01, T05 | pendiente |
 | F2-T10 | 2 | Adaptador de Cifra Club y alineación con lo detectado | T05 | hecha (acceso al sitio: ver nota) |
-| F2-T11 | 2 | Diccionario de acordes y adaptación al instrumento (clásica / eléctrica) | T02 | pendiente |
+| F2-T11 | 2 | Diccionario de acordes y adaptación al instrumento (clásica / eléctrica) | T02 | hecha |
 | F2-T12 | 3 | Rasgueo y arpegio: catálogo, reglas y elección con Ollama | T05, T07 | pendiente |
 | F2-T13 | 3 | Armado del `SongChart` y pipeline de punta a punta | T06–T12 | pendiente |
 | F2-T14 | 1 | UI: diagrama de acorde vertical con cejilla | T02 | hecha |
