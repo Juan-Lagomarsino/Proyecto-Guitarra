@@ -209,8 +209,8 @@ class Song(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(300))
-    artist: Mapped[str] = mapped_column(String(300))
+    title: Mapped[str | None] = mapped_column(String(300))
+    artist: Mapped[str | None] = mapped_column(String(300))
     source: Mapped[str] = mapped_column(String(20))
     url: Mapped[str | None] = mapped_column(Text)
     youtube_id: Mapped[str | None] = mapped_column(String(32), unique=True)
