@@ -221,6 +221,8 @@ class Song(Base):
     bpm: Mapped[float | None] = mapped_column(Float)
     key: Mapped[str | None] = mapped_column(String(20))  # tonalidad, p. ej. "A minor"
     year: Mapped[int | None] = mapped_column(Integer)
+    cifra_text: Mapped[str | None] = mapped_column(Text)  # pegada a mano (ADR 0012)
+    cifra_url: Mapped[str | None] = mapped_column(Text)
     analysis_status: Mapped[str] = mapped_column(
         String(20), default="queued", server_default="queued"
     )

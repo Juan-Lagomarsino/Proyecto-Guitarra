@@ -11,6 +11,7 @@ import {
 import type { SongChartContent } from '../../songs/types'
 import { AsyncView } from '../study/AsyncView'
 import { useAsyncData } from '../study/useAsyncData'
+import { CifraPanel } from './CifraPanel'
 import { SectionDetail } from './SectionDetail'
 import { SectionTimeline } from './SectionTimeline'
 import {
@@ -53,6 +54,13 @@ function Header({
     <header className="song-header">
       <h2 className="display page-title">{song.title ?? 'Sin título'}</h2>
       {song.artist && <p className="song-header__artist">{song.artist}</p>}
+      {song.analysis_status !== 'ready' && (
+        <p className="song-header__status" role="status">
+          {song.analysis_status === 'error'
+            ? 'El último análisis falló.'
+            : 'Reanalizando la canción…'}
+        </p>
+      )}
       <dl className="song-facts">
         {bpm !== null && bpm !== undefined && (
           <div className="song-fact">
@@ -149,7 +157,13 @@ function Chart({ content }: { content: SongChartContent }) {
   )
 }
 
-function SongBody({ song }: { song: SongDetail }) {
+function SongBody({
+  song,
+  onCifraChanged,
+}: {
+  song: SongDetail
+  onCifraChanged: () => void
+}) {
   const [instrument, setInstrument] = useState<ChartInstrument>('classical')
   const load = useCallback(
     (signal: AbortSignal) => loadChart(song.id, instrument, signal),
@@ -177,6 +191,12 @@ function SongBody({ song }: { song: SongDetail }) {
         }
       </AsyncView>
       <StaleSections sections={stale} />
+      <CifraPanel
+        songId={song.id}
+        hasCifra={song.has_cifra}
+        cifraUrl={song.cifra_url}
+        onChanged={onCifraChanged}
+      />
     </>
   )
 }
@@ -189,6 +209,14 @@ export function SongScreen() {
     [songId],
   )
   const detail = useAsyncData(load)
+  const [fresh, setFresh] = useState<SongDetail | null>(null)
+  const refresh = useCallback(async () => {
+    try {
+      setFresh(await fetchSong(songId))
+    } catch {
+      // si falla la recarga se queda con el detalle anterior
+    }
+  }, [songId])
 
   return (
     <section className="page song">
@@ -196,7 +224,13 @@ export function SongScreen() {
         ← Volver a Explorar
       </Link>
       <AsyncView state={detail}>
-        {(song) => <SongBody key={song.id} song={song} />}
+        {(song) => (
+          <SongBody
+            key={song.id}
+            song={fresh?.id === song.id ? fresh : song}
+            onCifraChanged={() => void refresh()}
+          />
+        )}
       </AsyncView>
     </section>
   )

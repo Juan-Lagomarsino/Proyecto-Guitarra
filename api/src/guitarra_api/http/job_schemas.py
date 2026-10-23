@@ -25,6 +25,7 @@ class ClaimedJobOut(BaseModel):
     url: str | None
     youtube_id: str | None
     spotify_id: str | None
+    cifra_text: str | None
     attempt: int
     max_attempts: int
     lease_until: dt.datetime

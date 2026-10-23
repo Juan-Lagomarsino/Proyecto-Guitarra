@@ -1,5 +1,6 @@
 import datetime as dt
 from typing import Any, Literal, Self
+from urllib.parse import urlparse
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -42,6 +43,34 @@ class SongSummaryOut(BaseModel):
     error: str | None = Field(description="Error del último trabajo de análisis, si falló")
 
 
+class CifraIn(BaseModel):
+    """Texto de la cifra pegado a mano (ADR 0012) y, opcional, el link de referencia."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    text: str = Field(min_length=1, max_length=50000)
+    url: str | None = Field(default=None, description="Link http(s) de la página de la cifra")
+
+    @field_validator("url")
+    @classmethod
+    def _http_url(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        value = value.strip()
+        if not value:
+            return None
+        parsed = urlparse(value)
+        if parsed.scheme not in ("http", "https") or not parsed.netloc:
+            raise ValueError("El link tiene que ser http o https")
+        return value
+
+
+class CifraSavedOut(SongSummaryOut):
+    reanalysis_queued: bool = Field(
+        description="false si ya había un análisis activo: la cifra se guardó igual"
+    )
+
+
 class SongSectionOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -58,6 +87,8 @@ class SongSectionOut(BaseModel):
 class SongDetailOut(SongSummaryOut):
     duration_s: float | None
     year: int | None
+    has_cifra: bool
+    cifra_url: str | None
     sections: list[SongSectionOut]
 
 

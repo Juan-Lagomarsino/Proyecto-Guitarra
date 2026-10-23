@@ -25,6 +25,8 @@ const song: SongDetail = {
   error: null,
   duration_s: 259,
   year: 1969,
+  has_cifra: false,
+  cifra_url: null,
   sections: [
     {
       slug: 'puente',
@@ -241,5 +243,31 @@ describe('SongScreen', () => {
     )
     renderScreen()
     expect(await screen.findByRole('alert')).toHaveTextContent(/No se pudo/)
+  })
+
+  it('al guardar la cifra recarga el detalle y muestra que se reanaliza', async () => {
+    const user = userEvent.setup()
+    let detail = song
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string, init?: RequestInit) => {
+        const path = url.replace('/api/v1', '')
+        if (path === '/songs/7/cifra' && init?.method === 'PUT') {
+          detail = { ...song, analysis_status: 'queued', has_cifra: true }
+          return json({ ...detail, reanalysis_queued: true })
+        }
+        if (path === '/songs/7') return json(detail)
+        return json({ detail: 'sin chart' }, 404)
+      }),
+    )
+    renderScreen()
+    await screen.findByRole('heading', { name: 'Come Together' })
+    expect(screen.queryByText(/Reanalizando/)).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Cargar cifra' }))
+    await user.type(screen.getByLabelText('Texto de la cifra'), 'Am')
+    await user.click(screen.getByRole('button', { name: 'Guardar' }))
+    expect(
+      await screen.findByText('Reanalizando la canción…'),
+    ).toBeInTheDocument()
   })
 })

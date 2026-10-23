@@ -13,6 +13,8 @@ from guitarra_api.application.song_service import (
 from guitarra_api.domain.song_source import InvalidSongUrlError
 from guitarra_api.http.auth import require_token
 from guitarra_api.http.song_schemas import (
+    CifraIn,
+    CifraSavedOut,
     Instrument,
     SongChartOut,
     SongDetailOut,
@@ -55,6 +57,8 @@ def _detail(detail: SongEntry) -> SongDetailOut:
         **_summary(detail).model_dump(),
         duration_s=song.duration_s,
         year=song.year,
+        has_cifra=bool(song.cifra_text),
+        cifra_url=song.cifra_url,
         sections=song.sections,
     )
 
@@ -116,6 +120,24 @@ def reanalyze(song_id: int, service: Service):
         raise _not_found(error) from error
     except AnalysisAlreadyActiveError as error:
         raise HTTPException(status.HTTP_409_CONFLICT, detail=str(error)) from error
+
+
+@router.put("/songs/{song_id}/cifra", response_model=CifraSavedOut)
+def save_cifra(song_id: int, body: CifraIn, service: Service):
+    try:
+        saved = service.save_cifra(song_id, body.text, body.url)
+    except SongNotFoundError as error:
+        raise _not_found(error) from error
+    summary = _summary_of(saved.song)
+    return CifraSavedOut(**summary.model_dump(), reanalysis_queued=saved.reanalysis_queued)
+
+
+@router.delete("/songs/{song_id}/cifra", status_code=status.HTTP_204_NO_CONTENT)
+def delete_cifra(song_id: int, service: Service) -> None:
+    try:
+        service.delete_cifra(song_id)
+    except SongNotFoundError as error:
+        raise _not_found(error) from error
 
 
 def _not_found(error: Exception) -> HTTPException:

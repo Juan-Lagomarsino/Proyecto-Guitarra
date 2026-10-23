@@ -160,6 +160,7 @@ def test_claim_entrega_el_trabajo_mas_viejo_y_marca_la_cancion(client, songs, jo
         "spotify_id": None,
         "attempt": 1,
         "max_attempts": 3,
+        "cifra_text": None,
         "lease_until": "2026-10-01T12:05:00Z",
     }
     job = session.get(AnalysisJob, 1)
@@ -167,6 +168,14 @@ def test_claim_entrega_el_trabajo_mas_viejo_y_marca_la_cancion(client, songs, jo
     assert session.get(Song, first.id).analysis_status == "processing"
     assert claim(client, "w2").json()["job_id"] == 2
     assert claim(client, "w3").status_code == 204
+
+
+def test_claim_lleva_el_texto_de_la_cifra(client, songs, jobs, session):
+    song = new_song(songs)
+    song.cifra_text = "[Intro]\nAm G"
+    session.commit()
+    jobs.add_job(song.id)
+    assert claim(client).json()["cifra_text"] == "[Intro]\nAm G"
 
 
 def test_lease_vencido_vuelve_a_la_cola(client, songs, jobs, clock):

@@ -9,6 +9,12 @@
   overflow-wrap: anywhere;
 }
 
+.song-header__status {
+  margin: 0 0 12px;
+  color: var(--accent);
+  font-size: 13px;
+}
+
 .song-facts {
   display: flex;
   flex-wrap: wrap;
@@ -215,6 +221,105 @@
   border-style: dashed;
   border-color: var(--warn);
   color: var(--warn);
+}
+
+/* Cifra de Cifra Club (carga manual). */
+.cifra {
+  margin-top: 24px;
+  min-width: 0;
+}
+
+.cifra__state {
+  margin: 0 0 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.cifra__state a {
+  color: var(--accent);
+}
+
+.cifra__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cifra__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cifra__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.cifra__field textarea,
+.cifra__field input {
+  font: inherit;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.cifra__field textarea {
+  font-family: var(--font-mono);
+  resize: vertical;
+}
+
+.cifra__button {
+  font: inherit;
+  font-size: 13px;
+  padding: 8px 14px;
+  min-height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.cifra__button--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.cifra__button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.cifra__button:focus-visible,
+.cifra__field textarea:focus-visible,
+.cifra__field input:focus-visible,
+.cifra__state a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.cifra__notice {
+  margin: 12px 0 0;
+  color: var(--good);
+  font-size: 13px;
+}
+
+.cifra__problem {
+  margin: 12px 0 0;
+  color: var(--warn);
+  font-size: 13px;
+  overflow-wrap: anywhere;
 }
 
 .song-stale__list {

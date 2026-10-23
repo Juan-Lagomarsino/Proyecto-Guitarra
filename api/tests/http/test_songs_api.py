@@ -278,3 +278,107 @@ def test_busqueda_por_nombre_tolera_canciones_sin_titulo(client):
     post_song(client, {"url": f"https://youtu.be/{YT}"})
     response = post_song(client, {"title": "T", "artist": "A"})
     assert response.status_code == 201
+
+
+# --- cifra manual (ADR 0012) -------------------------------------------------------------
+
+
+def put_cifra(client, song_id, body):
+    return client.put(f"/api/v1/songs/{song_id}/cifra", json=body, headers=AUTH)
+
+
+def finished_song(client, session) -> int:
+    song_id = post_song(client, {"title": "T", "artist": "A"}).json()["id"]
+    session.query(AnalysisJob).one().status = "done"
+    SongRepository(session).get(song_id).analysis_status = "ready"
+    session.commit()
+    return song_id
+
+
+def test_cifra_se_guarda_y_encola_reanalisis(client, session):
+    song_id = finished_song(client, session)
+    url = "https://www.cifraclub.com.br/x/y/"
+    response = put_cifra(client, song_id, {"text": "[Intro]\nAm G", "url": url})
+    assert response.status_code == 200
+    body = response.json()
+    assert body["reanalysis_queued"] is True
+    assert body["analysis_status"] == "queued"
+    song = SongRepository(session).get(song_id)
+    assert (song.cifra_text, song.cifra_url) == ("[Intro]\nAm G", url)
+    assert session.query(AnalysisJob).filter_by(status="queued").count() == 1
+
+
+def test_cifra_sin_url(client, session):
+    song_id = finished_song(client, session)
+    assert put_cifra(client, song_id, {"text": "Am"}).status_code == 200
+    assert SongRepository(session).get(song_id).cifra_url is None
+
+
+def test_cifra_con_analisis_activo_guarda_y_no_encola(client, session):
+    song_id = post_song(client, {"title": "T", "artist": "A"}).json()["id"]
+    response = put_cifra(client, song_id, {"text": "Am"})
+    assert response.status_code == 200
+    assert response.json()["reanalysis_queued"] is False
+    assert SongRepository(session).get(song_id).cifra_text == "Am"
+    assert session.query(AnalysisJob).count() == 1
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        {"text": ""},
+        {"text": "a" * 50001},
+        {},
+        {"text": "Am", "url": "ftp://x.com/y"},
+        {"text": "Am", "url": "cifraclub.com"},
+        {"text": "Am", "extra": 1},
+    ],
+)
+def test_cifra_invalida_da_422(client, session, body):
+    song_id = finished_song(client, session)
+    assert put_cifra(client, song_id, body).status_code == 422
+    assert SongRepository(session).get(song_id).cifra_text is None
+
+
+def test_cifra_con_largo_maximo_es_valida(client, session):
+    song_id = finished_song(client, session)
+    assert put_cifra(client, song_id, {"text": "a" * 50000}).status_code == 200
+
+
+def test_cifra_de_cancion_inexistente_da_404(client):
+    assert put_cifra(client, 999, {"text": "Am"}).status_code == 404
+    assert client.delete("/api/v1/songs/999/cifra", headers=AUTH).status_code == 404
+
+
+def test_detalle_expone_has_cifra_sin_el_texto(client, session):
+    song_id = finished_song(client, session)
+    before = client.get(f"/api/v1/songs/{song_id}", headers=AUTH).json()
+    assert (before["has_cifra"], before["cifra_url"]) == (False, None)
+    put_cifra(client, song_id, {"text": "Am", "url": "http://c.com/x"})
+    after = client.get(f"/api/v1/songs/{song_id}", headers=AUTH).json()
+    assert (after["has_cifra"], after["cifra_url"]) == (True, "http://c.com/x")
+    assert "cifra_text" not in after
+
+
+def test_borrar_cifra(client, session):
+    song_id = finished_song(client, session)
+    put_cifra(client, song_id, {"text": "Am", "url": "https://c.com/x"})
+    response = client.delete(f"/api/v1/songs/{song_id}/cifra", headers=AUTH)
+    assert response.status_code == 204
+    song = SongRepository(session).get(song_id)
+    assert (song.cifra_text, song.cifra_url) == (None, None)
+
+
+def test_borrar_cifra_con_analisis_activo_no_encola_ni_toca_la_cola(client, session):
+    song_id = post_song(client, {"title": "T", "artist": "A"}).json()["id"]
+    put_cifra(client, song_id, {"text": "Am"})
+    response = client.delete(f"/api/v1/songs/{song_id}/cifra", headers=AUTH)
+    assert response.status_code == 204
+    assert SongRepository(session).get(song_id).cifra_text is None
+    assert session.query(AnalysisJob).count() == 1
+    assert session.query(AnalysisJob).one().status == "queued"
+
+
+def test_cifra_requiere_token(client):
+    assert client.put("/api/v1/songs/1/cifra", json={"text": "Am"}).status_code == 401
+    assert client.delete("/api/v1/songs/1/cifra").status_code == 401

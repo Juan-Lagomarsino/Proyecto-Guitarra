@@ -43,3 +43,22 @@ def test_0002_agrega_description_nullable_y_el_downgrade_la_quita(database_url):
         command.upgrade(config, "head")
     finally:
         engine.dispose()
+
+
+def _song_columns(engine) -> dict:
+    return {column["name"]: column for column in inspect(engine).get_columns("songs")}
+
+
+def test_0004_agrega_cifra_nullable_y_el_downgrade_la_quita(database_url):
+    config = alembic_config()
+    engine = create_engine(database_url)
+    try:
+        command.upgrade(config, "head")
+        columns = _song_columns(engine)
+        assert columns["cifra_text"]["nullable"] is True
+        assert columns["cifra_url"]["nullable"] is True
+        command.downgrade(config, "0003")
+        assert not {"cifra_text", "cifra_url"} & set(_song_columns(engine))
+        command.upgrade(config, "head")
+    finally:
+        engine.dispose()

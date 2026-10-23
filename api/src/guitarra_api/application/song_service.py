@@ -42,6 +42,12 @@ class CreatedSong:
     created: bool
 
 
+@dataclass(frozen=True)
+class CifraSaved:
+    song: Song
+    reanalysis_queued: bool
+
+
 class SongService:
     def __init__(self, session: Session) -> None:
         self._session = session
@@ -87,6 +93,25 @@ class SongService:
         if self._repo.active_job(song_id) is not None:
             raise AnalysisAlreadyActiveError(song_id)
         return self._queued(song)
+
+    def save_cifra(self, song_id: int, text: str, url: str | None) -> CifraSaved:
+        """Guarda la cifra pegada a mano y encola un reanálisis si no hay uno activo."""
+        song = self._get(song_id)
+        song.cifra_text, song.cifra_url = text, url
+        queued = self._repo.active_job(song_id) is None
+        try:
+            if queued:
+                self._jobs.stage_job(song_id)
+            self._session.commit()
+        except Exception:
+            self._session.rollback()
+            raise
+        return CifraSaved(song, reanalysis_queued=queued)
+
+    def delete_cifra(self, song_id: int) -> None:
+        song = self._get(song_id)
+        song.cifra_text, song.cifra_url = None, None
+        self._session.commit()
 
     def _get(self, song_id: int) -> Song:
         song = self._repo.get(song_id)

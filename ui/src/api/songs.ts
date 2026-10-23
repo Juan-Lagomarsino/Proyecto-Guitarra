@@ -31,7 +31,20 @@ export interface SongSectionInfo {
 export interface SongDetail extends SongSummary {
   duration_s: number | null
   year: number | null
+  /** La API no devuelve el texto de la cifra, solo si hay. */
+  has_cifra: boolean
+  cifra_url: string | null
   sections: SongSectionInfo[]
+}
+
+export interface CifraInput {
+  text: string
+  url: string | null
+}
+
+export interface CifraSaved extends SongSummary {
+  /** false si ya había un análisis activo: la cifra se guardó igual. */
+  reanalysis_queued: boolean
 }
 
 export type ChartInstrument = 'classical' | 'electric'
@@ -76,6 +89,12 @@ export async function createSong(body: NewSong): Promise<CreatedSong> {
   })
   return { existed: status === 200, song: data }
 }
+
+export const saveCifra = (id: number, body: CifraInput) =>
+  apiFetch<CifraSaved>(`/songs/${id}/cifra`, { method: 'PUT', body })
+
+export const deleteCifra = (id: number) =>
+  apiFetch<void>(`/songs/${id}/cifra`, { method: 'DELETE' })
 
 export const reanalyzeSong = (id: number) =>
   apiFetch<unknown>(`/songs/${id}/reanalyze`, { method: 'POST' })

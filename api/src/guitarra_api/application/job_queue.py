@@ -38,6 +38,7 @@ class ClaimedJob:
     url: str | None
     youtube_id: str | None
     spotify_id: str | None
+    cifra_text: str | None
     attempt: int
     max_attempts: int
     lease_until: dt.datetime
@@ -200,6 +201,7 @@ class JobQueue:
             url=song.url,
             youtube_id=song.youtube_id,
             spotify_id=song.spotify_id,
+            cifra_text=song.cifra_text,
             attempt=job.attempts,
             max_attempts=job.max_attempts,
             lease_until=job.lease_until,
