@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from guitarra_api.domain.song_source import ParsedSongUrl, parse_song_url
 from guitarra_api.infra.db.models import Song, SongChart
+from guitarra_api.infra.db.repositories.jobs import JobRepository
 from guitarra_api.infra.db.repositories.songs import SongRepository
 
 
@@ -49,6 +50,7 @@ class SongService:
     def __init__(self, session: Session) -> None:
         self._session = session
         self._repo = SongRepository(session)
+        self._jobs = JobRepository(session)
 
     def add_from_url(self, url: str) -> CreatedSong:
         """Raises: InvalidSongUrlError si el link no es de YouTube ni de un tema de Spotify."""
@@ -113,7 +115,7 @@ class SongService:
             return CreatedSong(existing, created=False)
         try:
             song = stage()
-            self._repo.stage_job(song.id)
+            self._jobs.stage_job(song.id)
             self._session.commit()
         except IntegrityError:  # otra alta simultánea ganó la carrera
             self._session.rollback()
@@ -127,7 +129,7 @@ class SongService:
         return CreatedSong(song, created=True)
 
     def _queued(self, song: Song) -> Song:
-        self._repo.add_job(song.id)
+        self._jobs.add_job(song.id)
         return song
 
     def _entry(self, song: Song) -> SongEntry:

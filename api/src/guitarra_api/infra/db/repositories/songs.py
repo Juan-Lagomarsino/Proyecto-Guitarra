@@ -82,6 +82,12 @@ class SongRepository:
         La confianza global se calcula del contenido. La restricción única de la base protege
         contra dos altas simultáneas que calculen la misma versión.
         """
+        chart = self.stage_chart(song_id, origin, content)
+        self._session.commit()
+        return chart
+
+    def stage_chart(self, song_id: int, origin: str, content: SongChartContent) -> SongChart:
+        """Como `add_chart` pero sin commit, para sumarlo a una transacción más grande."""
         chart = SongChart(
             song_id=song_id,
             instrument=content.instrument,
@@ -91,7 +97,7 @@ class SongRepository:
             confidence=overall_confidence(content),
         )
         self._session.add(chart)
-        self._session.commit()
+        self._session.flush()
         return chart
 
     def current_chart(self, song_id: int, instrument: str) -> SongChart | None:
@@ -105,21 +111,6 @@ class SongRepository:
         ) or self._session.scalar(
             base.where(SongChart.origin != USER_ORIGIN).order_by(latest).limit(1)
         )
-
-    def stage_job(self, song_id: int) -> AnalysisJob:
-        """Encola un análisis y deja la canción en `queued`, con flush y sin commit."""
-        job = AnalysisJob(song_id=song_id, type="analyze", status="queued")
-        self._session.add(job)
-        song = self.get(song_id)
-        if song is not None:
-            song.analysis_status = "queued"
-        self._session.flush()
-        return job
-
-    def add_job(self, song_id: int) -> AnalysisJob:
-        job = self.stage_job(song_id)
-        self._session.commit()
-        return job
 
     def active_job(self, song_id: int) -> AnalysisJob | None:
         """El trabajo `queued` o `running` de la canción, si hay."""

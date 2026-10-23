@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Raíz del repo: config.py -> guitarra_api -> src -> api -> raíz.
@@ -14,6 +15,10 @@ class Settings(BaseSettings):
 
     guitar_api_url: str = "http://localhost:8000"
     guitar_api_token: str = ""
+    # Token propio del worker de análisis; solo sirve en /jobs. Vacío: /jobs rechaza todo.
+    guitar_worker_token: str = ""
+    # Segundos que dura el lease de un trabajo antes de volver a la cola si el worker no avisa.
+    guitar_job_lease_seconds: int = Field(default=300, gt=0)
     # Default solo para desarrollo local; en otros entornos se define por variable.
     database_url: str = "postgresql+psycopg://guitarra:guitarra@localhost:5432/guitarra"
     # Carpeta con la UI compilada (ui/dist); en Docker la define el Dockerfile.

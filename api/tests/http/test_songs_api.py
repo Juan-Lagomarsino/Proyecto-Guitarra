@@ -5,6 +5,7 @@ from guitarra_api.config import Settings
 from guitarra_api.domain.song_chart import SongChartContent
 from guitarra_api.http.auth import get_api_settings
 from guitarra_api.infra.db.models import AnalysisJob, SongSection
+from guitarra_api.infra.db.repositories.jobs import JobRepository
 from guitarra_api.infra.db.repositories.songs import SongRepository
 from guitarra_api.infra.db.session import get_session
 from guitarra_api.main import create_app
@@ -236,7 +237,7 @@ def test_si_encolar_falla_no_queda_la_cancion(client, session, monkeypatch):
     def boom(self, song_id):
         raise RuntimeError("cola caída")
 
-    monkeypatch.setattr(SongRepository, "stage_job", boom)
+    monkeypatch.setattr(JobRepository, "stage_job", boom)
     with pytest.raises(RuntimeError):
         post_song(client, {"url": f"https://youtu.be/{YT}"})
     with pytest.raises(RuntimeError):

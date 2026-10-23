@@ -40,7 +40,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F2-T01 | 0 | Spike: elegir herramientas de tempo, acordes, tonalidad y estructura midiendo con las 5 canciones | — | pendiente |
 | F2-T02 | 0 | Modelo de datos de canciones, esquema del `SongChart` y migración | — | hecha |
 | F2-T03 | 1 | API de canciones (alta por link o nombre, biblioteca, detalle, chart) | T02 | hecha |
-| F2-T04 | 1 | API de la cola de trabajos para el worker | T02 | pendiente |
+| F2-T04 | 1 | API de la cola de trabajos para el worker | T02 | hecha |
 | F2-T05 | 1 | Worker: esqueleto, pipeline por pasos con caché, cliente de API, `install.ps1` | T02 | hecha |
 | F2-T06 | 2 | Pasos de fuente y descarga: YouTube, Spotify y búsqueda por duración | T05 | pendiente |
 | F2-T07 | 2 | Paso de tempo y compases | T01, T05 | pendiente |
@@ -139,6 +139,8 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 
 ### F2-T16 — UI: vista de canción
 
+- **Nota de T04:** las secciones con `stale=true` (desaparecieron en un reanálisis pero tienen ejercicios) tienen posición negativa; no van en la línea de tiempo, se muestran aparte como "secciones anteriores" si tienen ejercicios.
+
 - **Archivos:** `ui/src/features/song/`.
 - **Skill:** `frontend-design`.
 - **Criterio:** cabecera con título, artista, BPM, tonalidad y capo; selector clásica / eléctrica; secciones como línea de tiempo clickeable; por sección, acordes con diagrama y rasgueo (o arpegio en clásica); lo de baja confianza en otro color con leyenda; marca de "acordes de Cifra Club" cuando aplica. Tests con datos de ejemplo; 375 px.
@@ -149,6 +151,8 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 - **Criterio:** tests: la versión del usuario gana en `GET chart` aunque después llegue un `auto` nuevo (reanálisis); el diff guardado refleja lo cambiado; la UI guarda, muestra "editado por vos" y permite volver a la versión automática.
 
 ### F2-T18 — Canción → ejercicios
+
+- **Nota de T04:** el reanálisis hace upsert de secciones por `(song_id, slug)` y nunca borra una sección con ejercicios (queda `stale`). Los ejercicios se ligan a `song_sections.id`.
 
 - **Archivos:** API para crear un ejercicio a partir de una sección (`POST /songs/{id}/sections/{sid}/exercises` con tipo: cambio de acordes, rasgueo; nombre y bpm sugeridos), servicio que arma la notación (acordes + rasgueo de la sección); UI: botón "Practicar esta sección" y la tarjeta de ejercicio de la Fase 1 reutilizada.
 - **Criterio:** tests: el ejercicio de canción se completa con "Terminé" y suma a la racha y al calendario; `GET /progress/summary` suma "canciones en curso"; la sesión del día no se rompe con ejercicios de canción (quedan fuera del planificador en esta fase).

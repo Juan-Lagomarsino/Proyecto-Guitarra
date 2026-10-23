@@ -13,12 +13,7 @@ def get_api_settings() -> Settings:
     return Settings()
 
 
-def require_token(
-    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer)],
-    settings: Annotated[Settings, Depends(get_api_settings)],
-) -> None:
-    """Exige `Authorization: Bearer <GUITAR_API_TOKEN>`. Sin token configurado, rechaza todo."""
-    expected = settings.guitar_api_token
+def _check_bearer(credentials: HTTPAuthorizationCredentials | None, expected: str) -> None:
     if (
         not expected
         or credentials is None
@@ -29,3 +24,19 @@ def require_token(
             detail="Token inválido o ausente",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+
+def require_token(
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer)],
+    settings: Annotated[Settings, Depends(get_api_settings)],
+) -> None:
+    """Exige `Authorization: Bearer <GUITAR_API_TOKEN>`. Sin token configurado, rechaza todo."""
+    _check_bearer(credentials, settings.guitar_api_token)
+
+
+def require_worker_token(
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer)],
+    settings: Annotated[Settings, Depends(get_api_settings)],
+) -> None:
+    """Exige `Bearer <GUITAR_WORKER_TOKEN>` (solo /jobs). Sin token configurado, rechaza todo."""
+    _check_bearer(credentials, settings.guitar_worker_token)

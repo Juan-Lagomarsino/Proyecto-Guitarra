@@ -8,6 +8,7 @@ from typing import Any
 
 from sqlalchemy import (
     ARRAY,
+    Boolean,
     CheckConstraint,
     Date,
     DateTime,
@@ -18,6 +19,7 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    false,
     func,
     text,
 )
@@ -248,6 +250,8 @@ class SongSection(Base):
     start_s: Mapped[float] = mapped_column(Float)
     end_s: Mapped[float] = mapped_column(Float)
     position: Mapped[int] = mapped_column(Integer)
+    # Desapareció en un reanálisis pero tiene ejercicios: se conserva marcada.
+    stale: Mapped[bool] = mapped_column(Boolean, default=False, server_default=false())
 
     song: Mapped[Song] = relationship(back_populates="sections")
 

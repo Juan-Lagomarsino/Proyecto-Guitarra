@@ -113,6 +113,7 @@ def _create_song_sections() -> None:
         sa.Column("start_s", sa.Float(), nullable=False),
         sa.Column("end_s", sa.Float(), nullable=False),
         sa.Column("position", sa.Integer(), nullable=False),
+        sa.Column("stale", sa.Boolean(), nullable=False, server_default=sa.false()),
         sa.UniqueConstraint("song_id", "position", name=op.f("uq_song_sections_song_position")),
         sa.UniqueConstraint("song_id", "slug", name=op.f("uq_song_sections_song_slug")),
         sa.CheckConstraint(
