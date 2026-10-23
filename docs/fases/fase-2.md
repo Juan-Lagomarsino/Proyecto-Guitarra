@@ -46,7 +46,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F2-T07 | 2 | Paso de tempo y compases | T01, T05 | pendiente |
 | F2-T08 | 2 | Paso de tonalidad y acordes | T01, T05 | pendiente |
 | F2-T09 | 2 | Paso de estructura (secciones con tiempos y nombres) | T01, T05 | pendiente |
-| F2-T10 | 2 | Adaptador de Cifra Club y alineación con lo detectado | T05 | pendiente |
+| F2-T10 | 2 | Adaptador de Cifra Club y alineación con lo detectado | T05 | hecha (acceso al sitio: ver nota) |
 | F2-T11 | 2 | Diccionario de acordes y adaptación al instrumento (clásica / eléctrica) | T02 | pendiente |
 | F2-T12 | 3 | Rasgueo y arpegio: catálogo, reglas y elección con Ollama | T05, T07 | pendiente |
 | F2-T13 | 3 | Armado del `SongChart` y pipeline de punta a punta | T06–T12 | pendiente |
@@ -56,6 +56,8 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F2-T17 | 4 | Correcciones: editar acordes y rasgueo, versión de usuario, historial | T16 | pendiente |
 | F2-T18 | 4 | Canción → ejercicios que suman al progreso | T03, T16 | pendiente |
 | F2-T19 | 5 | Validación con las 5 canciones, ajuste fino, E2E y README | todas | pendiente |
+
+> **Nota F2-T10 (2026-10-23):** Cifra Club responde 403 (Akamai, "Access Denied") a todo pedido automático, aun con User-Agent de navegador. El parser, la alineación y el "sin datos" están hechos y probados con HTML grabado; falta decidir con Juan Pedro de dónde sale el HTML (carga manual del link/texto, Internet Archive, o ambas). Bloquea el criterio 3 tal como está escrito; se resuelve con ADR antes de T13.
 
 ### F2-T01 — Spike de herramientas de análisis
 
