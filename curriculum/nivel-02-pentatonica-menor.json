@@ -21,6 +21,7 @@
           "bpm_start": 60,
           "bpm_target": 90,
           "duration_min": 3,
+          "description": "Los La de la caja 1: 6ta cuerda traste 5, 4ta cuerda traste 7 y 1ra cuerda traste 5. Tocalos hasta que los puedas ubicar sin mirar: son tu punto de referencia dentro de la caja. Escuchá cómo suena cada octava y mantené los dedos relajados sobre el traste.",
           "notation": {
             "bpm": 60,
             "time_signature": "4/4",
@@ -93,6 +94,7 @@
           "bpm_start": 60,
           "bpm_target": 100,
           "duration_min": 4,
+          "description": "Caja 1 de La menor pentatónica, de la 6ta a la 1ra cuerda y de vuelta. Dedo 1 en el traste 5, dedo 3 en el 7 y dedo 4 en el 8, con púa alternada. Buscá un sonido parejo y no te frenes en la vuelta: es donde más se rompe el ritmo.",
           "notation": {
             "bpm": 60,
             "time_signature": "4/4",
@@ -270,6 +272,7 @@
           "bpm_start": 50,
           "bpm_target": 90,
           "duration_min": 4,
+          "description": "Grupos de cuatro notas que avanzan una posición por vez dentro de la caja 1. La secuencia entrena los dedos para no depender de la subida y la bajada de siempre. Si te equivocás, volvé al comienzo del grupo, no sigas corriendo: lo importante es que cada grupo salga igual.",
           "notation": {
             "bpm": 50,
             "time_signature": "4/4",
@@ -518,6 +521,7 @@
           "bpm_start": 60,
           "bpm_target": 100,
           "duration_min": 4,
+          "description": "La caja 2 de La, desde la 4ta cuerda traste 7 (la tónica) hasta la 1ra y de vuelta hasta la 6ta cuerda. Va entre los trastes 7 y 10, así que la mano se mueve respecto de la caja 1. Mirá dónde caen las tónicas y nombrá las notas mentalmente.",
           "notation": {
             "bpm": 60,
             "time_signature": "4/4",
@@ -703,6 +707,7 @@
           "bpm_start": 50,
           "bpm_target": 90,
           "duration_min": 4,
+          "description": "Cada cuerda de punta a punta: tres notas por cuerda, mezclando la caja 1 y la caja 2. Fijate que la nota repetida (el 8 de la 6ta cuerda, el 7 de la 5ta) funciona de puente entre las dos cajas. Hacelo lento y deslizá la mano sin saltos.",
           "notation": {
             "bpm": 50,
             "time_signature": "4/4",
@@ -964,6 +969,7 @@
           "bpm_start": 55,
           "bpm_target": 95,
           "duration_min": 4,
+          "description": "Subís por la caja 1 y bajás por la caja 2. Es un ejercicio para sentir que el mástil es un mosaico: el cambio de caja se hace en una nota compartida, sin saltos. Pensá en la tónica cada vez que pasás por ella.",
           "notation": {
             "bpm": 55,
             "time_signature": "4/4",
@@ -1149,6 +1155,7 @@
           "bpm_start": 70,
           "bpm_target": 110,
           "duration_min": 4,
+          "description": "Riff en La menor pentatónica que insiste en la tónica de la 6ta cuerda y suma Do, Re y Mi como color. Tocalo con púa alternada y cuidá los silencios entre frases: un riff se define tanto por lo que no suena. Repetilo en loop varias veces sin cortar.",
           "notation": {
             "bpm": 70,
             "time_signature": "4/4",
@@ -1319,6 +1326,7 @@
           "bpm_start": 60,
           "bpm_target": 90,
           "duration_min": 5,
+          "description": "Una frase modelo dentro de la caja 1 (trastes 5 a 8) que empieza y termina en La. Tocala una vez y después inventá la tuya con tres reglas: quedate en la caja, arrancá en La y cerrá en La. Dos o tres notas bien elegidas suenan mejor que muchas apuradas.",
           "notation": {
             "bpm": 60,
             "time_signature": "4/4",

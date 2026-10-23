@@ -35,6 +35,7 @@ class SessionExerciseOut(BaseModel):
     minutes: int
     duration_min: int
     bpm_target: int | None
+    description: str | None
     completed_today: bool
 
 

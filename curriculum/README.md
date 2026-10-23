@@ -30,6 +30,7 @@ Carpeta configurable con `GUITAR_CURRICULUM_DIR` (en Docker: `/app/curriculum`).
           "bpm_start": 60,
           "bpm_target": 100,
           "duration_min": 4,
+          "description": "Subí y bajá por la caja 1 con púa alternada. Cuidá que cada nota suene pareja.",
           "notation": { "bpm": 60, "tonic": "A", "events": [] }
         }
       ]
@@ -49,6 +50,7 @@ Carpeta configurable con `GUITAR_CURRICULUM_DIR` (en Docker: `/app/curriculum`).
 | `exercises[].type` | `scale`, `riff`, `chords`, `strumming`, `arpeggio`, `technique` o `improvisation`. |
 | `exercises[].category` | `warmup`, `technique`, `riff` o `improvisation` (lo usa la sesión del día). |
 | `bpm_start`, `bpm_target`, `duration_min` | Enteros positivos, con `bpm_target >= bpm_start`. |
+| `exercises[].description` | **Obligatorio.** Texto de 1 a 3 frases (máx. 500 caracteres, sin espacios sobrantes): qué se toca, en qué fijarse y un consejo práctico. La UI lo muestra en la tarjeta del ejercicio. |
 | `notation` | Formato de notación del plan (`schemas/notation.schema.json`). `notation.bpm` debe ser igual a `bpm_start`. |
 
 El cargador valida esas reglas antes de escribir en la base y, si algo falla, informa archivo y slug.

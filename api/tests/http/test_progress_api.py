@@ -67,6 +67,7 @@ def curriculum(session):
                     bpm_target=100,
                     duration_min=5,
                     category=category,
+                    description=f"Descripción de {slug}",
                 )
                 session.add(exercise)
                 session.flush()
@@ -227,10 +228,12 @@ def test_sesion_de_hoy_es_estable_y_tiene_el_contrato_esperado(client, curriculu
         "minutes",
         "duration_min",
         "bpm_target",
+        "description",
         "completed_today",
     }
     assert exercise["completed_today"] is False
     assert exercise["bpm_target"] == 100
+    assert exercise["description"] == f"Descripción de {exercise['title']}"
 
 
 def test_regenerate_reemplaza_la_sesion_de_hoy(client, curriculum):

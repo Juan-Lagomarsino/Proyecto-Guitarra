@@ -211,7 +211,7 @@ def test_riffs_sin_acordes_empiezan_en_la_tonica(exercise):
 
 def _write_level(directory: Path, name: str, slug: str, position: int, notation: str) -> None:
     exercise = {
-        "slug": slug, "title": "E", "type": "riff", "category": "riff",
+        "slug": slug, "title": "E", "description": "Qué tocar.", "type": "riff", "category": "riff",
         "bpm_start": 60, "bpm_target": 80, "duration_min": 3,
         "notation": json.loads(notation),
     }  # fmt: skip
@@ -283,3 +283,31 @@ def test_error_claro_si_notation_bpm_no_es_bpm_start(tmp_path):
     assert "t.json" in str(error.value)
     assert "ej-tempo" in str(error.value)
     assert "notation.bpm" in str(error.value)
+
+
+@pytest.mark.parametrize("exercise", all_exercises())
+def test_cada_ejercicio_tiene_descripcion_corta(exercise):
+    assert exercise.description.strip()
+    assert len(exercise.description) <= 500
+
+
+def _write_with_description(directory: Path, description) -> None:
+    _write_level(directory, "d.json", "ej-desc", 1, '{"bpm": 60}')
+    path = directory / "d.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    exercise = data["lessons"][0]["exercises"][0]
+    if description is None:
+        del exercise["description"]
+    else:
+        exercise["description"] = description
+    path.write_text(json.dumps(data), encoding="utf-8")
+
+
+@pytest.mark.parametrize("description", [None, "", "   "])
+def test_error_claro_si_falta_la_descripcion_o_esta_vacia(tmp_path, description):
+    _write_with_description(tmp_path, description)
+    with pytest.raises(CurriculumError) as error:
+        read_curriculum(tmp_path)
+    assert "d.json" in str(error.value)
+    assert "ej-desc" in str(error.value)
+    assert "description" in str(error.value)

@@ -45,8 +45,10 @@ def test_actualiza_contenido_sin_borrar_completions(session: Session, tmp_path: 
     session.add(ExerciseCompletion(exercise_id=exercise.id, bpm_achieved=70, instrument="electric"))
     session.commit()
     exercise_id, slug = exercise.id, exercise.slug
+    assert exercise.description == data["lessons"][0]["exercises"][0]["description"]
 
     data["lessons"][0]["exercises"][0]["title"] = "Título nuevo"
+    data["lessons"][0]["exercises"][0]["description"] = "Descripción nueva"
     data["lessons"][0]["title"] = "Lección renombrada"
     data["level"]["name"] = "Nivel renombrado"
     target.write_text(json.dumps(data), encoding="utf-8")
@@ -57,6 +59,7 @@ def test_actualiza_contenido_sin_borrar_completions(session: Session, tmp_path: 
     updated = session.scalar(select(Exercise).where(Exercise.slug == slug))
     assert updated.id == exercise_id
     assert updated.title == "Título nuevo"
+    assert updated.description == "Descripción nueva"
     assert updated.lesson.title == "Lección renombrada"
     assert updated.lesson.level.name == "Nivel renombrado"
     assert count(session, ExerciseCompletion) == 1

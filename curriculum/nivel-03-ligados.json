@@ -21,6 +21,7 @@
           "bpm_start": 50,
           "bpm_target": 90,
           "duration_min": 3,
+          "description": "Hammer-on en cada cuerda de la caja 1: picás la nota grave y martillás la aguda sin volver a picar. Dejá el dedo cerca del traste y golpeá con fuerza desde arriba, como un martillo, para que la nota ligada suene tan fuerte como la picada. Cuidá que no se escuche ruido extra de las otras cuerdas.",
           "notation": {
             "bpm": 50,
             "time_signature": "4/4",
@@ -149,6 +150,7 @@
           "bpm_start": 50,
           "bpm_target": 90,
           "duration_min": 3,
+          "description": "Pull-off en las cuerdas 5 a 1 de la caja 1, de ida y vuelta: picás la nota aguda y, al soltar, tirás la cuerda con el dedo hacia abajo para que suene la grave. El gesto es un pequeño pellizco hacia abajo, no un simple levantar el dedo. Que las dos notas suenen con el mismo volumen.",
           "notation": {
             "bpm": 50,
             "time_signature": "4/4",
@@ -277,6 +279,7 @@
           "bpm_start": 50,
           "bpm_target": 90,
           "duration_min": 4,
+          "description": "Nota, pull-off y hammer-on seguidos en la misma cuerda, sin picar de nuevo: así se arma un trino. Mantené el dedo fijo en la nota grave mientras el otro sube y baja. Arrancá lento y subí el metrónomo solo cuando las tres notas suenen parejas.",
           "notation": {
             "bpm": 50,
             "time_signature": "4/4",
@@ -469,6 +472,7 @@
           "bpm_start": 50,
           "bpm_target": 90,
           "duration_min": 4,
+          "description": "Slides ascendentes y descendentes entre las dos notas de las cuerdas 6 a 3 de la caja 1. Mantené la presión justa mientras el dedo se desliza: si apretás de más, frena; si apretás de menos, se corta. Llegá al traste de destino sin pasarte.",
           "notation": {
             "bpm": 50,
             "time_signature": "4/4",
@@ -605,6 +609,7 @@
           "bpm_start": 55,
           "bpm_target": 95,
           "duration_min": 4,
+          "description": "Un pull-off en la 4ta cuerda, hammer-ons en la 3ra, 2da y 1ra, y la vuelta con pull-offs. Lo difícil es cambiar de cuerda sin perder el pulso, así que fijate en que el cambio caiga justo en el tiempo. Picá solo la primera nota de cada cuerda y dejá que el ligado haga el resto.",
           "notation": {
             "bpm": 55,
             "time_signature": "4/4",
@@ -741,6 +746,7 @@
           "bpm_start": 70,
           "bpm_target": 110,
           "duration_min": 4,
+          "description": "Riff en La menor que combina hammer-on, pull-off y slide sobre una nota grave que sirve de ancla. Aprendelo en trozos de un compás y después unilos. Despacio, pensá en cada ligado como un adorno de la frase y no como un obstáculo.",
           "notation": {
             "bpm": 70,
             "time_signature": "4/4",
@@ -967,6 +973,7 @@
           "bpm_start": 60,
           "bpm_target": 90,
           "duration_min": 5,
+          "description": "Una frase modelo con ligados dentro de la caja 1 de La. Tocala y después inventá la tuya: elegí al menos un hammer-on, un pull-off y un slide, y cerrá en La. Que los ligados suenen naturales, como si hablaras, y dejá silencios para respirar.",
           "notation": {
             "bpm": 60,
             "time_signature": "4/4",

@@ -12,7 +12,14 @@ import sys
 from pathlib import Path
 from typing import Annotated, Any, Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    ValidationError,
+    model_validator,
+)
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -46,6 +53,9 @@ class ExerciseData(_Strict):
     bpm_start: Annotated[int, Field(gt=0)]
     bpm_target: Annotated[int, Field(gt=0)]
     duration_min: Annotated[int, Field(gt=0)]
+    description: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=500)
+    ]
     notation: Notation
 
     @model_validator(mode="after")
@@ -217,6 +227,7 @@ def _upsert_exercise(session: Session, lesson: Lesson, level: Level, data: Exerc
     exercise.bpm_start = data.bpm_start
     exercise.bpm_target = data.bpm_target
     exercise.duration_min = data.duration_min
+    exercise.description = data.description
     session.flush()
 
 

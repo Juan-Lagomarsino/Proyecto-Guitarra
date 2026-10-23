@@ -45,6 +45,7 @@ def datos(session):
                 bpm_target=100,
                 duration_min=5,
                 category="riff",
+                description=f"Descripción de {slug}",
             )
         )
     session.commit()
@@ -110,6 +111,10 @@ def test_leccion_incluye_contenido_y_ejercicios(client, datos):
     body = response.json()
     assert body["content_md"] == "# uno"
     assert [item["slug"] for item in body["exercises"]] == ["e1", "e2"]
+    assert [item["description"] for item in body["exercises"]] == [
+        "Descripción de e1",
+        "Descripción de e2",
+    ]
 
 
 def test_ejercicio_sin_completar_tiene_mejor_bpm_null_y_notacion(client, datos):
@@ -119,6 +124,16 @@ def test_ejercicio_sin_completar_tiene_mejor_bpm_null_y_notacion(client, datos):
     assert body["best_bpm"] is None
     assert body["notation"] == NOTATION
     assert body["bpm_target"] == 100
+    assert body["description"] == "Descripción de e1"
+
+
+def test_ejercicio_sin_descripcion_la_devuelve_null(client, datos, session):
+    session.query(Exercise).filter_by(slug="e2").update({"description": None})
+    session.commit()
+
+    response = client.get(f"/api/v1/exercises/{datos['exercises']['e2']}", headers=AUTH)
+
+    assert response.json()["description"] is None
 
 
 @pytest.mark.parametrize(

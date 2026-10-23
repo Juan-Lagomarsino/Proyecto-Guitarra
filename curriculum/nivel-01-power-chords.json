@@ -21,6 +21,7 @@
           "bpm_start": 60,
           "bpm_target": 100,
           "duration_min": 3,
+          "description": "Subí y bajá por los trastes 1 a 4 de la 6ta y la 5ta cuerda, un dedo por traste (1-2-3-4). Fijate que cada dedo caiga justo detrás de su traste y que los dedos que no tocan queden cerca de las cuerdas. Arrancá lento y relajado: si la mano se tensa, bajá el metrónomo.",
           "notation": {
             "bpm": 60,
             "time_signature": "4/4",
@@ -149,6 +150,7 @@
           "bpm_start": 60,
           "bpm_target": 90,
           "duration_min": 4,
+          "description": "Mi, Sol, La y Sol con la tónica en la 6ta cuerda: dedo 1 en la tónica (el Mi es al aire), dedo 3 dos trastes más arriba en la 5ta cuerda y dedo 4 (o el 3 en cejilla) en la 4ta, en el mismo traste. Las cuerdas que sobran apagalas con el costado de la mano que pisa, y deslizá la forma entera sin levantar la mano.",
           "notation": {
             "bpm": 60,
             "time_signature": "4/4",
@@ -247,6 +249,7 @@
           "bpm_start": 60,
           "bpm_target": 90,
           "duration_min": 4,
+          "description": "La, Do, Re y Do con la tónica en la 5ta cuerda: es la misma forma, una cuerda más abajo. En Do y Re apagá la 6ta apoyando apenas el dedo 1 sobre ella; en el La al aire apagala con el costado de la mano que pisa o con el pulgar. Tienen que sonar solo tres cuerdas, limpias y parejas.",
           "notation": {
             "bpm": 60,
             "time_signature": "4/4",
@@ -353,6 +356,7 @@
           "bpm_start": 70,
           "bpm_target": 110,
           "duration_min": 5,
+          "description": "La, Re y Mi con power chords: los tres acordes de casi cualquier rock. Mirá hacia dónde se mueve la forma antes de cambiar y anticipá el cambio con la mano izquierda, no con la derecha. Si te trabás, practicá solo el cambio más difícil en loop, sin rasguear.",
           "notation": {
             "bpm": 70,
             "time_signature": "4/4",
@@ -455,6 +459,7 @@
           "bpm_start": 70,
           "bpm_target": 110,
           "duration_min": 5,
+          "description": "Riff de díadas (6ta y 5ta cuerda tocadas juntas) que suben de Mi a Sol y a La, con un ritmo de negras y corcheas. Tocalo con púa alternada y mantené el pulso parejo en los saltos de traste. Primero lento con metrónomo; cuando salga limpio, subí de a 5 bpm.",
           "notation": {
             "bpm": 70,
             "time_signature": "4/4",
@@ -633,6 +638,7 @@
           "bpm_start": 70,
           "bpm_target": 120,
           "duration_min": 3,
+          "description": "Cuerda 6 al aire, todas muteadas con el borde de la palma, en púa alternada y corcheas parejas. Buscá un sonido corto y seco pero con tono: la palma justo al lado del puente. Si no suena nada, apretá menos con la palma.",
           "notation": {
             "bpm": 70,
             "time_signature": "4/4",
@@ -761,6 +767,7 @@
           "bpm_start": 70,
           "bpm_target": 110,
           "duration_min": 4,
+          "description": "Tres golpes muteados y uno abierto sobre la 5ta cuerda, repetido. El truco está en levantar la palma justo para el golpe abierto y volver a apoyarla enseguida. Cuidá que el volumen de los muteados sea siempre el mismo.",
           "notation": {
             "bpm": 70,
             "time_signature": "4/4",
@@ -889,6 +896,7 @@
           "bpm_start": 80,
           "bpm_target": 120,
           "duration_min": 5,
+          "description": "Pulso muteado en la 5ta cuerda al aire que se abre en díadas sin mutear (5ta y 4ta cuerda, trastes 5-7 y 7-9). Mantené la palma firme en el pulso y levantala solo en las díadas, para que el riff respire. Tocalo con el metrónomo bien al frente.",
           "notation": {
             "bpm": 80,
             "time_signature": "4/4",
@@ -1053,6 +1061,7 @@
           "bpm_start": 70,
           "bpm_target": 110,
           "duration_min": 5,
+          "description": "Mi, Sol, La y Mi con power chords y rasgueo de corcheas, acentuando el golpe del tiempo 1. Mantené la mano derecha en movimiento continuo, incluso cuando no toca cuerdas. Primero el rasgueo sobre un solo acorde, después sumá los cambios.",
           "notation": {
             "bpm": 70,
             "time_signature": "4/4",
@@ -1155,6 +1164,7 @@
           "bpm_start": 70,
           "bpm_target": 100,
           "duration_min": 5,
+          "description": "Una progresión en La con power chords de la 6ta y la 5ta cuerda, y tu turno de inventar el ritmo. Elegí un patrón de rasgueo y repetilo cuatro compases antes de cambiarlo; si todo se desordena, volvé al más simple. Escuchá cuándo el acorde se cierra y dejalo sonar.",
           "notation": {
             "bpm": 70,
             "time_signature": "4/4",
@@ -1253,6 +1263,7 @@
           "bpm_start": 70,
           "bpm_target": 100,
           "duration_min": 5,
+          "description": "Dos compases de pregunta y dos de respuesta sobre Mi, Sol y La. Armá una idea rítmica corta, y en la respuesta repetila cambiando un solo detalle (el acento, un silencio). Dejá espacios: la pregunta tiene que quedar abierta, la respuesta cierra en Mi.",
           "notation": {
             "bpm": 70,
             "time_signature": "4/4",

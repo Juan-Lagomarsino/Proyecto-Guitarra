@@ -97,6 +97,7 @@ class Exercise(Base):
     bpm_target: Mapped[int | None] = mapped_column(Integer)
     duration_min: Mapped[int] = mapped_column(Integer)
     category: Mapped[str] = mapped_column(String(60))
+    description: Mapped[str | None] = mapped_column(Text)
 
     lesson: Mapped[Lesson] = relationship(back_populates="exercises")
 

@@ -27,6 +27,7 @@ class SessionExercise:
     minutes: int
     duration_min: int
     bpm_target: int | None
+    description: str | None
     completed_today: bool
 
 
@@ -122,6 +123,7 @@ class SessionService:
                     minutes=item["minutes"],
                     duration_min=exercise.duration_min,
                     bpm_target=exercise.bpm_target,
+                    description=exercise.description,
                     completed_today=exercise.id in done,
                 )
             )

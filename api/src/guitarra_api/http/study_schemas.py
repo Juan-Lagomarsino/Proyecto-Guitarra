@@ -38,6 +38,7 @@ class ExerciseOut(BaseModel):
     bpm_start: int | None
     bpm_target: int | None
     duration_min: int
+    description: str | None
     notation: dict[str, Any]
 
 
