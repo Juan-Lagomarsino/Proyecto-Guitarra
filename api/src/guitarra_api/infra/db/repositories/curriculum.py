@@ -1,7 +1,7 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from ..models import Exercise, ExerciseCompletion
+from ..models import Exercise, ExerciseCompletion, Lesson, Level
 
 
 class CurriculumRepository:
@@ -32,3 +32,25 @@ class CurriculumRepository:
             .order_by(ExerciseCompletion.completed_at)
         )
         return list(self._session.scalars(query))
+
+    def list_levels(self) -> list[Level]:
+        return list(self._session.scalars(select(Level).order_by(Level.position)))
+
+    def get_level(self, level_id: int) -> Level | None:
+        return self._session.get(Level, level_id)
+
+    def list_lessons(self, level_id: int) -> list[Lesson]:
+        query = select(Lesson).where(Lesson.level_id == level_id).order_by(Lesson.position)
+        return list(self._session.scalars(query))
+
+    def get_lesson(self, lesson_id: int) -> Lesson | None:
+        return self._session.get(Lesson, lesson_id)
+
+    def get_exercise(self, exercise_id: int) -> Exercise | None:
+        return self._session.get(Exercise, exercise_id)
+
+    def best_bpm(self, exercise_id: int) -> int | None:
+        query = select(func.max(ExerciseCompletion.bpm_achieved)).where(
+            ExerciseCompletion.exercise_id == exercise_id
+        )
+        return self._session.scalar(query)
