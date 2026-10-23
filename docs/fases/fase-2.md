@@ -7,7 +7,7 @@ Referencia: `docs/PLAN.md` § Explorar, § Pipeline de análisis de canciones, �
 
 1. Pegar un link de YouTube o de Spotify crea la canción y el worker del escritorio la procesa.
 2. Resultado: BPM, tonalidad, secciones con tiempos, acordes por sección con diagramas, rasgueo propuesto; clásica y eléctrica.
-3. Cruce con Cifra Club cuando existe; si falla, el pipeline termina igual.
+3. Cruce con Cifra Club cuando el usuario cargó la cifra; sin cifra, o si no se puede parsear, el pipeline termina igual. (Ajustado por ADR 0012: Cifra Club bloquea el acceso automático.)
 4. Probado con 5 canciones del usuario ("Flaca", "De música ligera", "Boys Don't Cry", "Cerca del fuego", "No voy en tren"); los acordes coinciden con Cifra Club en la mayoría de las secciones.
 5. Edición de acordes y rasgueo en la UI; la versión del usuario gana.
 6. Una canción puede partirse en ejercicios que suman al progreso.
@@ -46,18 +46,19 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F2-T07 | 2 | Paso de tempo y compases | T01, T05 | hecha |
 | F2-T08 | 2 | Paso de tonalidad y acordes | T01, T05 | hecha (prueba real de BTC en T19) |
 | F2-T09 | 2 | Paso de estructura (secciones con tiempos y nombres) | T01, T05 | hecha |
-| F2-T10 | 2 | Adaptador de Cifra Club y alineación con lo detectado | T05 | hecha (acceso al sitio: ver nota) |
+| F2-T10 | 2 | Adaptador de Cifra Club y alineación con lo detectado | T05 | hecha (acceso al sitio: ver ADR 0012) |
 | F2-T11 | 2 | Diccionario de acordes y adaptación al instrumento (clásica / eléctrica) | T02 | hecha |
 | F2-T12 | 3 | Rasgueo y arpegio: catálogo, reglas y elección con Ollama | T05, T07 | hecha |
-| F2-T13 | 3 | Armado del `SongChart` y pipeline de punta a punta | T06–T12 | pendiente |
+| F2-T13 | 4 | Armado del `SongChart`, pipeline de punta a punta y Cifra Club desde texto cargado | T06–T12 | en curso |
 | F2-T14 | 1 | UI: diagrama de acorde vertical con cejilla | T02 | hecha |
 | F2-T15 | 2 | UI: Explorar (pegar link, biblioteca con estado del análisis) | T03 | hecha |
 | F2-T16 | 3 | UI: vista de canción (secciones, acordes, rasgueo, clásica/eléctrica, confianza) | T03, T14 | hecha |
 | F2-T17 | 4 | Correcciones: editar acordes y rasgueo, versión de usuario, historial | T16 | pendiente |
 | F2-T18 | 4 | Canción → ejercicios que suman al progreso | T03, T16 | pendiente |
+| F2-T20 | 4 | Carga manual de la cifra: API, migración y UI en la vista de canción | T03, T16 | en curso |
 | F2-T19 | 5 | Validación con las 5 canciones, ajuste fino, E2E y README | todas | pendiente |
 
-> **Nota F2-T10 (2026-10-23):** Cifra Club responde 403 (Akamai, "Access Denied") a todo pedido automático, aun con User-Agent de navegador. El parser, la alineación y el "sin datos" están hechos y probados con HTML grabado; falta decidir con Juan Pedro de dónde sale el HTML (carga manual del link/texto, Internet Archive, o ambas). Bloquea el criterio 3 tal como está escrito; se resuelve con ADR antes de T13.
+> **Nota F2-T10 (2026-10-23):** Cifra Club responde 403 (Akamai, "Access Denied") a todo pedido automático, aun con User-Agent de navegador. El parser, la alineación y el "sin datos" están hechos y probados con HTML grabado; Juan Pedro eligió la carga manual (ADR 0012): T13 parsea el texto que llega en el trabajo y T20 hace la carga en la API y la UI.
 
 ### F2-T01 — Spike de herramientas de análisis
 
@@ -130,6 +131,11 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 - **Archivos:** `steps/assemble.py`, registro de todos los pasos en el orden del plan.
 - **Criterio:** dado lo de los pasos anteriores, arma un `SongChart` por instrumento (clásica y eléctrica) que valida con el esquema; prioriza nombres de Cifra Club con tiempos detectados cuando la alineación es buena; corrida de punta a punta con una canción real en local (no en la CI), con el resultado visible en `GET /songs/{id}/chart`.
 
+### F2-T20 — Carga manual de la cifra (ADR 0012)
+
+- **Archivos:** migración `0004` (`songs.cifra_text` Text, `songs.cifra_url` Text, ambos opcionales), `PUT /songs/{id}/cifra` (`{text, url?}`, guarda y encola reanálisis si no hay uno activo) y `DELETE /songs/{id}/cifra`, `cifra_text` en el trabajo reclamado (`ClaimedJobOut`), `has_cifra` y `cifra_url` en el detalle; UI en `ui/src/features/song/`: "Cargar cifra de Cifra Club" con textarea y link opcional.
+- **Criterio:** tests de API (guarda, valida largo máximo, encola reanálisis, el claim lleva el texto, borrar la cifra); UI con la API mockeada; 375 px.
+
 ### F2-T14 — UI: diagrama de acorde
 
 - **Archivos:** `ui/src/components/ChordDiagram/`.
@@ -172,7 +178,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 2. Ola 1 en paralelo: T03, T04, T05, T14.
 3. Ola 2 en paralelo: T06, T07, T08, T09, T10, T11, T15.
 4. Ola 3 en paralelo: T12, T13 (cuando entren sus pasos), T16.
-5. Ola 4 en paralelo: T17, T18.
+5. Ola 4 en paralelo: T13, T20, T17, T18 (T13 se demoró hasta la decisión de Cifra Club).
 6. Ola 5: T19 y cierre de fase.
 
 ## Resumen de cierre
