@@ -18,10 +18,3 @@ export const TodayPage = () => (
     description="Acá va a ir la sesión armada para hoy."
   />
 )
-
-export const ProgressPage = () => (
-  <PlaceholderPage
-    title="Progreso"
-    description="Acá van a ir la racha y tu avance."
-  />
-)

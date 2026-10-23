@@ -1,0 +1,137 @@
+/* Vista de Progreso. Solo tokens; la escala del heatmap sale de color-mix. */
+.progress-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.progress-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.progress-stat-value {
+  font-size: 1.6rem;
+  color: var(--accent);
+}
+
+.progress-stat-label,
+.heatmap-weekdays,
+.heatmap-month {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.progress-subtitle {
+  margin: 20px 0 8px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+.heatmap-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.heatmap {
+  display: flex;
+  gap: 3px;
+  width: max-content;
+}
+
+.heatmap-week,
+.heatmap-weekdays {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.heatmap-weekdays span,
+.heatmap-month {
+  height: 12px;
+  line-height: 12px;
+  white-space: nowrap;
+}
+
+.heatmap-weekdays {
+  margin-right: 4px;
+}
+
+.heat-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.heat-empty {
+  background: transparent;
+}
+
+.heat-0 {
+  background: var(--surface-2);
+}
+
+.heat-1 {
+  background: color-mix(in srgb, var(--accent) 25%, var(--surface-2));
+}
+
+.heat-2 {
+  background: color-mix(in srgb, var(--accent) 50%, var(--surface-2));
+}
+
+.heat-3 {
+  background: color-mix(in srgb, var(--accent) 75%, var(--surface-2));
+}
+
+.heat-4 {
+  background: var(--accent);
+}
+
+.progress-levels {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.progress-level-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  appearance: none;
+  border: 0;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.progress-bar::-webkit-progress-bar {
+  background: var(--surface-2);
+}
+
+.progress-bar::-webkit-progress-value {
+  background: var(--accent);
+}
+
+.progress-bar::-moz-progress-bar {
+  background: var(--accent);
+}
