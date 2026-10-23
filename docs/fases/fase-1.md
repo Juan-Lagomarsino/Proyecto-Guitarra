@@ -40,9 +40,9 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 | F1-T07 | 1 | UI: shell, rutas, tokens de tema y cliente de API | T01 | hecha |
 | F1-T08 | 2 | Currículum nivel 1 + cargador idempotente | T03, T04 | hecha |
 | F1-T09 | 3 | Currículum niveles 2 y 3 | T08 | hecha |
-| F1-T10 | 2 | API de Estudio y "Terminé" | T03, T04 | pendiente |
+| F1-T10 | 2 | API de Estudio y "Terminé" | T03, T04 | hecha |
 | F1-T11 | 3 | API de progreso, sesión del día y reglas | T05, T06, T10 | pendiente |
-| F1-T12 | 2 | API de ajustes (tema) | T04 | pendiente |
+| F1-T12 | 2 | API de ajustes (tema) | T04 | hecha |
 | F1-T13 | 2 | UI: componente Mástil | T03, T07 | hecha |
 | F1-T14 | 2 | UI: componente Tablatura | T03, T07 | hecha |
 | F1-T15 | 2 | UI: motor de reproducción y metrónomo | T03, T07 | hecha |
