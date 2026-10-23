@@ -41,7 +41,7 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 | F1-T08 | 2 | Currículum nivel 1 + cargador idempotente | T03, T04 | hecha |
 | F1-T09 | 3 | Currículum niveles 2 y 3 | T08 | hecha |
 | F1-T10 | 2 | API de Estudio y "Terminé" | T03, T04 | hecha |
-| F1-T11 | 3 | API de progreso, sesión del día y reglas | T05, T06, T10 | pendiente |
+| F1-T11 | 3 | API de progreso, sesión del día y reglas | T05, T06, T10 | hecha |
 | F1-T12 | 2 | API de ajustes (tema) | T04 | hecha |
 | F1-T13 | 2 | UI: componente Mástil | T03, T07 | hecha |
 | F1-T14 | 2 | UI: componente Tablatura | T03, T07 | hecha |
@@ -49,7 +49,7 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 | F1-T16 | 4 | UI: tarjeta de ejercicio y vistas de Estudio | T10, T13, T14, T15 | pendiente |
 | F1-T17 | 4 | UI: vista de Progreso | T07, T11 | pendiente |
 | F1-T18 | 5 | UI: vista de Sesión del día | T11, T16 | pendiente |
-| F1-T19 | 4 | UI: ajustes de tema con vista previa | T12, T13 | pendiente |
+| F1-T19 | 4 | UI: ajustes de tema con vista previa | T12, T13 | hecha |
 | F1-T20 | 6 | Pruebas E2E con Playwright y README | todas | pendiente |
 
 ### F1-T01 — Esqueleto del repo, tooling y CI
