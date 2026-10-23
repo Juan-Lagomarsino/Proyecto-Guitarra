@@ -50,7 +50,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F2-T11 | 2 | Diccionario de acordes y adaptación al instrumento (clásica / eléctrica) | T02 | pendiente |
 | F2-T12 | 3 | Rasgueo y arpegio: catálogo, reglas y elección con Ollama | T05, T07 | pendiente |
 | F2-T13 | 3 | Armado del `SongChart` y pipeline de punta a punta | T06–T12 | pendiente |
-| F2-T14 | 1 | UI: diagrama de acorde vertical con cejilla | T02 | pendiente |
+| F2-T14 | 1 | UI: diagrama de acorde vertical con cejilla | T02 | hecha |
 | F2-T15 | 2 | UI: Explorar (pegar link, biblioteca con estado del análisis) | T03 | pendiente |
 | F2-T16 | 3 | UI: vista de canción (secciones, acordes, rasgueo, clásica/eléctrica, confianza) | T03, T14 | pendiente |
 | F2-T17 | 4 | Correcciones: editar acordes y rasgueo, versión de usuario, historial | T16 | pendiente |

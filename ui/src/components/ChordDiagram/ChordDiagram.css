@@ -1,0 +1,62 @@
+/* Diagrama de acorde vertical. Solo tokens del tema, misma familia de trazos que el mástil. */
+.chord-diagram {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.chord-diagram__name {
+  fill: var(--text);
+  font-family: var(--font-display);
+  font-size: 18px;
+}
+
+.chord-diagram__marker,
+.chord-diagram__start {
+  fill: var(--muted);
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
+
+.chord-diagram__marker--tonic {
+  fill: var(--note-tonic);
+}
+
+.chord-diagram__fret {
+  stroke: var(--fret);
+  stroke-width: 2;
+}
+
+.chord-diagram__nut {
+  stroke: var(--text);
+  stroke-width: 5;
+}
+
+.chord-diagram__string {
+  stroke: var(--string);
+  stroke-width: 1.2;
+  opacity: 0.7;
+}
+
+.chord-diagram__barre,
+.chord-diagram__dot--other {
+  fill: var(--note-other);
+}
+
+.chord-diagram__dot--tonic {
+  fill: var(--note-tonic);
+}
+
+.chord-diagram__finger {
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.chord-diagram__finger--other {
+  fill: var(--text);
+}
+
+.chord-diagram__finger--tonic {
+  fill: var(--accent-ink);
+}

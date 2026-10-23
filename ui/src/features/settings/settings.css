@@ -148,3 +148,10 @@
   margin: 12px 0 0;
   color: var(--good);
 }
+
+.theme-preview-chords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}

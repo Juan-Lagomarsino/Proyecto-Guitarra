@@ -1,5 +1,7 @@
 import type { CSSProperties } from 'react'
+import { ChordDiagram } from '../../components/ChordDiagram/ChordDiagram'
 import { Fretboard } from '../../components/Fretboard/Fretboard'
+import type { ChordDiagramProps } from '../../components/ChordDiagram/ChordDiagram'
 import type { Notation } from '../../notation/types'
 
 /** La menor pentatónica, posición 1, con La como tónica. */
@@ -22,6 +24,27 @@ const SAMPLE: Notation = {
   ],
 }
 
+const CHORDS: { chord: ChordDiagramProps['chord']; tonic: string }[] = [
+  { chord: { name: 'C', shape: ['x', 3, 2, 0, 1, 0] }, tonic: 'C' },
+  { chord: { name: 'Am', shape: ['x', 0, 2, 2, 1, 0] }, tonic: 'A' },
+  {
+    chord: {
+      name: 'F',
+      shape: [1, 3, 3, 2, 1, 1],
+      barre: { fret: 1, from_string: 6, to_string: 1 },
+    },
+    tonic: 'F',
+  },
+  {
+    chord: {
+      name: 'Bm',
+      shape: [7, 9, 9, 7, 7, 7],
+      barre: { fret: 7, from_string: 6, to_string: 1 },
+    },
+    tonic: 'B',
+  },
+]
+
 interface ThemePreviewProps {
   theme: Record<string, string>
 }
@@ -39,6 +62,16 @@ export function ThemePreview({ theme }: ThemePreviewProps) {
         Así se ven el texto, el <em>acento</em> y el mástil.
       </p>
       <Fretboard notation={SAMPLE} activeIndex={3} />
+      <div className="theme-preview-chords">
+        {CHORDS.map(({ chord, tonic }) => (
+          <ChordDiagram
+            key={chord.name}
+            chord={chord}
+            tonic={tonic}
+            size={96}
+          />
+        ))}
+      </div>
     </section>
   )
 }
