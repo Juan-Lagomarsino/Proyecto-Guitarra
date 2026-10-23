@@ -15,6 +15,15 @@
   font-size: 13px;
 }
 
+.song-cifra-unused {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  border: 1px dashed var(--warn);
+  border-radius: 8px;
+  color: var(--warn);
+  font-size: 13px;
+}
+
 .song-facts {
   display: flex;
   flex-wrap: wrap;

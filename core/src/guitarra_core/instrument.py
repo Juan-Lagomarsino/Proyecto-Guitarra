@@ -17,8 +17,8 @@ from guitarra_core.theory import (
 Instrument = Literal["classical", "electric"]
 INSTRUMENTS = ("classical", "electric")
 
-DEFAULT_MAX_CAPO = 7
-CAPO_FRET_PENALTY = 0.25  # a igual dificultad, mejor el capo más bajo
+DEFAULT_MAX_CAPO = 5  # más arriba la guitarra suena apretada y casi nadie lo usa
+CAPO_FRET_PENALTY = 0.1  # por traste y por acorde: el capo tiene que valer la pena
 JUMP_PENALTY_PER_FRET = 0.5  # costo de mover la mano entre acordes consecutivos
 NO_CHORD = "N"
 
@@ -38,13 +38,33 @@ class Voicing:
 
 
 def best_capo(progression: Sequence[str], max_capo: int = DEFAULT_MAX_CAPO) -> CapoSuggestion:
-    """Capo que minimiza la dificultad total de la progresión en guitarra clásica."""
-    best: CapoSuggestion | None = None
-    for capo in range(max_capo + 1):
+    """Capo que minimiza la dificultad media por acorde en guitarra clásica.
+
+    Es 0 si empata o si las formas abiertas ya no piden cejilla: el capo se propone solo si
+    mejora de verdad lo que cuesta tocar sin él. Se compara el costo medio (no el total) para que
+    el castigo por traste pese igual en una progresión corta que en una canción entera.
+    """
+    best = CapoSuggestion(0, capo_forms(progression, 0), capo_cost(progression, 0))
+    if not _needs_barre(progression):
+        return best
+    for capo in range(1, max_capo + 1):
         cost = capo_cost(progression, capo)
-        if best is None or cost < best.cost:
+        if _per_chord(cost, progression) < _per_chord(best.cost, progression):
             best = CapoSuggestion(capo, capo_forms(progression, capo), cost)
-    return best or CapoSuggestion(0, capo_forms(progression, 0), 0.0)
+    return best
+
+
+def _per_chord(cost: float, progression: Sequence[str]) -> float:
+    return cost / max(len(progression), 1)
+
+
+def _needs_barre(progression: Sequence[str]) -> bool:
+    """Alguna de las formas más fáciles de la progresión (sin capo) lleva cejilla."""
+    for name in set(progression):
+        shapes = shapes_for(name)
+        if shapes and min(shapes, key=lambda s: s.difficulty).barre:
+            return True
+    return False
 
 
 def capo_forms(progression: Sequence[str], capo: int) -> list[str]:
@@ -53,7 +73,7 @@ def capo_forms(progression: Sequence[str], capo: int) -> list[str]:
 
 def capo_cost(progression: Sequence[str], capo: int) -> float:
     """Dificultad total de tocar la progresión con ese capo (la forma más fácil de cada acorde)."""
-    total = CAPO_FRET_PENALTY * capo
+    total = CAPO_FRET_PENALTY * capo * len(progression)
     for form in capo_forms(progression, capo):
         shapes = shapes_for(form)
         if shapes:

@@ -123,6 +123,28 @@ function Legend() {
   )
 }
 
+const CIFRA_UNUSED =
+  'La cifra cargada no coincidió con lo que se escucha; se usaron los acordes detectados.'
+
+/** La cifra está cargada y el análisis terminó, pero ninguna sección tomó sus acordes. */
+function CifraUnusedNotice({
+  song,
+  content,
+}: {
+  song: SongDetail
+  content: SongChartContent | null
+}) {
+  if (!song.has_cifra || song.analysis_status !== 'ready' || !content) {
+    return null
+  }
+  if (content.sections.some((s) => s.chord_source === 'cifraclub')) return null
+  return (
+    <p className="song-cifra-unused" role="status">
+      {CIFRA_UNUSED}
+    </p>
+  )
+}
+
 function StaleSections({ sections }: { sections: SongSectionInfo[] }) {
   if (sections.length === 0) return null
   return (
@@ -210,6 +232,7 @@ function SongBody({
   return (
     <>
       <Header song={song} content={content} />
+      <CifraUnusedNotice song={song} content={content} />
       <InstrumentSelector value={instrument} onChange={setInstrument} />
       <AsyncView state={chart}>
         {(data) =>

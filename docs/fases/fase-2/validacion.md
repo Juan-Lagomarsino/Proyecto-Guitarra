@@ -65,7 +65,7 @@ Casos especiales:
 - Similitud de la alineación con la cifra (modo b): Flaca 0.741, De música ligera 0.905, Boys Don't Cry 0.795,
   No voy en tren 0.091 (la cifra no se usa, queda `detected`). En las tres primeras todas las secciones, salvo la
   última de De música ligera, quedan con `chord_source: cifraclub`, y el capo clásico pasa a ser el de la cifra (0).
-- Sin cifra, el capo clásico lo propone `guitarra_core` (`best_capo`): 7 en Flaca, De música ligera y Boys Don't Cry; 5 en las otras dos.
+- Sin cifra, el capo clásico lo propone `guitarra_core` (`best_capo`): 7 en Flaca, De música ligera y Boys Don't Cry; 5 en las otras dos (primera pasada; corregido en F2-T21, ver más abajo).
 
 ### Qué falla y por qué
 
@@ -92,20 +92,55 @@ Casos especiales:
 
 ## Ajustes
 
-Ninguno. `GOOD_ALIGNMENT = 0.6` se mantiene: las cifras buenas dan 0.74 a 0.91 y la lista plana 0.09, hay margen
-a los dos lados. No hizo falta tocar el snap a beats ni los umbrales de confianza. La limitación de la alineación
-global quedó anotada en el ADR 0012.
+Primera pasada (F2-T19): ninguno. `GOOD_ALIGNMENT = 0.6` se mantiene: las cifras buenas dan 0.74 a 0.91 y la lista plana 0.09.
 
-## Limitación encontrada: cifras que escriben cada sección una sola vez
+Segunda pasada (F2-T21), a partir de lo que mostró la primera:
 
-La alineación de `domain/alignment.py` es global: la secuencia entera de la cifra contra toda la detectada. Las 4 cifras
-de las fixtures JSON son la canción completa con repeticiones, y alinean. Pero el texto corto
-`fixtures/cifraclub/text/flaca.txt` (19 acordes, cada sección una vez) da similitud 0.13 contra los 141 acordes
-detectados: el análisis termina bien pero con `chord_source: detected`, sin avisar al usuario que la cifra no se usó
-(probado en la corrida por la API, abajo). Pendiente de decidir: alinear el ciclo de cada sección de la cifra contra las
-secciones detectadas, o avisar en la UI.
+1. **Cifra por sección.** La alineación global descartaba, sin avisar, una cifra que escribe cada sección una sola vez
+   (`text/flaca.txt`, similitud 0.13). Ahora, si la global no alcanza, `domain/section_alignment.py` compara el ciclo mínimo
+   de cada sección de la cifra (repetido, con la mejor rotación) contra los acordes de cada sección detectada, con una sola
+   transposición para toda la canción (0, la del capo, las demás). Se toman los nombres solo en las secciones con similitud
+   >= `GOOD_SECTION_MATCH` (0.6); el resto queda detectado. Lo global no cambia: las cifras completas dan los mismos resultados.
+2. **Aviso en la UI.** Con cifra cargada, análisis listo y ninguna sección `cifraclub`, la vista de canción muestra que la
+   cifra no coincidió y se usaron los acordes detectados.
+3. **Capo sugerido.** Causa (por qué salía 7): el costo se sumaba por acorde detectado y el castigo por traste era fijo (0.25),
+   así que en una canción entera (100 a 200 acordes) el castigo no pesaba nada y cualquier ruido (un `B` mayor suelto en
+   Flaca, que pide cejilla) inclinaba la balanza. Capo 7 ganaba por 11 puntos de 309 (3.7 %). Ahora se compara el costo medio por
+   acorde con 0.1 por traste, el máximo por defecto baja de 7 a 5, con empate gana 0 y si las formas más fáciles de la progresión
+   no llevan cejilla no se propone capo.
+4. **Parser.** `A/` (barra sin bajo) se toma como `A`, en texto y en HTML. Se corrigió la fixture de No voy en tren.
 
-Detalle menor: el parser deja fuera `A/` (barra sin bajo) de la lista de No voy en tren.
+## Re-validación (F2-T21)
+
+Mismo audio y mismos modelos que arriba. Las columnas de coincidencia no cambiaron (los acordes detectados son los mismos):
+
+| Canción | a: % secciones | a: % ref | b: % secciones | b: % ref | capo clásica a (antes) | capo clásica b | b: secciones con cifra |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Flaca | 100 % (6/6) | 100 % (5/5) | 100 % (6/6) | 100 % (5/5) | 0 (7) | 0 | 6/6 |
+| De música ligera | 90 % (9/10) | 100 % (10/10) | 90 % (9/10) | 100 % (10/10) | 0 (7) | 0 | 9/10 |
+| Boys Don't Cry | 100 % (11/11) | 100 % (12/12) | 100 % (11/11) | 100 % (12/12) | 2 (7) | 0 | 11/11 |
+| Cerca del fuego | n/a | n/a | n/a | n/a | 5 (5) | n/a | n/a |
+| No voy en tren | 60 % (6/10) | 100 % (vocab.) | 60 % (6/10) | 100 % (vocab.) | 0 (5) | 0 | 1/10 (antes 0/10) |
+
+- **Cifra corta de Flaca** (`text/flaca.txt`, 19 acordes, cada sección una vez): antes 0 secciones con cifra (similitud global 0.135);
+  ahora **5 de 6** secciones con `chord_source: "cifraclub"` y los nombres de la cifra. La sexta (detectada como otra cosa) queda
+  detectada. Coincidencia contra la referencia: 100 % (6/6) en el chart y 100 % de la referencia. Capo clásica 2: el del texto
+  de esa cifra (el fixture dice "2ª casa"; es un texto armado a mano, no la página real).
+- Boys Don't Cry sin cifra sigue pidiendo capo 2 (Am Bm G C en vez de Bm C#m A D: baja de dos cejillas a una); ya no el 7.
+  La cifra real dice capo 0, y con ella se usa 0.
+- No voy en tren (modo b): la lista plana de 12 acordes ahora toma una sección por el camino por sección. No cambia el
+  porcentaje. La sección de la cifra sin encabezado tiene nombre vacío (antes "(sin título)") y el armado usa el nombre
+  detectado ("Parte B", etc.).
+- Los tiempos de la tabla anterior no se re-midieron (se reusó la caché de pasos de audio; las columnas de arriba son del
+  pipeline completo en la primera pasada). Pasos nuevos (`cifraclub`, `strum`, `assemble`): menos de 1 s por canción.
+
+Reproducir la cifra corta: `validar_canciones.py --only flaca --cifra-file tests/fixtures/cifraclub/text/flaca.txt`.
+
+## Limitación que quedó resuelta: cifras que escriben cada sección una sola vez
+
+(Texto original, antes de T21.) La alineación de `domain/alignment.py` era global. El texto corto `flaca.txt` daba similitud 0.13 y
+terminaba con `chord_source: detected` sin avisar. Ahora se alinea por sección y la UI avisa si nada coincide. El caso de
+la corrida por la API (más abajo) es el de antes del ajuste.
 
 ## Corrida de punta a punta por la API
 
@@ -149,4 +184,4 @@ como estaban). Quedan en disco, fuera del repo, el audio y la caché de pasos en
 - Criterio "la mayoría de las secciones coincide en las 5 canciones": se cumple en las 4 con referencia; la quinta
   (Cerca del fuego) se valida solo por BPM, tiempo y de oído.
 - Velocidad: 5 a 12 s por canción de 3 a 5 minutos.
-- A mejorar: alineación para cifras de secciones únicas; calidad mayor/menor en No voy en tren.
+- A mejorar: calidad mayor/menor en No voy en tren. (La alineación para cifras de secciones únicas se resolvió en F2-T21.)

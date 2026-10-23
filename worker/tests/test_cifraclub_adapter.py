@@ -108,6 +108,12 @@ def test_acordes_con_sufijos_se_reconocen(chord):
     assert chart.sections[0].chords == [chord, "Am"]
 
 
+def test_barra_sin_bajo_se_toma_como_el_acorde_solo():
+    chart = parse_cifraclub_text("[Verso]\nA/  D/  G/B  Em/\n")
+    assert chart is not None
+    assert chart.sections[0].chords == ["A", "D", "G/B", "Em"]
+
+
 def test_capo_en_distintos_formatos():
     assert parse_cifraclub_text("Capo: 4\n[A]\nAm F\n").capo == 4
     assert parse_cifraclub_text("capotraste na 7ª casa\n[A]\nAm F\n").capo == 7
@@ -122,7 +128,10 @@ def test_html_pegado_usa_el_parser_html():
 
 
 def render_as_text(fixture: dict) -> str:
-    blocks = [f"[{s['name']}]\n" + "  ".join(s["chords"]) for s in fixture["sections"]]
+    blocks = [
+        (f"[{s['name']}]\n" if s["name"] else "") + "  ".join(s["chords"])
+        for s in fixture["sections"]
+    ]
     return f"Tom: {fixture['tonalidad']}\n\n" + "\n\n".join(blocks)
 
 

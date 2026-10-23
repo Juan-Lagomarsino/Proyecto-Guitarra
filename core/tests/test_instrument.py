@@ -16,11 +16,11 @@ def max_jump(voicings):
 
 
 class TestBestCapo:
-    def test_bm_g_d_a_gets_easier_with_capo(self):
-        result = best_capo(["Bm", "G", "D", "A"])
-        assert result.capo > 0
+    def test_f_sharp_m_d_a_e_gets_easier_with_capo(self):
+        progression = ["F#m", "D", "A", "E"]
+        result = best_capo(progression)
+        assert result.capo == 2
         assert barre_count(result.forms) == 0
-        progression = ["Bm", "G", "D", "A"]
         assert capo_cost(progression, result.capo) < capo_cost(progression, 0)
 
     def test_capo_transposes_every_chord_down(self):
@@ -40,6 +40,32 @@ class TestBestCapo:
         result = best_capo(["G", "D", "Em", "C"])
         assert result.capo == 0
         assert result.forms == ["G", "D", "Em", "C"]
+
+    @pytest.mark.parametrize(
+        "progression",
+        [
+            ["G", "D", "Em", "C"],  # Flaca
+            ["D", "A", "Bm", "G"],  # De música ligera: una sola cejilla, no vale subir 7 trastes
+            ["Bm", "G", "D", "A"],
+        ],
+    )
+    def test_songs_with_open_chords_stay_without_capo(self, progression):
+        assert best_capo(progression).capo == 0
+
+    def test_boys_dont_cry_does_not_get_a_high_capo(self):
+        # Dos cejillas (Bm, C#m): un capo bajo las reduce, pero nunca el 7 que salía antes.
+        assert best_capo(["Bm", "Dbm", "A", "D"]).capo <= 2
+
+    def test_noisy_detected_progression_does_not_suggest_high_capo(self):
+        # Flaca detectada: G, D, C, Em dominan y B (cejilla) aparece suelto.
+        progression = ["G"] * 49 + ["D"] * 29 + ["C"] * 16 + ["B"] * 14 + ["Em"] * 13 + ["B7"] * 9
+        assert best_capo(progression).capo == 0
+
+    def test_open_forms_never_get_a_capo(self):
+        assert best_capo(["Am", "E", "G", "C", "D"]).capo == 0
+
+    def test_tie_prefers_capo_zero(self):
+        assert best_capo(["E", "A"]).capo == 0
 
     def test_respects_max_capo(self):
         assert best_capo(["Bm", "G", "D", "A"], max_capo=0).capo == 0

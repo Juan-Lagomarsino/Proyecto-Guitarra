@@ -52,7 +52,7 @@ def _seconds(value: float) -> float:
 
 class AssembleStep:
     name = "assemble"
-    version = "1"
+    version = "2"
 
     def __init__(self, step_versions: dict[str, str] | None = None) -> None:
         self._versions = step_versions or {}
@@ -66,13 +66,13 @@ class AssembleStep:
             )
         ctx.progress("Armando el chart")
         detected = merge_detected((outputs.get("chords") or {}).get("chords", []))
-        match = match_with_cifra(outputs.get("cifraclub"), detected)
         try:
             drafts = section_drafts(
                 (outputs.get("structure") or {}).get("sections", []), _song_end(outputs, detected)
             )
         except ValueError as error:
             raise PermanentStepError(str(error)) from error
+        match = match_with_cifra(outputs.get("cifraclub"), detected, drafts)
         plans = plan_sections(drafts, detected, match)
         ids = [section_id(plan.name, index) for index, plan in enumerate(plans)]
         return {

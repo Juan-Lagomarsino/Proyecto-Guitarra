@@ -100,7 +100,8 @@ def render_cifra(fixture: dict[str, Any]) -> str | None:
     if fixture.get("capo"):
         lines.append(f"Capotraste na {fixture['capo']}ª casa")
     for section in sections:
-        lines += ["", f"[{section['name']}]", "  ".join(section["chords"])]
+        header = f"[{section['name']}]" if section["name"] else None
+        lines += ["", *([header] if header else []), "  ".join(section["chords"])]
     return "\n".join(lines) + "\n"
 
 
@@ -222,9 +223,11 @@ def read_outputs(cache_dir: Path, song: Song) -> dict[str, Any]:
     }
 
 
-def validate_song(song: Song, steps: list[Any], cache_dir: Path) -> dict[str, Any]:
+def validate_song(
+    song: Song, steps: list[Any], cache_dir: Path, cifra_file: Path | None = None
+) -> dict[str, Any]:
     fixture = json.loads((FIXTURES / f"{song.slug}.json").read_text(encoding="utf-8"))
-    cifra = render_cifra(fixture)
+    cifra = cifra_file.read_text(encoding="utf-8") if cifra_file else render_cifra(fixture)
     report: dict[str, Any] = {"cifra_chars": len(cifra) if cifra else None, "b": None}
     for mode, text in (("a", None), ("b", cifra)):
         if mode == "b" and text is None:
@@ -296,13 +299,20 @@ def main() -> None:
     parser.add_argument("--cache-dir", type=Path, default=settings.cache_dir / "validacion")
     parser.add_argument("--json", type=Path, help="escribe el detalle completo acá")
     parser.add_argument("--only", help="slug de una sola canción")
+    parser.add_argument(
+        "--cifra-file",
+        type=Path,
+        help="texto de cifra para el modo b (en vez de la fixture); con --only",
+    )
     args = parser.parse_args()
     report: dict[str, Any] = {}
     for song in SONGS:
         if args.only and song.slug != args.only:
             continue
         print(f"== {song.title}", file=sys.stderr)
-        report[song.slug] = validate_song(song, build_steps(song, args.audio_dir), args.cache_dir)
+        report[song.slug] = validate_song(
+            song, build_steps(song, args.audio_dir), args.cache_dir, args.cifra_file
+        )
     if args.json:
         args.json.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     print(markdown(report))

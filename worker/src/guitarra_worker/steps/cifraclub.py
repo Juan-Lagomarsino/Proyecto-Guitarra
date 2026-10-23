@@ -26,7 +26,7 @@ TOKEN_LENGTH = 12
 
 class CifraClubStep:
     name = "cifraclub"
-    version = "2"
+    version = "3"
 
     def cache_token(self, job: Job) -> str:
         """Hash del texto cargado; vacío si no hay texto (así sin cifra la clave no cambia)."""

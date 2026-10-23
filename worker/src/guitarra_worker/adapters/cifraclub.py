@@ -16,7 +16,7 @@ _CHORD_TEXT = re.compile(r"^[A-G][#b]?[^\s]*$")
 _TAGS = re.compile(r"<[^>]+>")
 _SPAN = r'<span[^>]*id="{id}"[^>]*>(.*?)</span>'
 _DIGITS = re.compile(r"(\d+)")
-_UNNAMED_SECTION = "(sin título)"
+_UNNAMED_SECTION = ""  # sin encabezado: el armado usa el nombre detectado
 
 _CHORD_TOKEN = re.compile(
     r"^[A-G][#b]?(?:maj|min|dim|aug|sus|add|m|M|[°º+\-]|[#b]|\d|[(),])*(?:/(?:[A-G][#b]?)?)?$"
@@ -64,7 +64,7 @@ def _parse_key(page: str) -> str | None:
 
 def _line_chords(line: str) -> list[str]:
     names = (html.unescape(raw).strip() for raw in _BOLD.findall(line))
-    return [name for name in names if _CHORD_TEXT.match(name)]
+    return [name.removesuffix("/") for name in names if _CHORD_TEXT.match(name)]
 
 
 def _is_tab(section_name: str) -> bool:
@@ -105,7 +105,9 @@ def _text_line_chords(line: str) -> list[str]:
     tokens = line.split()
     chords = [t for t in tokens if _CHORD_TOKEN.match(t)]
     others = [t for t in tokens if t not in chords]
-    return chords if chords and all(_IGNORABLE_TOKEN.match(t) for t in others) else []
+    if not chords or not all(_IGNORABLE_TOKEN.match(t) for t in others):
+        return []
+    return [chord.removesuffix("/") for chord in chords]  # "A/" es A: la barra no trae bajo
 
 
 def _parse_text_sections(text: str) -> list[CifraClubSection]:

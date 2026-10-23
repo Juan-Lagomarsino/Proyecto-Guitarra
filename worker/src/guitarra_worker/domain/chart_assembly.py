@@ -13,7 +13,8 @@ from typing import Any
 
 from guitarra_core.theory import is_no_chord, parse_chord, transpose_chord
 
-from guitarra_worker.domain.alignment import Alignment, align, blend_confidence
+from guitarra_worker.domain.alignment import align, blend_confidence
+from guitarra_worker.domain.section_alignment import match_sections
 
 GOOD_ALIGNMENT = 0.6  # similitud mínima para fiarse de los nombres de Cifra Club
 MAJORITY = 0.5
@@ -62,28 +63,27 @@ class SectionPlan:
 
 
 @dataclass(frozen=True)
+class MatchedChord:
+    """Un acorde detectado que se pudo emparejar con la cifra."""
+
+    name: str  # nombre del acorde de la cifra, ya transpuesto a lo que suena
+    section: str  # sección de la cifra de donde sale
+    similarity: float  # qué tan bien alineó (global o de su sección): mezcla la confianza
+
+
+@dataclass(frozen=True)
 class CifraMatch:
-    """Correspondencia entre lo detectado y la cifra (por acorde detectado, el de la cifra)."""
+    """Correspondencia entre lo detectado y la cifra, por índice de acorde detectado."""
 
-    alignment: Alignment
-    cifra_chords: list[str]
-    cifra_sections: list[str]  # nombre de la sección de cada acorde de la cifra
-    matches: dict[int, int]  # índice detectado -> índice de la cifra
-
-    def chord_name(self, detected_index: int) -> str:
-        name = self.cifra_chords[self.matches[detected_index]]
-        shift = self.alignment.transposition
-        return transpose_chord_name(name, shift) if shift else name
+    by_chord: dict[int, MatchedChord]
 
     def section_name_for(self, detected_indexes: list[int]) -> str | None:
         """Nombre de la sección de la cifra que concentra la mayoría de esos acordes."""
-        names = [
-            self.cifra_sections[self.matches[i]] for i in detected_indexes if i in self.matches
-        ]
+        names = [self.by_chord[i].section for i in detected_indexes if i in self.by_chord]
         if not names:
             return None
         top = max(set(names), key=names.count)
-        return top if names.count(top) >= len(names) * MAJORITY else None
+        return (top or None) if names.count(top) >= len(names) * MAJORITY else None
 
 
 def transpose_chord_name(name: str, semitones: int) -> str:
@@ -138,18 +138,65 @@ def section_drafts(structure: list[dict[str, Any]], song_end_s: float) -> list[S
 
 
 def match_with_cifra(
-    cifra: dict[str, Any] | None, detected: list[DetectedChord]
+    cifra: dict[str, Any] | None,
+    detected: list[DetectedChord],
+    drafts: list[SectionDraft] | None = None,
 ) -> CifraMatch | None:
-    """None si no hay cifra, no hay acordes detectados o la alineación no es buena."""
+    """None si no hay cifra, no hay acordes detectados o nada coincide.
+
+    Primero alinea la cifra entera; si no alcanza y se pasan las secciones (`drafts`), alinea el
+    ciclo de cada sección de la cifra contra cada sección detectada (cifras que escriben cada
+    sección una sola vez). Lo que no coincide queda con el acorde detectado.
+    """
     if not cifra or not cifra.get("found") or not detected:
         return None
+    return _global_match(cifra, detected) or (
+        _section_match(cifra, detected, drafts) if drafts else None
+    )
+
+
+def _global_match(cifra: dict[str, Any], detected: list[DetectedChord]) -> CifraMatch | None:
     names = [chord for section in cifra["sections"] for chord in section["chords"]]
     section_names = [s["name"] for s in cifra["sections"] for _ in s["chords"]]
     alignment = align(names, [chord.label for chord in detected])
     if alignment.similarity < GOOD_ALIGNMENT:
         return None
-    matches = {j: i for i, j in alignment.pairs if i is not None and j is not None}
-    return CifraMatch(alignment, names, section_names, matches)
+    shift = alignment.transposition
+    by_chord = {
+        j: MatchedChord(
+            transpose_chord_name(names[i], shift) if shift else names[i],
+            section_names[i],
+            alignment.similarity,
+        )
+        for i, j in alignment.pairs
+        if i is not None and j is not None
+    }
+    return CifraMatch(by_chord)
+
+
+def _section_match(
+    cifra: dict[str, Any], detected: list[DetectedChord], drafts: list[SectionDraft]
+) -> CifraMatch | None:
+    members = _members(drafts, detected)
+    labels = [[detected[p].label for p in positions] for positions in members]
+    sections = [(s["name"], s["chords"]) for s in cifra["sections"]]
+    matches = match_sections(sections, labels, int(cifra.get("capo") or 0), transpose_chord_name)
+    by_chord = {
+        positions[local]: MatchedChord(name, match.cifra_name, match.similarity)
+        for positions, match in zip(members, matches, strict=True)
+        if match
+        for local, name in match.chords
+    }
+    return CifraMatch(by_chord) if by_chord else None
+
+
+def _members(drafts: list[SectionDraft], detected: list[DetectedChord]) -> list[list[int]]:
+    members: list[list[int]] = [[] for _ in drafts]
+    for position, chord in enumerate(detected):
+        index = _section_index(drafts, chord)
+        if index is not None:
+            members[index].append(position)
+    return members
 
 
 def _section_index(drafts: list[SectionDraft], chord: DetectedChord) -> int | None:
@@ -171,11 +218,7 @@ def _default_name(draft: SectionDraft, index: int) -> str:
 def plan_sections(
     drafts: list[SectionDraft], detected: list[DetectedChord], match: CifraMatch | None
 ) -> list[SectionPlan]:
-    members: list[list[int]] = [[] for _ in drafts]
-    for position, chord in enumerate(detected):
-        index = _section_index(drafts, chord)
-        if index is not None:
-            members[index].append(position)
+    members = _members(drafts, detected)
     return [
         _plan(draft, index, members[index], detected, match) for index, draft in enumerate(drafts)
     ]
@@ -197,9 +240,10 @@ def _chord_draft(
     chord: DetectedChord, position: int, draft: SectionDraft, match: CifraMatch | None
 ) -> ChordDraft:
     t_s = max(chord.start, draft.start_s)
-    if match and position in match.matches:
-        confidence = blend_confidence(chord.confidence, match.alignment.similarity)
-        return ChordDraft(t_s, match.chord_name(position), confidence, True)
+    matched = match.by_chord.get(position) if match else None
+    if matched:
+        confidence = blend_confidence(chord.confidence, matched.similarity)
+        return ChordDraft(t_s, matched.name, confidence, True)
     return ChordDraft(t_s, chord.label, chord.confidence, False)
 
 

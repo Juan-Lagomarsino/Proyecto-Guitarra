@@ -111,14 +111,17 @@ const classical = chart('classical', [
   verse,
 ])
 
-const mockApi = (charts: Record<string, SongChartResponse | undefined>) => {
+const mockApi = (
+  charts: Record<string, SongChartResponse | undefined>,
+  detail: SongDetail = song,
+) => {
   const calls: string[] = []
   vi.stubGlobal(
     'fetch',
     vi.fn(async (url: string) => {
       const path = url.replace('/api/v1', '')
       calls.push(path)
-      if (path === '/songs/7') return json(song)
+      if (path === '/songs/7') return json(detail)
       if (path === '/songs/7/exercises') return json([])
       const match = /^\/songs\/7\/chart\?instrument=(\w+)$/.exec(path)
       const found = match ? charts[match[1]] : undefined
@@ -198,6 +201,53 @@ describe('SongScreen', () => {
     const detail = screen.getByRole('article', { name: 'Sección Estrofa' })
     expect(within(detail).getByText('Acordes de Cifra Club')).toBeVisible()
     expect(within(detail).getByRole('img', { name: /Acorde G:/ })).toBeVisible()
+  })
+
+  describe('aviso de cifra sin usar', () => {
+    const NOTICE = /La cifra cargada no coincidió/
+    const withCifra = { ...song, has_cifra: true }
+    const detectedOnly = chart('classical', [section({})])
+
+    it('avisa si hay cifra, el análisis terminó y ninguna sección la usó', async () => {
+      mockApi({ classical: detectedOnly }, withCifra)
+      renderScreen()
+      expect(await screen.findByText(NOTICE)).toBeVisible()
+    })
+
+    it('no avisa si alguna sección usa los acordes de la cifra', async () => {
+      mockApi({ classical }, withCifra)
+      renderScreen()
+      await screen.findByRole('article', { name: 'Sección Intro' })
+      expect(screen.queryByText(NOTICE)).not.toBeInTheDocument()
+    })
+
+    it('no avisa en un chart editado por el usuario con secciones user y cifraclub', async () => {
+      const edited = chart('classical', [
+        section({ chord_source: 'user' }),
+        verse,
+      ])
+      mockApi({ classical: { ...edited, origin: 'user' } }, withCifra)
+      renderScreen()
+      await screen.findByRole('article', { name: 'Sección Intro' })
+      expect(screen.queryByText(NOTICE)).not.toBeInTheDocument()
+    })
+
+    it('no avisa si no hay cifra cargada', async () => {
+      mockApi({ classical: detectedOnly })
+      renderScreen()
+      await screen.findByRole('article', { name: 'Sección Intro' })
+      expect(screen.queryByText(NOTICE)).not.toBeInTheDocument()
+    })
+
+    it('no avisa mientras se reanaliza', async () => {
+      mockApi(
+        { classical: detectedOnly },
+        { ...withCifra, analysis_status: 'queued' },
+      )
+      renderScreen()
+      await screen.findByRole('article', { name: 'Sección Intro' })
+      expect(screen.queryByText(NOTICE)).not.toBeInTheDocument()
+    })
   })
 
   it('muestra un diagrama por acorde distinto y marca la baja confianza', async () => {
