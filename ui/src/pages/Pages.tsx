@@ -19,23 +19,9 @@ export const TodayPage = () => (
   />
 )
 
-export const StudyPage = () => (
-  <PlaceholderPage
-    title="Estudio"
-    description="Acá van a ir los niveles y ejercicios."
-  />
-)
-
 export const ProgressPage = () => (
   <PlaceholderPage
     title="Progreso"
     description="Acá van a ir la racha y tu avance."
-  />
-)
-
-export const SettingsPage = () => (
-  <PlaceholderPage
-    title="Ajustes"
-    description="Acá van a ir la zona horaria y los recordatorios."
   />
 )

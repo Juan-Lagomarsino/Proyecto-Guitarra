@@ -46,7 +46,8 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 | F1-T13 | 2 | UI: componente Mástil | T03, T07 | hecha |
 | F1-T14 | 2 | UI: componente Tablatura | T03, T07 | hecha |
 | F1-T15 | 2 | UI: motor de reproducción y metrónomo | T03, T07 | hecha |
-| F1-T16 | 4 | UI: tarjeta de ejercicio y vistas de Estudio | T10, T13, T14, T15 | pendiente |
+| F1-T16 | 4 | UI: tarjeta de ejercicio y vistas de Estudio | T10, T13, T14, T15 | hecha |
+| F1-T16b | 4 | Descripción corta por ejercicio (modelo, migración, loader, API y textos del currículum) | T10, T09 | en curso |
 | F1-T17 | 4 | UI: vista de Progreso | T07, T11 | pendiente |
 | F1-T18 | 5 | UI: vista de Sesión del día | T11, T16 | pendiente |
 | F1-T19 | 4 | UI: ajustes de tema con vista previa | T12, T13 | hecha |
@@ -141,6 +142,12 @@ Leyenda: **Ola** = las tareas de una misma ola son independientes entre sí y va
 - **Archivos:** `ui/src/features/study/` (lista de niveles con avance → lección con teoría en markdown → tarjetas de ejercicio), `ExerciseCard`.
 - **Skill:** `frontend-design`.
 - **Criterio:** tarjeta según el plan y la tarjeta de práctica de la referencia (categoría en versalitas, título condensado, chips de objetivo / mejor marca / "en la sesión de hoy", descripción con borde de acento, mástil + tab sincronizados con la reproducción, controles de bpm, play, nota por nota y **Terminé** que envía el bpm logrado y actualiza la mejor marca). Tests con API mockeada.
+
+### F1-T16b — Descripción por ejercicio
+
+- **Origen:** la revisión de T16 encontró que ninguna capa tenía la "explicación corta" por ejercicio que pide el plan.
+- **Archivos:** columna `Exercise.description` + migración 0002, `ExerciseData` del cargador, `ExerciseOut`, textos en los tres JSON de `curriculum/`.
+- **Criterio:** todos los ejercicios tienen descripción (validado por test), la API la expone, migración ida y vuelta, cargador idempotente.
 
 ### F1-T17 — UI: Progreso
 
