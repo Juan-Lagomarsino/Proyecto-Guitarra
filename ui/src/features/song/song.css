@@ -64,11 +64,13 @@
 
 .song-timeline__item {
   flex-basis: 0;
-  min-width: 84px;
+  /* Los nombres no se cortan a mitad de palabra; si no entran, la línea de tiempo scrollea. */
+  min-width: max-content;
 }
 
 .song-timeline__button {
   width: 100%;
+  min-width: 84px;
   min-height: 48px;
   display: flex;
   flex-direction: column;
@@ -92,7 +94,6 @@
 
 .song-timeline__name {
   font-size: 13px;
-  overflow-wrap: anywhere;
 }
 
 .song-timeline__time {
@@ -319,7 +320,6 @@
   margin: 12px 0 0;
   color: var(--warn);
   font-size: 13px;
-  overflow-wrap: anywhere;
 }
 
 .song-stale__list {
