@@ -16,3 +16,5 @@ cd worker
 .\.venv\Scripts\python -m ruff check .
 .\.venv\Scripts\python -m ruff format --check .
 ```
+
+El test de `tempo` con el modelo real (beat_this, clicks a BPM conocido) corre solo en local con el extra `analysis` y los pesos instalados; en la CI se omite.

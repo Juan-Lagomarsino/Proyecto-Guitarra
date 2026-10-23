@@ -2,12 +2,14 @@
 
 from typing import Any
 
+from guitarra_worker.adapters.beat_this import BeatThisTracker
 from guitarra_worker.adapters.spotify import SpotifyAdapter
 from guitarra_worker.adapters.youtube import YoutubeAdapter
 from guitarra_worker.config import Settings
 from guitarra_worker.pipeline.step import PipelineContext, Step
 from guitarra_worker.steps.download import DownloadStep
 from guitarra_worker.steps.source import SourceStep
+from guitarra_worker.steps.tempo import TempoStep
 
 
 class NoopStep:
@@ -33,4 +35,5 @@ def default_steps(settings: Settings | None = None) -> list[Step]:
     settings = settings or Settings()
     youtube = YoutubeAdapter(settings.ffmpeg)
     spotify = SpotifyAdapter(settings.spotify_client_id, settings.spotify_client_secret)
-    return [SourceStep(youtube, spotify), DownloadStep(youtube)]
+    beat_tracker = BeatThisTracker(settings.beat_this_checkpoint_path, settings.beat_this_sha256)
+    return [SourceStep(youtube, spotify), DownloadStep(youtube), TempoStep(beat_tracker)]

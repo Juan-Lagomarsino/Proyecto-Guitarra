@@ -12,6 +12,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.6"]
+# Modelos de análisis (torch CPU lo instala install.ps1 desde el índice de PyTorch)
+analysis = ["beat-this>=1.1", "safetensors>=0.4"]
 
 [build-system]
 requires = ["setuptools>=68"]

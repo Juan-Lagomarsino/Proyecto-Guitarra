@@ -33,6 +33,23 @@ class Settings(BaseSettings):
     cifraclub_base_url: str = "https://www.cifraclub.com"
     cifraclub_min_interval_s: float = 3.0
 
+    # beat_this (tempo y compases): ruta del checkpoint y de dónde bajarlo (oficial y espejo)
+    beat_this_checkpoint: Path | None = None  # GUITAR_BEAT_THIS_CHECKPOINT
+    beat_this_url: str = "https://cloud.cp.jku.at/public.php/dav/files/7ik4RrBKTS273gp/final0.ckpt"
+    # SHA-256 del final0.ckpt oficial (GUITAR_BEAT_THIS_SHA256)
+    beat_this_sha256: str = "8c328b45f59d8dd3dff219253ff6a8d6482be57d0133a29140e2febbf8eb8331"
+    beat_this_mirror_url: str = (
+        "https://huggingface.co/safe-models/beat-this-final0/resolve/main/model.safetensors"
+    )
+
+    @property
+    def models_dir(self) -> Path:
+        return self.cache_dir.parent / "models"
+
+    @property
+    def beat_this_checkpoint_path(self) -> Path:
+        return self.beat_this_checkpoint or self.models_dir / "beat_this-final0.ckpt"
+
     @property
     def logs_dir(self) -> Path:
         return self.cache_dir.parent / "logs"

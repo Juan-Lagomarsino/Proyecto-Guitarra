@@ -170,11 +170,11 @@ def test_download_sin_duracion_esperada_no_valida(job, tmp_path):
     assert DownloadStep(FakeYoutube(wav_seconds=1.0)).run(ctx)["duration_s"] == 1.0
 
 
-def test_registro_en_orden_source_download():
+def test_registro_en_orden_source_download_tempo():
     from guitarra_worker.config import Settings
 
     steps = default_steps(Settings(_env_file=None))
-    assert [s.name for s in steps] == ["source", "download"]
+    assert [s.name for s in steps][:3] == ["source", "download", "tempo"]
 
 
 @pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="ffmpeg no está en el PATH")

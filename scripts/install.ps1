@@ -8,17 +8,36 @@ $envFile = Join-Path $root '.env'
 $cacheDir = if ($env:GUITAR_CACHE_DIR) { $env:GUITAR_CACHE_DIR } else { Join-Path $HOME 'GuitarApp\cache' }
 $logsDir = Join-Path (Split-Path -Parent $cacheDir) 'logs'
 
+function Install-TorchCpu {
+    # torch CPU desde el índice de PyTorch (el de PyPI trae CUDA, GBs de más). Solo si falta.
+    & $venvPython -c 'import torch' 2>$null
+    if ($LASTEXITCODE -eq 0) { return }
+    Write-Host 'Instalando torch (CPU) ...'
+    & $venvPython -m pip install --quiet --disable-pip-version-check torch==2.14.1 torchaudio==2.11.0 --index-url https://download.pytorch.org/whl/cpu
+    if ($LASTEXITCODE -ne 0) { throw 'pip install de torch falló' }
+}
+
+function Install-BeatThisWeights {
+    # Pesos de beat_this: host oficial con reintentos y, si está caído, el espejo safetensors.
+    # La lógica vive en guitarra_worker.adapters.beat_this_weights (testeada); ruta por
+    # GUITAR_BEAT_THIS_CHECKPOINT, por defecto GuitarApp\models.
+    Write-Host 'Preparando los pesos de beat_this ...'
+    & $venvPython -m guitarra_worker.adapters.beat_this_weights
+    if ($LASTEXITCODE -ne 0) { throw 'No se pudieron bajar los pesos de beat_this (ni del host oficial ni del espejo)' }
+}
+
 function Install-WorkerVenv {
     if (-not (Test-Path $venvPython)) {
         Write-Host 'Creando worker\.venv con Python 3.12 ...'
         & py -3.12 -m venv (Join-Path $workerDir '.venv')
         if ($LASTEXITCODE -ne 0) { throw 'No se pudo crear el venv (¿está instalado Python 3.12 y el lanzador py?)' }
     }
-    Write-Host 'Instalando worker[dev] en modo editable ...'
+    Install-TorchCpu
+    Write-Host 'Instalando worker[dev,analysis] en modo editable ...'
     $coreDir = Join-Path (Split-Path -Parent $workerDir) 'core'
     & $venvPython -m pip install --quiet --disable-pip-version-check -e $coreDir
     if ($LASTEXITCODE -ne 0) { throw 'pip install de core falló' }
-    & $venvPython -m pip install --quiet --disable-pip-version-check -e "$workerDir[dev]"
+    & $venvPython -m pip install --quiet --disable-pip-version-check -e "$workerDir[dev,analysis]"
     if ($LASTEXITCODE -ne 0) { throw 'pip install del worker falló' }
 }
 
@@ -78,6 +97,7 @@ try {
     Install-Ffmpeg
     Update-YtDlp
     New-WorkerFolders
+    Install-BeatThisWeights
     Test-WorkerToken
     Write-Host 'Listo.'
     exit 0
