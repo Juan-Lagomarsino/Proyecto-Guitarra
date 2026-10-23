@@ -31,8 +31,6 @@ class Settings(BaseSettings):
     spotify_client_id: str = Field(default="", validation_alias="SPOTIFY_CLIENT_ID")
     spotify_client_secret: str = Field(default="", validation_alias="SPOTIFY_CLIENT_SECRET")
     btc_dir: Path | None = None  # GUITAR_BTC_DIR: clon de BTC; vacío = <cache_dir>/btc
-    cifraclub_base_url: str = "https://www.cifraclub.com"
-    cifraclub_min_interval_s: float = 3.0
 
     # beat_this (tempo y compases): ruta del checkpoint y de dónde bajarlo (oficial y espejo)
     beat_this_checkpoint: Path | None = None  # GUITAR_BEAT_THIS_CHECKPOINT

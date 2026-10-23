@@ -33,6 +33,7 @@ class Job(BaseModel):
     attempt: int = 1
     max_attempts: int | None = None
     lease_until: str | None = None
+    cifra_text: str | None = None  # cifra de Cifra Club pegada a mano (ADR 0012)
 
 
 class ApiClient:

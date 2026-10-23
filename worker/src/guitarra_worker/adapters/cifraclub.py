@@ -1,23 +1,13 @@
-"""Adaptador de Cifra Club: arma la URL por artista y título, baja la página y la parsea.
+"""Parser de la cifra de Cifra Club que Juan Pedro pega a mano (ADR 0012).
 
-Cualquier falla (red, 403, 404, HTML que cambió) da `None`: es un dato opcional y el
-pipeline sigue sin él. Entre pedido y pedido espera `min_interval_s`.
+Acepta texto plano (copiado de la página: `[Intro]`, líneas de acordes, `Tom:`, capo) o el HTML
+de la página. Sin cifra reconocible da `None`: es un dato opcional y el pipeline sigue sin él.
+No hace ningún pedido de red.
 """
 
 import html
-import logging
 import re
-import time
-import unicodedata
-from collections.abc import Callable
-from dataclasses import dataclass, field, replace
-
-import httpx
-
-log = logging.getLogger(__name__)
-
-DEFAULT_BASE_URL = "https://www.cifraclub.com"
-USER_AGENT = "Mozilla/5.0 (compatible; GuitarraPracticaWorker/0.1; uso personal)"
+from dataclasses import dataclass, field
 
 _PRE = re.compile(r"<pre[^>]*>(.*?)</pre>", re.S)
 _SECTION = re.compile(r"^\s*\[([^\]]+)\]")
@@ -27,6 +17,13 @@ _TAGS = re.compile(r"<[^>]+>")
 _SPAN = r'<span[^>]*id="{id}"[^>]*>(.*?)</span>'
 _DIGITS = re.compile(r"(\d+)")
 _UNNAMED_SECTION = "(sin título)"
+
+_CHORD_TOKEN = re.compile(
+    r"^[A-G][#b]?(?:maj|min|dim|aug|sus|add|m|M|[°º+\-]|[#b]|\d|[(),])*(?:/(?:[A-G][#b]?)?)?$"
+)
+_IGNORABLE_TOKEN = re.compile(r"^(?:\(?(?:\d+x|x\d+)\)?|[|\-/%]+|N\.?C\.?)$", re.I)
+_TEXT_KEY = re.compile(r"^\s*tom\s*:\s*(\S+)", re.I | re.M)
+_TEXT_CAPO = re.compile(r"^\s*capo(?:traste)?\b[^\d\n]{0,20}(\d{1,2})", re.I | re.M)
 
 
 @dataclass
@@ -44,13 +41,6 @@ class CifraClubChart:
 
     def all_chords(self) -> list[str]:
         return [chord for section in self.sections for chord in section.chords]
-
-
-def slugify(text: str) -> str:
-    """'Andrés Calamaro' -> 'andres-calamaro' (como arma las URLs Cifra Club)."""
-    ascii_text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
-    ascii_text = ascii_text.lower().replace("'", "")
-    return re.sub(r"[^a-z0-9]+", "-", ascii_text).strip("-")
 
 
 def _plain_text(fragment: str) -> str:
@@ -110,48 +100,50 @@ def parse_cifraclub_html(page: str) -> CifraClubChart | None:
     return CifraClubChart(sections, _parse_capo(page), _parse_key(page))
 
 
-class CifraClubClient:
-    def __init__(
-        self,
-        http: httpx.Client,
-        *,
-        base_url: str = DEFAULT_BASE_URL,
-        min_interval_s: float = 3.0,
-        sleep: Callable[[float], None] = time.sleep,
-        monotonic: Callable[[], float] = time.monotonic,
-    ) -> None:
-        self._http = http
-        self._base_url = base_url.rstrip("/")
-        self._min_interval_s = min_interval_s
-        self._sleep = sleep
-        self._monotonic = monotonic
-        self._last_request_at: float | None = None
+def _text_line_chords(line: str) -> list[str]:
+    """Acordes de la línea si es una línea de acordes (todo acorde o marca ignorable), si no []."""
+    tokens = line.split()
+    chords = [t for t in tokens if _CHORD_TOKEN.match(t)]
+    others = [t for t in tokens if t not in chords]
+    return chords if chords and all(_IGNORABLE_TOKEN.match(t) for t in others) else []
 
-    def fetch_chart(self, title: str | None, artist: str | None) -> CifraClubChart | None:
-        if not title or not artist:
-            return None
-        url = f"{self._base_url}/{slugify(artist)}/{slugify(title)}/"
-        page = self._get(url)
-        chart = parse_cifraclub_html(page) if page else None
-        return replace(chart, url=url) if chart else None
 
-    def _get(self, url: str) -> str | None:
-        self._wait_turn()
-        try:
-            response = self._http.get(
-                url, headers={"User-Agent": USER_AGENT}, follow_redirects=True, timeout=15.0
-            )
-        except httpx.HTTPError as exc:
-            log.warning("Cifra Club no respondió (%s): %s", url, exc)
-            return None
-        if response.status_code != 200:
-            log.info("Cifra Club respondió %s para %s", response.status_code, url)
-            return None
-        return response.text
+def _parse_text_sections(text: str) -> list[CifraClubSection]:
+    sections: list[CifraClubSection] = []
+    name, chords, in_tab = _UNNAMED_SECTION, [], False
+    for line in text.splitlines():
+        header = _SECTION.match(line)
+        if header:
+            if chords:
+                sections.append(CifraClubSection(name, chords))
+            name, chords = header.group(1).strip(), []
+            in_tab = _is_tab(name)
+            line = line[header.end() :]
+        if not in_tab:
+            chords += _text_line_chords(line)
+    if chords:
+        sections.append(CifraClubSection(name, chords))
+    return sections
 
-    def _wait_turn(self) -> None:
-        if self._last_request_at is not None:
-            remaining = self._min_interval_s - (self._monotonic() - self._last_request_at)
-            if remaining > 0:
-                self._sleep(remaining)
-        self._last_request_at = self._monotonic()
+
+def _first_group(pattern: re.Pattern[str], text: str) -> str | None:
+    match = pattern.search(text)
+    return match.group(1) if match else None
+
+
+def parse_cifraclub_plain_text(text: str) -> CifraClubChart | None:
+    """None si el texto no tiene ninguna línea de acordes."""
+    sections = _parse_text_sections(text)
+    if not sections:
+        return None
+    capo = _first_group(_TEXT_CAPO, text)
+    return CifraClubChart(sections, int(capo) if capo else 0, _first_group(_TEXT_KEY, text))
+
+
+def parse_cifraclub_text(text: str | None) -> CifraClubChart | None:
+    """Parsea lo que se pegó: HTML de la página si trae `<pre`, si no texto plano."""
+    if not text or not text.strip():
+        return None
+    if "<pre" in text.lower():
+        return parse_cifraclub_html(text)
+    return parse_cifraclub_plain_text(text)

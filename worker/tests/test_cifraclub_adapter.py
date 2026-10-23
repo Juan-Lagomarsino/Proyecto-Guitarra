@@ -1,19 +1,21 @@
+import json
 from pathlib import Path
 
-import httpx
 import pytest
 
-from guitarra_worker.adapters.cifraclub import (
-    CifraClubClient,
-    parse_cifraclub_html,
-    slugify,
-)
+from guitarra_worker.adapters.cifraclub import parse_cifraclub_html, parse_cifraclub_text
 
-HTML_DIR = Path(__file__).parent / "fixtures" / "cifraclub" / "html"
+JSON_DIR = Path(__file__).parent / "fixtures" / "cifraclub"
+HTML_DIR = JSON_DIR / "html"
+TEXT_DIR = JSON_DIR / "text"
 
 
 def html(name: str) -> str:
     return (HTML_DIR / f"{name}.html").read_text(encoding="utf-8", errors="replace")
+
+
+def text(name: str) -> str:
+    return (TEXT_DIR / f"{name}.txt").read_text(encoding="utf-8")
 
 
 def test_parsea_flaca():
@@ -57,81 +59,78 @@ def test_html_irreconocible_da_none(page):
     assert parse_cifraclub_html(page) is None
 
 
-def test_slugify():
-    assert slugify("Andrés Calamaro") == "andres-calamaro"
-    assert slugify("Boys Don't Cry") == "boys-dont-cry"
-    assert slugify("De Música Ligera!") == "de-musica-ligera"
+def test_texto_plano_con_secciones_tom_y_capo():
+    chart = parse_cifraclub_text(text("flaca"))
+    assert chart is not None
+    assert chart.key == "G"
+    assert chart.capo == 2
+    assert [s.name for s in chart.sections] == ["Intro", "Primeira Parte", "Refrão"]
+    assert chart.sections[0].chords == ["G", "B7", "Em", "C", "G", "D", "G", "D"]
+    assert chart.sections[1].chords == ["G", "B7", "Em", "C", "G", "D", "G"]
+    assert chart.sections[2].chords == ["C", "G", "D", "Em"]
 
 
-class Clock:
-    def __init__(self):
-        self.now = 100.0
-        self.sleeps: list[float] = []
-
-    def monotonic(self):
-        return self.now
-
-    def sleep(self, s):
-        self.sleeps.append(s)
-        self.now += s
+def test_texto_plano_ignora_tablatura_y_letra():
+    chart = parse_cifraclub_text(text("flaca"))
+    assert chart is not None
+    assert all(not s.name.lower().startswith("tab") for s in chart.sections)
+    assert "e" not in chart.all_chords()
 
 
-def make_client(handler, clock=None, interval=2.0):
-    clock = clock or Clock()
-    http = httpx.Client(transport=httpx.MockTransport(handler))
-    client = CifraClubClient(
-        http,
-        base_url="https://cifra.test",
-        min_interval_s=interval,
-        sleep=clock.sleep,
-        monotonic=clock.monotonic,
-    )
-    return client, clock
+def test_texto_sin_encabezados_va_a_una_seccion_sin_titulo():
+    chart = parse_cifraclub_text(text("sin-secciones"))
+    assert chart is not None
+    assert len(chart.sections) == 1
+    assert chart.sections[0].chords == ["Am", "G", "F", "E7"]
+    assert chart.capo == 0 and chart.key is None
 
 
-def test_fetch_chart_arma_la_url_y_parsea():
-    seen = []
-
-    def handler(request):
-        seen.append(str(request.url))
-        return httpx.Response(200, text=html("flaca"))
-
-    client, _ = make_client(handler)
-    chart = client.fetch_chart("Flaca", "Andrés Calamaro")
-    assert seen == ["https://cifra.test/andres-calamaro/flaca/"]
-    assert chart is not None and chart.url == seen[0]
+@pytest.mark.parametrize("raw", ["", "   \n\n", None])
+def test_texto_vacio_da_none(raw):
+    assert parse_cifraclub_text(raw) is None
 
 
-@pytest.mark.parametrize("status", [403, 404, 500])
-def test_error_http_da_none(status):
-    client, _ = make_client(lambda r: httpx.Response(status))
-    assert client.fetch_chart("x", "y") is None
+def test_texto_basura_da_none():
+    assert parse_cifraclub_text(text("basura")) is None
 
 
-def test_error_de_red_da_none():
-    def handler(request):
-        raise httpx.ConnectError("sin red")
-
-    client, _ = make_client(handler)
-    assert client.fetch_chart("x", "y") is None
+@pytest.mark.parametrize("line", ["Dado Ana Bebe", "Gato", "Dame la mano", "Ama", "Bebe"])
+def test_palabras_comunes_no_son_acordes(line):
+    assert parse_cifraclub_text(f"[Verso]\n{line}\n") is None
 
 
-def test_sin_titulo_o_artista_no_pide_nada():
-    def handler(request):
-        raise AssertionError("no debería haber pedido")
+@pytest.mark.parametrize(
+    "chord", ["C#m7", "Bb", "F#m7(b5)", "Cadd9", "Dsus4", "G/B", "Am7/G", "Ebmaj7", "A°", "E7(9)"]
+)
+def test_acordes_con_sufijos_se_reconocen(chord):
+    chart = parse_cifraclub_text(f"[Verso]\n{chord}   Am\n")
+    assert chart is not None
+    assert chart.sections[0].chords == [chord, "Am"]
 
-    client, _ = make_client(handler)
-    assert client.fetch_chart(None, "y") is None
-    assert client.fetch_chart("x", "") is None
+
+def test_capo_en_distintos_formatos():
+    assert parse_cifraclub_text("Capo: 4\n[A]\nAm F\n").capo == 4
+    assert parse_cifraclub_text("capotraste na 7ª casa\n[A]\nAm F\n").capo == 7
+    assert parse_cifraclub_text("[A]\nAm F\n").capo == 0
 
 
-def test_respeta_el_intervalo_entre_pedidos():
-    client, clock = make_client(lambda r: httpx.Response(404), interval=2.0)
-    client.fetch_chart("a", "b")
-    assert clock.sleeps == []
-    clock.now += 0.5
-    client.fetch_chart("c", "d")
-    assert clock.sleeps == [pytest.approx(1.5)]
-    clock.now += 5
-    client.fetch_chart("e", "f")
-    assert len(clock.sleeps) == 1
+def test_html_pegado_usa_el_parser_html():
+    page = '<span id="cifra_capo">Capotraste na 3ª casa</span><pre>[Intro] <b>Am</b> <b>F</b></pre>'
+    chart = parse_cifraclub_text(page)
+    assert chart is not None
+    assert chart.capo == 3 and chart.sections[0].chords == ["Am", "F"]
+
+
+def render_as_text(fixture: dict) -> str:
+    blocks = [f"[{s['name']}]\n" + "  ".join(s["chords"]) for s in fixture["sections"]]
+    return f"Tom: {fixture['tonalidad']}\n\n" + "\n\n".join(blocks)
+
+
+@pytest.mark.parametrize("name", ["flaca", "de-musica-ligera", "boys-dont-cry", "no-voy-en-tren"])
+def test_texto_armado_desde_las_fixtures_da_las_mismas_secciones(name):
+    fixture = json.loads((JSON_DIR / f"{name}.json").read_text(encoding="utf-8"))
+    chart = parse_cifraclub_text(render_as_text(fixture))
+    assert chart is not None
+    assert [(s.name, s.chords) for s in chart.sections] == [
+        (s["name"], s["chords"]) for s in fixture["sections"]
+    ]

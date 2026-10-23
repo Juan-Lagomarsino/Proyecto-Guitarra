@@ -170,7 +170,7 @@ def test_download_sin_duracion_esperada_no_valida(job, tmp_path):
     assert DownloadStep(FakeYoutube(wav_seconds=1.0)).run(ctx)["duration_s"] == 1.0
 
 
-def test_registro_en_orden_source_download_tempo():
+def test_registro_con_todos_los_pasos_en_el_orden_del_plan():
     from guitarra_worker.config import Settings
 
     steps = default_steps(Settings(_env_file=None))
@@ -181,7 +181,9 @@ def test_registro_en_orden_source_download_tempo():
         "structure",
         "chords",
         "key",
+        "cifraclub",
         "strum",
+        "assemble",
     ]
 
 

@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from guitarra_worker.api_client import ApiError, Job, LeaseLostError
-from guitarra_worker.pipeline.step import PipelineContext, Step, cache_key
+from guitarra_worker.pipeline.step import PipelineContext, Step, cache_key, step_cache_token
 
 log = logging.getLogger(__name__)
 
@@ -18,9 +18,11 @@ HeartbeatFn = Callable[[str | None], None]
 AssembleFn = Callable[[dict[str, dict[str, Any]]], dict[str, Any]]
 
 
-def chain_key(previous_key: str, step: Step) -> str:
-    """Clave de caché de un paso: combina su versión con las de todos los pasos previos."""
+def chain_key(previous_key: str, step: Step, token: str = "") -> str:
+    """Clave de caché de un paso: combina su versión (y su token) con los de los pasos previos."""
     raw = f"{previous_key}|{step.name}|{step.version}"
+    if token:
+        raw += f"|{token}"
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:12]
 
 
@@ -98,7 +100,8 @@ def run_pipeline(
 ) -> dict[str, Any]:
     """Corre los pasos y devuelve `assemble(outputs)`: el cuerpo del result para la API.
 
-    La caché de cada paso se invalida si cambia su versión o la de cualquier paso anterior.
+    La caché de cada paso se invalida si cambia su versión (o su `cache_token`, ver `step.py`) o la
+    de cualquier paso anterior.
 
     Lanza LeaseLostError si se pierde el lease; cualquier otra excepción del paso sube tal cual
     (RetryableStepError incluida; PermanentStepError también sube y el loop la informa como no
@@ -114,7 +117,7 @@ def run_pipeline(
     key = ""
     for step in steps:
         heartbeat.beat(step.name)
-        key = chain_key(key, step)
+        key = chain_key(key, step, step_cache_token(step, job))
         cache_path = song_dir / "steps" / f"{step.name}.json"
         output = read_step_cache(cache_path, key)
         if output is None:

@@ -48,5 +48,15 @@ class Step(Protocol):
         ...
 
 
+def step_cache_token(step: Step, job: Job) -> str:
+    """Dato del trabajo que cambia la salida del paso, aparte de la canción (opcional).
+
+    Un paso lo declara con un método `cache_token(job) -> str`; si el token cambia, la caché del
+    paso y la de los siguientes se invalidan. Vacío = el paso no depende de nada extra.
+    """
+    token = getattr(step, "cache_token", None)
+    return token(job) if callable(token) else ""
+
+
 def cache_key(job: Job) -> str:
     return job.youtube_id or f"song-{job.song_id}"

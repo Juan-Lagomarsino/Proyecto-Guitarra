@@ -137,3 +137,19 @@ def test_beat_propaga_error_de_api():
 
     with Heartbeat(send, 60) as hb, pytest.raises(ApiError):
         hb.beat("a")
+
+
+class TokenStep(FakeStep):
+    """Paso cuya salida depende de un dato del trabajo (como el texto de Cifra Club)."""
+
+    def cache_token(self, job):
+        return job.cifra_text or ""
+
+
+def test_token_de_cache_distinto_reejecuta_ese_paso_y_los_siguientes(job, tmp_path):
+    a, token, after = FakeStep("a"), TokenStep("t"), FakeStep("z")
+    run([a, token, after], job.model_copy(update={"cifra_text": "uno"}), tmp_path)
+    run([a, token, after], job.model_copy(update={"cifra_text": "uno"}), tmp_path)
+    assert (a.runs, token.runs, after.runs) == (1, 1, 1)
+    run([a, token, after], job.model_copy(update={"cifra_text": "dos"}), tmp_path)
+    assert (a.runs, token.runs, after.runs) == (1, 2, 2)

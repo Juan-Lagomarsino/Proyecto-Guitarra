@@ -1,4 +1,4 @@
-"""Lista ordenada de pasos del pipeline. T06 a T13 suman los reales acá."""
+"""Lista ordenada de pasos del pipeline y cómo sale de ahí el resultado para la API."""
 
 from typing import Any
 
@@ -8,8 +8,10 @@ from guitarra_worker.adapters.btc import BtcChordRecognizer
 from guitarra_worker.adapters.spotify import SpotifyAdapter
 from guitarra_worker.adapters.youtube import YoutubeAdapter
 from guitarra_worker.config import Settings
-from guitarra_worker.pipeline.step import PipelineContext, Step
+from guitarra_worker.pipeline.step import Step
+from guitarra_worker.steps.assemble import AssembleStep
 from guitarra_worker.steps.chords import ChordsStep
+from guitarra_worker.steps.cifraclub import CifraClubStep
 from guitarra_worker.steps.download import DownloadStep
 from guitarra_worker.steps.key import KeyStep
 from guitarra_worker.steps.source import SourceStep
@@ -18,23 +20,12 @@ from guitarra_worker.steps.strum import StrumStep
 from guitarra_worker.steps.tempo import TempoStep
 from guitarra_worker.strum.ollama_chooser import OllamaChooser
 
-
-class NoopStep:
-    """Paso de ejemplo: devuelve un resultado vacío con la forma que espera la API."""
-
-    name = "noop"
-    version = "1"
-
-    def run(self, ctx: PipelineContext) -> dict[str, Any]:
-        return {"metadata": {}, "sections": [], "charts": []}
+RESULT_STEP = AssembleStep.name
 
 
 def assemble_result(outputs: dict[str, dict[str, Any]]) -> dict[str, Any]:
-    """Arma el cuerpo del result (`metadata`, `sections`, `charts`) con las salidas de los pasos.
-
-    T13 lo reemplaza para leer la salida del paso de armado.
-    """
-    return outputs["noop"]
+    """Cuerpo del result (`metadata`, `sections`, `charts`): la salida del paso de armado."""
+    return outputs[RESULT_STEP]
 
 
 def default_steps(settings: Settings | None = None) -> list[Step]:
@@ -48,12 +39,14 @@ def default_steps(settings: Settings | None = None) -> list[Step]:
         if settings.ollama_url
         else None
     )
-    return [
+    steps: list[Step] = [
         SourceStep(youtube, spotify),
         DownloadStep(youtube),
         TempoStep(beat_tracker),
         StructureStep(LibrosaSelfSimilarity()),
         ChordsStep(BtcChordRecognizer(settings.btc_path)),
         KeyStep(),
+        CifraClubStep(),
         StrumStep(chooser),
     ]
+    return [*steps, AssembleStep({step.name: step.version for step in steps})]

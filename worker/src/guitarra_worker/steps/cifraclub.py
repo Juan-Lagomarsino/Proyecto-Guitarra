@@ -1,48 +1,45 @@
-"""Paso de Cifra Club: baja los acordes publicados. 'Sin datos' no es un error.
+"""Paso de Cifra Club: parsea la cifra que Juan Pedro pegó a mano (ADR 0012).
 
-La alineación con lo detectado (domain/alignment.py) la hace el armado, que ve las
-salidas de este paso y del de acordes.
+'Sin datos' no es un error.
+
+Entrada: `ctx.job.cifra_text` (texto plano o HTML de la página). No hace pedidos de red. Sin texto,
+o si no se reconoce ningún acorde, devuelve `{"found": False}` y el pipeline sigue.
+
+La alineación con lo detectado (domain/alignment.py) la hace el armado, que ve las salidas de este
+paso y del de acordes. Si cambia el texto, `cache_token` invalida la caché de este paso y de los
+siguientes.
 """
 
+import hashlib
 import logging
-from typing import Any, Protocol
+from typing import Any
 
-import httpx
-
-from guitarra_worker.adapters.cifraclub import CifraClubChart, CifraClubClient
-from guitarra_worker.config import Settings
+from guitarra_worker.adapters.cifraclub import parse_cifraclub_text
+from guitarra_worker.api_client import Job
 from guitarra_worker.pipeline.step import PipelineContext
 
 log = logging.getLogger(__name__)
 
 NO_DATA: dict[str, Any] = {"found": False}
-
-
-class ChartSource(Protocol):
-    def fetch_chart(self, title: str | None, artist: str | None) -> CifraClubChart | None: ...
+TOKEN_LENGTH = 12
 
 
 class CifraClubStep:
     name = "cifraclub"
-    version = "1"
+    version = "2"
 
-    def __init__(self, client: ChartSource) -> None:
-        self._client = client
-
-    @classmethod
-    def from_settings(cls, settings: Settings) -> "CifraClubStep":
-        client = CifraClubClient(
-            httpx.Client(),
-            base_url=settings.cifraclub_base_url,
-            min_interval_s=settings.cifraclub_min_interval_s,
-        )
-        return cls(client)
+    def cache_token(self, job: Job) -> str:
+        """Hash del texto cargado; vacío si no hay texto (así sin cifra la clave no cambia)."""
+        text = (job.cifra_text or "").strip()
+        if not text:
+            return ""
+        return hashlib.sha256(text.encode("utf-8")).hexdigest()[:TOKEN_LENGTH]
 
     def run(self, ctx: PipelineContext) -> dict[str, Any]:
         try:
-            chart = self._client.fetch_chart(ctx.job.title, ctx.job.artist)
+            chart = parse_cifraclub_text(ctx.job.cifra_text)
         except Exception:
-            log.exception("Cifra Club falló; sigo sin esos datos")
+            log.exception("No pude leer la cifra cargada; sigo sin esos datos")
             return dict(NO_DATA)
         if chart is None:
             return dict(NO_DATA)

@@ -22,6 +22,14 @@ lista vacía y `key` devuelve `null`.
 El test que corre BTC de verdad (`tests/test_btc_adapter.py`) se omite si no están instalados
 torch y el clon. Para forzarlo: `$env:GUITAR_BTC_DIR = "<clon>"` y `pytest tests/test_btc_adapter.py`.
 
+## Cifra Club
+
+El worker no consulta Cifra Club (bloquea los pedidos automáticos, ADR 0012). Si Juan Pedro pegó la
+cifra en la vista de la canción, el trabajo trae `cifra_text` (texto plano o HTML de la página) y el
+paso `cifraclub` lo parsea y lo cruza con los acordes detectados. Sin texto, o si no se reconoce
+ningún acorde, el análisis sigue sin ese cruce. Si cambia el texto, se rehacen ese paso y los que
+dependen de él (la clave de caché lleva el hash del texto).
+
 ## Tests
 
 ```powershell
