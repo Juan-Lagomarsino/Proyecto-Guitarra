@@ -30,6 +30,8 @@ class Settings(BaseSettings):
     # Spotify es opcional; sin credenciales los links de Spotify fallan con un mensaje claro.
     spotify_client_id: str = Field(default="", validation_alias="SPOTIFY_CLIENT_ID")
     spotify_client_secret: str = Field(default="", validation_alias="SPOTIFY_CLIENT_SECRET")
+    cifraclub_base_url: str = "https://www.cifraclub.com"
+    cifraclub_min_interval_s: float = 3.0
 
     @property
     def logs_dir(self) -> Path:
