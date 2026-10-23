@@ -26,6 +26,10 @@ class Settings(BaseSettings):
     poll_interval_s: float = 2.0
     max_backoff_s: float = 60.0
     heartbeat_interval_s: float = 30.0
+    ffmpeg: str | None = None  # GUITAR_FFMPEG: ruta al ejecutable; vacío = el del PATH
+    # Spotify es opcional; sin credenciales los links de Spotify fallan con un mensaje claro.
+    spotify_client_id: str = Field(default="", validation_alias="SPOTIFY_CLIENT_ID")
+    spotify_client_secret: str = Field(default="", validation_alias="SPOTIFY_CLIENT_SECRET")
 
     @property
     def logs_dir(self) -> Path:

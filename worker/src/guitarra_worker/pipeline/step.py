@@ -14,6 +14,10 @@ class RetryableStepError(Exception):
     """Error transitorio (red, timeout): la API puede reencolar el trabajo."""
 
 
+class PermanentStepError(Exception):
+    """Error que reintentar no arregla (video privado, faltan credenciales, entrada inválida)."""
+
+
 def _ignore_progress(message: str) -> None:
     return None
 

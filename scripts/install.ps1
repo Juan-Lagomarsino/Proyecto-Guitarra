@@ -48,11 +48,11 @@ function Install-Ffmpeg {
 }
 
 function Update-YtDlp {
-    # Lo usa T06 cuando yt-dlp entre como dependencia: YouTube cambia seguido y hay que actualizarlo.
-    $ytDlp = Join-Path $workerDir '.venv\Scripts\yt-dlp.exe'
-    if (-not (Test-Path $ytDlp)) { return }
-    & $ytDlp -U
-    if ($LASTEXITCODE -ne 0) { Write-Warning 'yt-dlp -U falló (no es bloqueante).' }
+    # YouTube cambia seguido: yt-dlp (instalado como librería en el venv) se actualiza en cada corrida.
+    $python = Join-Path $workerDir '.venv\Scripts\python.exe'
+    if (-not (Test-Path $python)) { return }
+    & $python -m pip install -U yt-dlp
+    if ($LASTEXITCODE -ne 0) { Write-Warning 'pip install -U yt-dlp falló (no es bloqueante).' }
 }
 
 function New-WorkerFolders {

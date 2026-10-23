@@ -101,7 +101,8 @@ def run_pipeline(
     La caché de cada paso se invalida si cambia su versión o la de cualquier paso anterior.
 
     Lanza LeaseLostError si se pierde el lease; cualquier otra excepción del paso sube tal cual
-    (RetryableStepError incluida) para que el loop decida el `fail`.
+    (RetryableStepError incluida; PermanentStepError también sube y el loop la informa como no
+    reintentable) para que el loop decida el `fail`.
     """
     song_dir = cache_dir / cache_key(job)
 

@@ -8,7 +8,7 @@ from pathlib import Path
 from guitarra_worker.api_client import ApiClient, ApiError, Job, LeaseLostError
 from guitarra_worker.config import Settings
 from guitarra_worker.pipeline.runner import AssembleFn, Heartbeat, run_pipeline
-from guitarra_worker.pipeline.step import RetryableStepError, Step
+from guitarra_worker.pipeline.step import PermanentStepError, RetryableStepError, Step
 
 log = logging.getLogger(__name__)
 
@@ -35,6 +35,8 @@ def process_job(
             log.warning("Trabajo %s: lease perdido, se aborta", job.job_id)
         except (RetryableStepError, ApiError) as exc:  # ApiError: red caída, vale reintentar
             _report_failure(client, job, exc, retryable=True)
+        except PermanentStepError as exc:  # no reintentable: se informa directo
+            _report_failure(client, job, exc, retryable=False)
         except Exception as exc:  # noqa: BLE001 - cualquier fallo del paso se informa a la API
             _report_failure(client, job, exc, retryable=False)
     return False

@@ -2,7 +2,12 @@
 
 from typing import Any
 
+from guitarra_worker.adapters.spotify import SpotifyAdapter
+from guitarra_worker.adapters.youtube import YoutubeAdapter
+from guitarra_worker.config import Settings
 from guitarra_worker.pipeline.step import PipelineContext, Step
+from guitarra_worker.steps.download import DownloadStep
+from guitarra_worker.steps.source import SourceStep
 
 
 class NoopStep:
@@ -23,5 +28,9 @@ def assemble_result(outputs: dict[str, dict[str, Any]]) -> dict[str, Any]:
     return outputs["noop"]
 
 
-def default_steps() -> list[Step]:
-    return [NoopStep()]
+def default_steps(settings: Settings | None = None) -> list[Step]:
+    """Pasos reales en orden. Spotify solo funciona si hay credenciales en la config."""
+    settings = settings or Settings()
+    youtube = YoutubeAdapter(settings.ffmpeg)
+    spotify = SpotifyAdapter(settings.spotify_client_id, settings.spotify_client_secret)
+    return [SourceStep(youtube, spotify), DownloadStep(youtube)]
