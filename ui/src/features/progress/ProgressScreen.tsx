@@ -81,6 +81,10 @@ function ProgressContent({ data }: { data: Loaded }) {
           value={plural(summary.max_streak, 'día', 'días')}
         />
         <Stat label="Días practicados" value={String(summary.practiced_days)} />
+        <Stat
+          label="Canciones en curso"
+          value={String(summary.songs_in_progress)}
+        />
       </div>
       <h3 className="progress-subtitle">Último año</h3>
       <Heatmap from={from} to={to} days={days} />

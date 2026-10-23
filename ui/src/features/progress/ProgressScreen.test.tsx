@@ -12,6 +12,7 @@ const summary = {
   current_streak: 3,
   max_streak: 7,
   practiced_days: 12,
+  songs_in_progress: 2,
   levels: [
     {
       level_id: 1,
@@ -113,6 +114,13 @@ describe('ProgressScreen', () => {
       ),
     )
     await screen.findByText('Avance por nivel')
+  })
+
+  it('muestra las canciones en curso', async () => {
+    mockApi()
+    render(<ProgressScreen />)
+    const stat = (await screen.findByText('Canciones en curso')).parentElement
+    expect(stat).toHaveTextContent('2')
   })
 
   it('muestra un estado vacío amable sin práctica', async () => {

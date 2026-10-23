@@ -5,7 +5,7 @@ import datetime as dt
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from ..models import Exercise, ExerciseCompletion, Lesson, Level, PracticeSession
+from ..models import Exercise, ExerciseCompletion, Lesson, Level, PracticeSession, SongSection
 
 
 class ProgressRepository:
@@ -44,6 +44,16 @@ class ProgressRepository:
             .order_by(Level.position)
         )
         return [(row[0], row[1], row[2]) for row in self._session.execute(query)]
+
+    def songs_in_progress(self) -> int:
+        """Canciones en curso: las que tienen al menos un ejercicio creado desde una sección.
+
+        No exige que alguno se haya completado: crear la práctica ya cuenta como empezar.
+        """
+        query = select(func.count(func.distinct(SongSection.song_id))).join(
+            Exercise, Exercise.song_section_id == SongSection.id
+        )
+        return self._session.scalar(query) or 0
 
     def exercises_with_level_position(self) -> list[tuple[Exercise, int]]:
         query = (

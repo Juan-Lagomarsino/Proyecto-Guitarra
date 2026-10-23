@@ -1,4 +1,5 @@
 import type { SongChartContent } from '../songs/types'
+import type { Exercise } from '../features/study/types'
 import { apiFetch, apiFetchWithStatus } from './client'
 
 export type AnalysisStatus = 'queued' | 'processing' | 'ready' | 'error'
@@ -19,6 +20,7 @@ export interface SongSummary {
 }
 
 export interface SongSectionInfo {
+  id: number
   slug: string
   name: string
   start_s: number
@@ -98,3 +100,19 @@ export const deleteCifra = (id: number) =>
 
 export const reanalyzeSong = (id: number) =>
   apiFetch<unknown>(`/songs/${id}/reanalyze`, { method: 'POST' })
+
+export type SectionExerciseType = 'chords' | 'strumming'
+
+export const fetchSongExercises = (id: number, signal?: AbortSignal) =>
+  apiFetch<Exercise[]>(`/songs/${id}/exercises`, { signal })
+
+export const createSectionExercise = (
+  songId: number,
+  sectionId: number,
+  type: SectionExerciseType,
+  instrument: ChartInstrument,
+) =>
+  apiFetch<Exercise>(`/songs/${songId}/sections/${sectionId}/exercises`, {
+    method: 'POST',
+    body: { type, instrument },
+  })

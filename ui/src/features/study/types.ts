@@ -19,7 +19,9 @@ export interface LessonSummary {
 
 export interface Exercise {
   id: number
-  lesson_id: number
+  /** null en los ejercicios armados desde una sección de canción. */
+  lesson_id: number | null
+  song_section_id?: number | null
   slug: string
   title: string
   type: string

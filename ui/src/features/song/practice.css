@@ -1,0 +1,46 @@
+/* Practicar una sección de canción. Solo tokens. */
+.practice {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.practice__form {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-2);
+  min-width: 0;
+}
+
+.practice__form legend {
+  padding: 0 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.practice__types,
+.practice__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.practice__types .btn[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.song-exercises {
+  margin-top: 20px;
+  min-width: 0;
+}
+
+.song-exercises__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

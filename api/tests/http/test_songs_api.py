@@ -184,8 +184,10 @@ def test_detalle(client, session):
     )  # fmt: skip
     assert body["error"] == "yt-dlp falló"
     assert body["analysis_status"] == "error"
+    ids = {section.slug: section.id for section in song.sections}
     assert body["sections"] == [
         {
+            "id": ids["viejo"],
             "slug": "viejo",
             "name": "Viejo",
             "start_s": 10,
@@ -194,6 +196,7 @@ def test_detalle(client, session):
             "stale": True,
         },
         {
+            "id": ids["intro"],
             "slug": "intro",
             "name": "Intro",
             "start_s": 0,

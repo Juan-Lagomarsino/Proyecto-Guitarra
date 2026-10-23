@@ -12,8 +12,10 @@ import type { SongChartContent } from '../../songs/types'
 import { AsyncView } from '../study/AsyncView'
 import { useAsyncData } from '../study/useAsyncData'
 import { CifraPanel } from './CifraPanel'
+import { PracticeSection } from './PracticeSection'
 import { SectionDetail } from './SectionDetail'
 import { SectionTimeline } from './SectionTimeline'
+import { SongExercises } from './SongExercises'
 import {
   capoLabel,
   keyLabel,
@@ -138,12 +140,21 @@ function StaleSections({ sections }: { sections: SongSectionInfo[] }) {
   )
 }
 
-function Chart({ content }: { content: SongChartContent }) {
+function Chart({
+  song,
+  content,
+  onCreated,
+}: {
+  song: SongDetail
+  content: SongChartContent
+  onCreated: () => void
+}) {
   const sections = timelineSections(content)
   const [selectedId, setSelectedId] = useState(sections[0]?.id ?? '')
   const selected = sections.find((s) => s.id === selectedId) ?? sections[0]
   if (!selected)
     return <p className="page-note">Esta canción todavía no tiene secciones.</p>
+  const stored = song.sections.find((s) => s.slug === selected.id && !s.stale)
   return (
     <>
       <SectionTimeline
@@ -153,6 +164,16 @@ function Chart({ content }: { content: SongChartContent }) {
       />
       <Legend />
       <SectionDetail section={selected} instrument={content.instrument} />
+      {stored && (
+        <PracticeSection
+          key={stored.id}
+          songId={song.id}
+          sectionId={stored.id}
+          sectionName={selected.name}
+          instrument={content.instrument}
+          onCreated={onCreated}
+        />
+      )}
     </>
   )
 }
@@ -172,6 +193,7 @@ function SongBody({
   const chart = useAsyncData(load)
   const content = chart.status === 'ready' ? chart.data : null
   const stale = song.sections.filter((s) => s.stale)
+  const [exercisesKey, setExercisesKey] = useState(0)
 
   return (
     <>
@@ -180,7 +202,12 @@ function SongBody({
       <AsyncView state={chart}>
         {(data) =>
           data ? (
-            <Chart key={`${song.id}-${instrument}`} content={data} />
+            <Chart
+              key={`${song.id}-${instrument}`}
+              song={song}
+              content={data}
+              onCreated={() => setExercisesKey((key) => key + 1)}
+            />
           ) : (
             <p className="page-note">
               Todavía no hay acordes de guitarra{' '}
@@ -190,6 +217,7 @@ function SongBody({
           )
         }
       </AsyncView>
+      <SongExercises songId={song.id} refreshKey={exercisesKey} />
       <StaleSections sections={stale} />
       <CifraPanel
         songId={song.id}

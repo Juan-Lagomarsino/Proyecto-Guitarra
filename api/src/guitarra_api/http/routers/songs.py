@@ -3,6 +3,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.orm import Session
 
+from guitarra_api.application.song_exercise_service import (
+    SectionNotFoundError,
+    SongExerciseService,
+)
 from guitarra_api.application.song_service import (
     AnalysisAlreadyActiveError,
     ChartNotFoundError,
@@ -10,17 +14,23 @@ from guitarra_api.application.song_service import (
     SongNotFoundError,
     SongService,
 )
+from guitarra_api.domain.song_exercise import (
+    SectionNotFoundInChartError,
+    SectionNotPlayableError,
+)
 from guitarra_api.domain.song_source import InvalidSongUrlError
 from guitarra_api.http.auth import require_token
 from guitarra_api.http.song_schemas import (
     CifraIn,
     CifraSavedOut,
     Instrument,
+    SectionExerciseIn,
     SongChartOut,
     SongDetailOut,
     SongIn,
     SongSummaryOut,
 )
+from guitarra_api.http.study_schemas import ExerciseOut
 from guitarra_api.infra.db.models import Song
 from guitarra_api.infra.db.session import get_session
 
@@ -32,6 +42,15 @@ def get_song_service(session: Annotated[Session, Depends(get_session)]) -> SongS
 
 
 Service = Annotated[SongService, Depends(get_song_service)]
+
+
+def get_song_exercise_service(
+    session: Annotated[Session, Depends(get_session)],
+) -> SongExerciseService:
+    return SongExerciseService(session)
+
+
+ExerciseService = Annotated[SongExerciseService, Depends(get_song_exercise_service)]
 
 
 def _summary(entry: SongEntry) -> SongSummaryOut:
@@ -136,6 +155,32 @@ def save_cifra(song_id: int, body: CifraIn, service: Service):
 def delete_cifra(song_id: int, service: Service) -> None:
     try:
         service.delete_cifra(song_id)
+    except SongNotFoundError as error:
+        raise _not_found(error) from error
+
+
+@router.post(
+    "/songs/{song_id}/sections/{section_id}/exercises",
+    response_model=ExerciseOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_section_exercise(
+    song_id: int, section_id: int, body: SectionExerciseIn, service: ExerciseService
+):
+    try:
+        return service.create(song_id, section_id, body.type, body.instrument)
+    except (SongNotFoundError, SectionNotFoundError, ChartNotFoundError) as error:
+        raise _not_found(error) from error
+    except SectionNotFoundInChartError as error:
+        raise HTTPException(status.HTTP_409_CONFLICT, detail=str(error)) from error
+    except SectionNotPlayableError as error:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(error)) from error
+
+
+@router.get("/songs/{song_id}/exercises", response_model=list[ExerciseOut])
+def list_song_exercises(song_id: int, service: ExerciseService):
+    try:
+        return service.list_for_song(song_id)
     except SongNotFoundError as error:
         raise _not_found(error) from error
 

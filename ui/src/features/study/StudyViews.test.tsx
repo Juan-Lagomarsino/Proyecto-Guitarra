@@ -56,6 +56,7 @@ const progressSummary = {
   current_streak: 0,
   max_streak: 0,
   practiced_days: 0,
+  songs_in_progress: 0,
   levels: [
     {
       level_id: 1,

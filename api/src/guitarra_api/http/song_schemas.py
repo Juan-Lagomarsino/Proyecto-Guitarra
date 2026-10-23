@@ -74,6 +74,7 @@ class CifraSavedOut(SongSummaryOut):
 class SongSectionOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    id: int
     slug: str
     name: str
     start_s: float
@@ -102,3 +103,8 @@ class SongChartOut(BaseModel):
     confidence: float | None
     content: dict[str, Any] = Field(description="SongChartContent (schemas/song_chart.schema.json)")
     created_at: dt.datetime
+
+
+class SectionExerciseIn(BaseModel):
+    type: Literal["chords", "strumming"] = Field(description="Cambio de acordes o rasgueo")
+    instrument: Instrument = Field(description="Chart de qué guitarra se usa de base")

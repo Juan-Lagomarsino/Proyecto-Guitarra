@@ -17,6 +17,7 @@ class SummaryOut(BaseModel):
     max_streak: int
     practiced_days: int
     levels: list[LevelProgressOut]
+    songs_in_progress: int
 
 
 class CalendarDayOut(BaseModel):

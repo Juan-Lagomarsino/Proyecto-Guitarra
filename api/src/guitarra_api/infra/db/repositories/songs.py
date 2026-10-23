@@ -4,7 +4,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from guitarra_api.domain.song_chart import SongChartContent, overall_confidence
-from guitarra_api.infra.db.models import AnalysisJob, Song, SongChart
+from guitarra_api.infra.db.models import AnalysisJob, Exercise, Song, SongChart, SongSection
 
 USER_ORIGIN = "user"
 ACTIVE_JOB_STATUSES = ("queued", "running")
@@ -111,6 +111,28 @@ class SongRepository:
         ) or self._session.scalar(
             base.where(SongChart.origin != USER_ORIGIN).order_by(latest).limit(1)
         )
+
+    def get_section(self, song_id: int, section_id: int) -> SongSection | None:
+        """La sección solo si pertenece a esa canción."""
+        return self._session.scalar(
+            select(SongSection).where(SongSection.id == section_id, SongSection.song_id == song_id)
+        )
+
+    def add_exercise(self, exercise: Exercise) -> Exercise:
+        """Agrega el ejercicio y hace flush, sin commit."""
+        self._session.add(exercise)
+        self._session.flush()
+        return exercise
+
+    def list_exercises(self, song_id: int) -> list[Exercise]:
+        """Ejercicios de todas las secciones de la canción, del más viejo al más nuevo."""
+        query = (
+            select(Exercise)
+            .join(SongSection, Exercise.song_section_id == SongSection.id)
+            .where(SongSection.song_id == song_id)
+            .order_by(Exercise.id)
+        )
+        return list(self._session.scalars(query))
 
     def active_job(self, song_id: int) -> AnalysisJob | None:
         """El trabajo `queued` o `running` de la canción, si hay."""

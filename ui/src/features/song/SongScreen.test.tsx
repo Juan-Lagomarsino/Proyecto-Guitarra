@@ -29,6 +29,7 @@ const song: SongDetail = {
   cifra_url: null,
   sections: [
     {
+      id: 3,
       slug: 'puente',
       name: 'Puente viejo',
       start_s: 0,
@@ -118,6 +119,7 @@ const mockApi = (charts: Record<string, SongChartResponse | undefined>) => {
       const path = url.replace('/api/v1', '')
       calls.push(path)
       if (path === '/songs/7') return json(song)
+      if (path === '/songs/7/exercises') return json([])
       const match = /^\/songs\/7\/chart\?instrument=(\w+)$/.exec(path)
       const found = match ? charts[match[1]] : undefined
       return found ? json(found) : json({ detail: 'sin chart' }, 404)

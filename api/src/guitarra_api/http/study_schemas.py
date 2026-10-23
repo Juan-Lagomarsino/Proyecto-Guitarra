@@ -29,7 +29,8 @@ class ExerciseOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    lesson_id: int
+    lesson_id: int | None = Field(description="null en los ejercicios de canción")
+    song_section_id: int | None = Field(description="null en los ejercicios de una lección")
     slug: str
     title: str
     type: str

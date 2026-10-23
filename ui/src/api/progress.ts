@@ -14,6 +14,7 @@ export interface ProgressSummary {
   max_streak: number
   practiced_days: number
   levels: LevelProgress[]
+  songs_in_progress: number
 }
 
 export interface CalendarDay {

@@ -33,6 +33,7 @@ class Summary:
     max_streak: int
     practiced_days: int
     levels: list[LevelProgress]
+    songs_in_progress: int
 
 
 class ProgressService:
@@ -48,7 +49,13 @@ class ProgressService:
             LevelProgress(level.id, level.slug, level.position, level.name, done, total)
             for level, done, total in self._repo.level_progress()
         ]
-        return Summary(progress.current_streak, progress.max_streak, progress.total_days, levels)
+        return Summary(
+            progress.current_streak,
+            progress.max_streak,
+            progress.total_days,
+            levels,
+            self._repo.songs_in_progress(),
+        )
 
     def calendar(self, start: dt.date, end: dt.date) -> list[tuple[dt.date, int]]:
         if start > end:
