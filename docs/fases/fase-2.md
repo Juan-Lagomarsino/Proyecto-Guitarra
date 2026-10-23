@@ -44,7 +44,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F2-T05 | 1 | Worker: esqueleto, pipeline por pasos con caché, cliente de API, `install.ps1` | T02 | hecha |
 | F2-T06 | 2 | Pasos de fuente y descarga: YouTube, Spotify y búsqueda por duración | T05 | hecha |
 | F2-T07 | 2 | Paso de tempo y compases | T01, T05 | hecha |
-| F2-T08 | 2 | Paso de tonalidad y acordes | T01, T05 | pendiente |
+| F2-T08 | 2 | Paso de tonalidad y acordes | T01, T05 | hecha (prueba real de BTC en T19) |
 | F2-T09 | 2 | Paso de estructura (secciones con tiempos y nombres) | T01, T05 | hecha |
 | F2-T10 | 2 | Adaptador de Cifra Club y alineación con lo detectado | T05 | hecha (acceso al sitio: ver nota) |
 | F2-T11 | 2 | Diccionario de acordes y adaptación al instrumento (clásica / eléctrica) | T02 | hecha |
