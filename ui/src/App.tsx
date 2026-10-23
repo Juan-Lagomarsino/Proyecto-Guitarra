@@ -1,11 +1,11 @@
 import { AppRoutes } from './app/AppRoutes'
-import { ThemeProvider } from './theme/ThemeProvider'
+import { SavedThemeProvider } from './features/settings/SavedTheme'
 
 /** Debe renderizarse dentro de un Router (lo pone main.tsx). */
 export default function App() {
   return (
-    <ThemeProvider>
+    <SavedThemeProvider>
       <AppRoutes />
-    </ThemeProvider>
+    </SavedThemeProvider>
   )
 }

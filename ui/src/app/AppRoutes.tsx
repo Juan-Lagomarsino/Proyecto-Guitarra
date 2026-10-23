@@ -1,10 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
-import {
-  ProgressPage,
-  SettingsPage,
-  StudyPage,
-  TodayPage,
-} from '../pages/Pages'
+import { ProgressPage, StudyPage, TodayPage } from '../pages/Pages'
+import { SettingsScreen } from '../features/settings/SettingsScreen'
 import { AppShell } from './AppShell'
 
 export function AppRoutes() {
@@ -14,7 +10,7 @@ export function AppRoutes() {
         <Route index element={<TodayPage />} />
         <Route path="estudio" element={<StudyPage />} />
         <Route path="progreso" element={<ProgressPage />} />
-        <Route path="ajustes" element={<SettingsPage />} />
+        <Route path="ajustes" element={<SettingsScreen />} />
       </Route>
     </Routes>
   )

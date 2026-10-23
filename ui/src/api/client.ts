@@ -2,11 +2,14 @@ const BASE_URL = '/api/v1'
 
 export class ApiError extends Error {
   readonly status: number
+  /** Campo `detail` de la respuesta de error (string, o lista en los 422 de FastAPI). */
+  readonly detail: unknown
 
-  constructor(status: number, message: string) {
+  constructor(status: number, message: string, detail?: unknown) {
     super(message)
     this.name = 'ApiError'
     this.status = status
+    this.detail = detail
   }
 }
 
@@ -16,14 +19,18 @@ interface ApiRequestOptions {
   signal?: AbortSignal
 }
 
-async function readErrorMessage(response: Response): Promise<string> {
+async function readError(
+  response: Response,
+): Promise<{ message: string; detail?: unknown }> {
+  const fallback = response.statusText || `Error ${response.status}`
   try {
     const data = (await response.json()) as { detail?: unknown }
-    if (typeof data.detail === 'string') return data.detail
+    const message = typeof data.detail === 'string' ? data.detail : fallback
+    return { message, detail: data.detail }
   } catch {
     // el cuerpo no era JSON: se usa el texto de estado
+    return { message: fallback }
   }
-  return response.statusText || `Error ${response.status}`
 }
 
 /** fetch tipado contra /api/v1 con el token Bearer de la config de build. */
@@ -43,8 +50,10 @@ export async function apiFetch<T = unknown>(
     signal,
   })
 
-  if (!response.ok)
-    throw new ApiError(response.status, await readErrorMessage(response))
+  if (!response.ok) {
+    const { message, detail } = await readError(response)
+    throw new ApiError(response.status, message, detail)
+  }
   if (response.status === 204) return undefined as T
   return (await response.json()) as T
 }
