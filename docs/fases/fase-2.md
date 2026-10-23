@@ -38,7 +38,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | Id | Ola | Objetivo | Depende de | Estado |
 | --- | --- | --- | --- | --- |
 | F2-T01 | 0 | Spike: elegir herramientas de tempo, acordes, tonalidad y estructura midiendo con las 5 canciones | — | pendiente |
-| F2-T02 | 0 | Modelo de datos de canciones, esquema del `SongChart` y migración | — | pendiente |
+| F2-T02 | 0 | Modelo de datos de canciones, esquema del `SongChart` y migración | — | hecha |
 | F2-T03 | 1 | API de canciones (alta por link o nombre, biblioteca, detalle, chart) | T02 | pendiente |
 | F2-T04 | 1 | API de la cola de trabajos para el worker | T02 | pendiente |
 | F2-T05 | 1 | Worker: esqueleto, pipeline por pasos con caché, cliente de API, `install.ps1` | T02 | pendiente |

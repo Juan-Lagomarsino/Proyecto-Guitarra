@@ -1,0 +1,391 @@
+{
+  "$defs": {
+    "Barre": {
+      "additionalProperties": false,
+      "description": "Cejilla: traste y rango de cuerdas, de la más grave (6) a la más aguda (1).",
+      "properties": {
+        "fret": {
+          "maximum": 24,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "from_string": {
+          "maximum": 6,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "to_string": {
+          "maximum": 6,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "fret",
+        "from_string",
+        "to_string"
+      ],
+      "title": "Barre",
+      "type": "object"
+    },
+    "BeatGrid": {
+      "additionalProperties": false,
+      "description": "Instante (en segundos) de cada beat y del primer tiempo de cada compás.",
+      "properties": {
+        "beats_s": {
+          "items": {
+            "minimum": 0,
+            "type": "number"
+          },
+          "minItems": 2,
+          "type": "array"
+        },
+        "downbeats_s": {
+          "items": {
+            "minimum": 0,
+            "type": "number"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "beats_s"
+      ],
+      "title": "BeatGrid",
+      "type": "object"
+    },
+    "ChartChord": {
+      "additionalProperties": false,
+      "description": "Acorde con el mismo `name`, `shape` y `barre` que la notación; `t_s` en segundos.",
+      "properties": {
+        "t_s": {
+          "minimum": 0,
+          "type": "number"
+        },
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "shape": {
+          "items": {
+            "anyOf": [
+              {
+                "maximum": 24,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "const": "x",
+                "type": "string"
+              }
+            ]
+          },
+          "maxItems": 6,
+          "minItems": 6,
+          "type": "array"
+        },
+        "barre": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Barre"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "t_s",
+        "name",
+        "shape",
+        "confidence"
+      ],
+      "title": "ChartChord",
+      "type": "object"
+    },
+    "ChartSection": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9][a-z0-9_-]*$",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "start_s": {
+          "minimum": 0,
+          "type": "number"
+        },
+        "end_s": {
+          "minimum": 0,
+          "type": "number"
+        },
+        "order": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "chord_source": {
+          "enum": [
+            "detected",
+            "cifraclub",
+            "user"
+          ],
+          "type": "string"
+        },
+        "chords": {
+          "items": {
+            "$ref": "#/$defs/ChartChord"
+          },
+          "type": "array"
+        },
+        "strum": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SectionStrum"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "arpeggio": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SectionArpeggio"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "start_s",
+        "end_s",
+        "order",
+        "chord_source"
+      ],
+      "title": "ChartSection",
+      "type": "object"
+    },
+    "Key": {
+      "additionalProperties": false,
+      "properties": {
+        "tonic": {
+          "pattern": "^[A-G][#b]?$",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "major",
+            "minor"
+          ],
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "tonic",
+        "mode",
+        "confidence"
+      ],
+      "title": "Key",
+      "type": "object"
+    },
+    "SectionArpeggio": {
+      "additionalProperties": false,
+      "description": "Arpegio p-i-m-a (solo guitarra clásica), p. ej. `p-i-m-a-m-i`.",
+      "properties": {
+        "pattern_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "pattern": {
+          "pattern": "^[pima](-[pima])*$",
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "pattern_id",
+        "pattern",
+        "confidence"
+      ],
+      "title": "SectionArpeggio",
+      "type": "object"
+    },
+    "SectionStrum": {
+      "additionalProperties": false,
+      "description": "Rasgueo propuesto: un patrón que se repite, con el patrón del catálogo del que salió.",
+      "properties": {
+        "pattern": {
+          "minLength": 1,
+          "pattern": "^[DU-]+$",
+          "type": "string"
+        },
+        "accent": {
+          "items": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "beats_per_cycle": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pattern_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "pattern",
+        "pattern_id",
+        "confidence"
+      ],
+      "title": "SectionStrum",
+      "type": "object"
+    },
+    "SourceStep": {
+      "additionalProperties": false,
+      "description": "Un paso del pipeline que corrió: qué herramienta y qué versión.",
+      "properties": {
+        "step": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "tool": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "version": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "step",
+        "tool",
+        "version"
+      ],
+      "title": "SourceStep",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "instrument": {
+      "enum": [
+        "classical",
+        "electric"
+      ],
+      "type": "string"
+    },
+    "key": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Key"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "bpm": {
+      "exclusiveMinimum": 0,
+      "maximum": 400,
+      "type": "number"
+    },
+    "bpm_confidence": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "time_signature": {
+      "default": "4/4",
+      "pattern": "^[1-9][0-9]?/[1-9][0-9]?$",
+      "type": "string"
+    },
+    "capo": {
+      "default": 0,
+      "maximum": 12,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "beat_grid": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BeatGrid"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "sections": {
+      "items": {
+        "$ref": "#/$defs/ChartSection"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/SourceStep"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "instrument",
+    "bpm",
+    "sections"
+  ],
+  "title": "SongChartContent",
+  "type": "object"
+}

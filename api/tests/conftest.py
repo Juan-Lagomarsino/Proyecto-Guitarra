@@ -46,6 +46,7 @@ def session(migrated_engine: Engine) -> Iterator[Session]:
         connection.execute(
             text(
                 "TRUNCATE exercise_completions, practice_sessions, exercises, lessons, levels, "
-                "settings, reminder_rules RESTART IDENTITY CASCADE"
+                "settings, reminder_rules, songs, song_sections, song_charts, audio_assets, "
+                "analysis_jobs, corrections RESTART IDENTITY CASCADE"
             )
         )

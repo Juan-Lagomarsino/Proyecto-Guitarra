@@ -1,4 +1,7 @@
-"""Modelos SQLAlchemy de la Fase 1. Timestamps en UTC; la fecha local de práctica es una `date`."""
+"""Modelos SQLAlchemy (Fase 1: estudio y progreso; Fase 2: canciones y cola de análisis).
+
+Timestamps en UTC; la fecha local de práctica es una `date`.
+"""
 
 import datetime as dt
 from typing import Any
@@ -8,7 +11,9 @@ from sqlalchemy import (
     CheckConstraint,
     Date,
     DateTime,
+    Float,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
@@ -17,15 +22,21 @@ from sqlalchemy import (
     text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from guitarra_api.domain.app_settings import INSTRUMENTS
+from guitarra_api.domain.song_chart import SongChartContent
 
 from .base import Base
 
 EXERCISE_TYPES = ("scale", "riff", "chords", "strumming", "arpeggio", "technique", "improvisation")
 CATEGORIES = ("warmup", "technique", "riff", "improvisation")
 SESSION_STATUSES = ("planned", "in_progress", "completed", "skipped")
+SONG_SOURCES = ("youtube", "spotify", "search")
+ANALYSIS_STATUSES = ("queued", "processing", "ready", "error")
+CHART_ORIGINS = ("auto", "cifraclub", "user")
+AUDIO_ASSET_KINDS = ("original", "no_guitar", "stem")
+JOB_STATUSES = ("queued", "running", "done", "error")
 DEFAULT_TUNING = ["E2", "A2", "D3", "G3", "B3", "E4"]
 
 
@@ -73,7 +84,7 @@ class Lesson(Base):
 
 
 class Exercise(Base):
-    """Pertenece a una lección. `song_section_id` llega en la Fase 2 con su migración."""
+    """Pertenece a una lección **o** a una sección de canción (exactamente una de las dos)."""
 
     __tablename__ = "exercises"
     __table_args__ = (
@@ -84,10 +95,16 @@ class Exercise(Base):
         CheckConstraint("bpm_target > 0", name="bpm_target_positive"),
         CheckConstraint("bpm_target >= bpm_start", name="bpm_target_gte_start"),
         CheckConstraint("duration_min > 0", name="duration_positive"),
+        CheckConstraint(
+            "(lesson_id IS NULL) <> (song_section_id IS NULL)", name="lesson_xor_song_section"
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    lesson_id: Mapped[int] = mapped_column(ForeignKey("lessons.id", ondelete="CASCADE"))
+    lesson_id: Mapped[int | None] = mapped_column(ForeignKey("lessons.id", ondelete="CASCADE"))
+    song_section_id: Mapped[int | None] = mapped_column(
+        ForeignKey("song_sections.id", ondelete="CASCADE"), index=True
+    )
     slug: Mapped[str] = mapped_column(String(120), unique=True)
     title: Mapped[str] = mapped_column(String(200))
     type: Mapped[str] = mapped_column(String(20))
@@ -99,7 +116,7 @@ class Exercise(Base):
     category: Mapped[str] = mapped_column(String(60))
     description: Mapped[str | None] = mapped_column(Text)
 
-    lesson: Mapped[Lesson] = relationship(back_populates="exercises")
+    lesson: Mapped[Lesson | None] = relationship(back_populates="exercises")
 
 
 class ExerciseCompletion(Base):
@@ -178,3 +195,145 @@ class ReminderRules(Base):
     )
     inactivity_threshold_days: Mapped[int] = mapped_column(Integer, default=3, server_default="3")
     preferred_window: Mapped[dict[str, Any] | None] = mapped_column(JSONB)  # {start, end} HH:MM
+
+
+class Song(Base):
+    """Una por canción, independiente del instrumento."""
+
+    __tablename__ = "songs"
+    __table_args__ = (
+        CheckConstraint(_in_list("source", SONG_SOURCES), name="source_valid"),
+        CheckConstraint(_in_list("analysis_status", ANALYSIS_STATUSES), name="status_valid"),
+        CheckConstraint("duration_s IS NULL OR duration_s > 0", name="duration_positive"),
+        CheckConstraint("bpm IS NULL OR bpm > 0", name="bpm_positive"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(300))
+    artist: Mapped[str] = mapped_column(String(300))
+    source: Mapped[str] = mapped_column(String(20))
+    url: Mapped[str | None] = mapped_column(Text)
+    youtube_id: Mapped[str | None] = mapped_column(String(32), unique=True)
+    spotify_id: Mapped[str | None] = mapped_column(String(64), unique=True)
+    duration_s: Mapped[float | None] = mapped_column(Float)
+    bpm: Mapped[float | None] = mapped_column(Float)
+    key: Mapped[str | None] = mapped_column(String(20))  # tonalidad, p. ej. "A minor"
+    year: Mapped[int | None] = mapped_column(Integer)
+    analysis_status: Mapped[str] = mapped_column(
+        String(20), default="queued", server_default="queued"
+    )
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    sections: Mapped[list["SongSection"]] = relationship(
+        back_populates="song", order_by="SongSection.position"
+    )
+
+
+class SongSection(Base):
+    """Sección con tiempos. `slug` es el id estable de la sección dentro del `SongChart`."""
+
+    __tablename__ = "song_sections"
+    __table_args__ = (
+        UniqueConstraint("song_id", "position", name="uq_song_sections_song_position"),
+        UniqueConstraint("song_id", "slug", name="uq_song_sections_song_slug"),
+        CheckConstraint("start_s >= 0 AND start_s < end_s", name="times_valid"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    song_id: Mapped[int] = mapped_column(ForeignKey("songs.id", ondelete="CASCADE"), index=True)
+    slug: Mapped[str] = mapped_column(String(80))
+    name: Mapped[str] = mapped_column(String(120))
+    start_s: Mapped[float] = mapped_column(Float)
+    end_s: Mapped[float] = mapped_column(Float)
+    position: Mapped[int] = mapped_column(Integer)
+
+    song: Mapped[Song] = relationship(back_populates="sections")
+
+
+class SongChart(Base):
+    """Versionado por canción e instrumento. `content` es un `SongChartContent` validado."""
+
+    __tablename__ = "song_charts"
+    __table_args__ = (
+        UniqueConstraint("song_id", "instrument", "version", name="uq_song_charts_version"),
+        CheckConstraint(_in_list("instrument", INSTRUMENTS), name="instrument_valid"),
+        CheckConstraint(_in_list("origin", CHART_ORIGINS), name="origin_valid"),
+        CheckConstraint("version >= 1", name="version_positive"),
+        CheckConstraint(
+            "confidence IS NULL OR confidence BETWEEN 0 AND 1", name="confidence_range"
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    song_id: Mapped[int] = mapped_column(ForeignKey("songs.id", ondelete="CASCADE"), index=True)
+    instrument: Mapped[str] = mapped_column(String(20))
+    version: Mapped[int] = mapped_column(Integer)
+    origin: Mapped[str] = mapped_column(String(20))
+    content: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    confidence: Mapped[float | None] = mapped_column(Float)
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    @validates("content")
+    def _validate_content(self, _key: str, value: dict[str, Any]) -> dict[str, Any]:
+        """Rechaza al guardar todo lo que no cumpla el esquema del dominio."""
+        return SongChartContent.model_validate(value).model_dump(mode="json")
+
+
+class AudioAsset(Base):
+    __tablename__ = "audio_assets"
+    __table_args__ = (CheckConstraint(_in_list("kind", AUDIO_ASSET_KINDS), name="kind_valid"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    song_id: Mapped[int] = mapped_column(ForeignKey("songs.id", ondelete="CASCADE"), index=True)
+    kind: Mapped[str] = mapped_column(String(20))
+    path: Mapped[str] = mapped_column(Text)
+    format: Mapped[str] = mapped_column(String(10))
+
+
+class AnalysisJob(Base):
+    """Cola que consume el worker: se toma con lease y se reintenta hasta `max_attempts`."""
+
+    __tablename__ = "analysis_jobs"
+    __table_args__ = (
+        CheckConstraint(_in_list("status", JOB_STATUSES), name="status_valid"),
+        CheckConstraint("attempts >= 0", name="attempts_non_negative"),
+        CheckConstraint("max_attempts >= 1", name="max_attempts_positive"),
+        Index("ix_analysis_jobs_status_lease_until", "status", "lease_until"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    song_id: Mapped[int] = mapped_column(ForeignKey("songs.id", ondelete="CASCADE"), index=True)
+    type: Mapped[str] = mapped_column(String(30), default="analyze", server_default="analyze")
+    status: Mapped[str] = mapped_column(String(20), default="queued", server_default="queued")
+    attempts: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    max_attempts: Mapped[int] = mapped_column(Integer, default=3, server_default="3")
+    error: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    claimed_by: Mapped[str | None] = mapped_column(String(120))
+    lease_until: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    current_step: Mapped[str | None] = mapped_column(String(60))
+    finished_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class Correction(Base):
+    """Historial de ediciones del usuario sobre un chart (insumo para el aprendizaje)."""
+
+    __tablename__ = "corrections"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    song_chart_id: Mapped[int] = mapped_column(
+        ForeignKey("song_charts.id", ondelete="CASCADE"), index=True
+    )
+    diff: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )

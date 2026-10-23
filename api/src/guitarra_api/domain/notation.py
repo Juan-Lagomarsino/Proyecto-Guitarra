@@ -23,6 +23,13 @@ StringNumber = Annotated[int, Field(ge=1, le=NUM_STRINGS)]
 Fret = Annotated[int, Field(ge=0, le=MAX_FRET)]
 Beats = Annotated[float, Field(ge=0)]
 NoteWithOctave = Annotated[str, Field(pattern=NOTE_WITH_OCTAVE_PATTERN)]
+ChordName = Annotated[str, Field(min_length=1)]
+ChordShape = Annotated[
+    list[Fret | Literal["x"]],
+    Field(min_length=NUM_STRINGS, max_length=NUM_STRINGS),
+]
+StrumPattern = Annotated[str, Field(min_length=1, pattern=STRUM_PATTERN)]
+StrumAccents = list[Annotated[int, Field(ge=0)]]
 
 
 class _Strict(BaseModel):
@@ -62,23 +69,24 @@ class Barre(_Strict):
 
 class Chord(_Strict):
     t: Beats
-    name: Annotated[str, Field(min_length=1)]
-    shape: Annotated[
-        list[Fret | Literal["x"]],
-        Field(min_length=NUM_STRINGS, max_length=NUM_STRINGS),
-    ]
+    name: ChordName
+    shape: ChordShape
     barre: Barre | None = None
+
+
+def ensure_accents_inside_pattern(pattern: str, accent: list[int]) -> None:
+    if any(index >= len(pattern) for index in accent):
+        raise ValueError("'accent' tiene índices fuera del patrón")
 
 
 class Strum(_Strict):
     t: Beats
-    pattern: Annotated[str, Field(min_length=1, pattern=STRUM_PATTERN)]
-    accent: list[Annotated[int, Field(ge=0)]] = Field(default_factory=list)
+    pattern: StrumPattern
+    accent: StrumAccents = Field(default_factory=list)
 
     @model_validator(mode="after")
     def _accents_point_inside_pattern(self) -> Self:
-        if any(index >= len(self.pattern) for index in self.accent):
-            raise ValueError("'accent' tiene índices fuera del patrón")
+        ensure_accents_inside_pattern(self.pattern, self.accent)
         return self
 
 
@@ -95,7 +103,7 @@ class Notation(_Strict):
     tonic: Annotated[str, Field(pattern=NOTE_PATTERN)] | None = None
 
 
-class _NoFieldTitles(GenerateJsonSchema):
+class NoFieldTitles(GenerateJsonSchema):
     """Sin títulos autogenerados por campo: evita tipos TS con nombres como `String`."""
 
     def field_title_should_be_set(self, schema: core_schema.CoreSchema) -> bool:
@@ -103,4 +111,4 @@ class _NoFieldTitles(GenerateJsonSchema):
 
 
 def build_json_schema() -> dict[str, Any]:
-    return Notation.model_json_schema(schema_generator=_NoFieldTitles)
+    return Notation.model_json_schema(schema_generator=NoFieldTitles)
