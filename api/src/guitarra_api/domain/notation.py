@@ -43,6 +43,7 @@ class NoteEvent(_Strict):
     fret: Fret
     technique: Technique | None = None
     bend: Annotated[float, Field(gt=0)] | None = None
+    confidence: Annotated[float, Field(ge=0, le=1)] | None = None
 
     @model_validator(mode="after")
     def _bend_goes_with_bend_technique(self) -> Self:

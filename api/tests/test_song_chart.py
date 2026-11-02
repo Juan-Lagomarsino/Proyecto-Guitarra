@@ -207,3 +207,63 @@ def test_committed_json_schema_matches_model():
         "schemas/song_chart.schema.json está viejo: correr "
         "`python api/scripts/export_song_chart_schema.py`"
     )
+
+
+def riff(*events: dict, **changes) -> dict:
+    return {"bpm": 96, "events": list(events), **changes}
+
+
+def note(t: float, dur: float = 1.0, **changes) -> dict:
+    return {"t": t, "dur": dur, "string": 6, "fret": 3, **changes}
+
+
+def test_chart_without_riff_still_validates():
+    chart = SongChartContent.model_validate(valid_chart())
+    assert all(section.riff is None for section in chart.sections)
+
+
+def test_riff_inside_the_section_is_accepted_with_standard_tuning():
+    # sección de 10 s a 96 bpm = 16 beats
+    chart = SongChartContent.model_validate(
+        with_section(0, riff=riff(note(0, confidence=0.7), note(15, 1)))
+    )
+    riff_notation = chart.sections[0].riff
+    assert riff_notation is not None
+    assert riff_notation.tuning == ["E2", "A2", "D3", "G3", "B3", "E4"]
+    assert riff_notation.events[0].confidence == 0.7
+
+
+def test_riff_that_runs_past_the_section_is_rejected_by_bpm():
+    with pytest.raises(ValidationError, match="riff"):
+        SongChartContent.model_validate(with_section(0, riff=riff(note(15.5, 1))))
+
+
+def test_riff_length_uses_the_beat_grid_when_present():
+    grid = {"beats_s": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0], "downbeats_s": [0.0]}
+    chart = {**valid_chart(), "beat_grid": grid}
+    chart["sections"][0].update(end_s=4.0, chords=[A_MINOR], riff=riff(note(3, 1)))
+    chart["sections"][1].update(start_s=4.0, chords=[{**A_MINOR, "t_s": 4.0}])
+    SongChartContent.model_validate(chart)  # 4 beats exactos
+    chart["sections"][0]["riff"] = riff(note(3.5, 1))
+    with pytest.raises(ValidationError, match="riff"):
+        SongChartContent.model_validate(chart)
+
+
+def test_riff_beats_are_relative_to_the_section_start():
+    chart = {**valid_chart(), "beat_grid": {"beats_s": [float(s) for s in range(0, 31)]}}
+    # sección 2: 10 s a 30 s = 20 beats desde su inicio
+    chart["sections"][1]["riff"] = riff(note(19, 1))
+    SongChartContent.model_validate(chart)
+    chart["sections"][1]["riff"] = riff(note(19.5, 1))
+    with pytest.raises(ValidationError, match="riff"):
+        SongChartContent.model_validate(chart)
+
+
+def test_empty_riff_is_rejected():
+    with pytest.raises(ValidationError, match="eventos"):
+        SongChartContent.model_validate(with_section(0, riff=riff()))
+
+
+def test_riff_event_confidence_out_of_range_is_rejected():
+    with pytest.raises(ValidationError):
+        SongChartContent.model_validate(with_section(0, riff=riff(note(0, confidence=1.5))))

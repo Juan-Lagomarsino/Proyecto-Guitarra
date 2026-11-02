@@ -39,6 +39,7 @@ export interface ChartSection {
   chords?: ChartChord[]
   strum?: SectionStrum | null
   arpeggio?: SectionArpeggio | null
+  riff?: Notation | null
 }
 /**
  * Acorde con el mismo `name`, `shape` y `barre` que la notación; `t_s` en segundos.
@@ -86,6 +87,50 @@ export interface SectionArpeggio {
   pattern_id: string
   pattern: string
   confidence: number
+}
+export interface Notation {
+  /**
+   * @minItems 6
+   * @maxItems 6
+   */
+  tuning?: [string, string, string, string, string, string]
+  bpm: number
+  time_signature?: string
+  events?: NoteEvent[]
+  chords?: Chord[]
+  strum?: Strum[]
+  tonic?: string | null
+}
+export interface NoteEvent {
+  t: number
+  dur: number
+  string: number
+  fret: number
+  technique?: ('h' | 'p' | '/' | '\\' | 'b' | 'r' | '~' | 'pm' | 'x') | null
+  bend?: number | null
+  confidence?: number | null
+}
+export interface Chord {
+  t: number
+  name: string
+  /**
+   * @minItems 6
+   * @maxItems 6
+   */
+  shape: [
+    number | 'x',
+    number | 'x',
+    number | 'x',
+    number | 'x',
+    number | 'x',
+    number | 'x',
+  ]
+  barre?: Barre | null
+}
+export interface Strum {
+  t: number
+  pattern: string
+  accent?: number[]
 }
 /**
  * Un paso del pipeline que corrió: qué herramienta y qué versión.

@@ -18,6 +18,7 @@ from guitarra_api.domain.notation import (
     ChordName,
     ChordShape,
     NoFieldTitles,
+    Notation,
     StrumAccents,
     StrumPattern,
     ensure_accents_inside_pattern,
@@ -28,6 +29,7 @@ ARPEGGIO_PATTERN = r"^[pima](-[pima])*$"
 MAX_CAPO_FRET = 12
 MAX_BPM = 400
 BEAT_TOLERANCE_S = 0.01
+RIFF_TOLERANCE_BEATS = 0.01
 
 Confidence = Annotated[float, Field(ge=0, le=1)]
 Seconds = Annotated[float, Field(ge=0)]
@@ -82,6 +84,7 @@ class ChartSection(_Strict):
     chords: list[ChartChord] = Field(default_factory=list)
     strum: SectionStrum | None = None
     arpeggio: SectionArpeggio | None = None
+    riff: Notation | None = None
 
     @field_validator("name")
     @classmethod
@@ -103,6 +106,12 @@ class ChartSection(_Strict):
             raise ValueError(f"sección '{self.id}': hay acordes fuera de la sección")
         if times != sorted(times):
             raise ValueError(f"sección '{self.id}': los acordes deben estar ordenados por 't_s'")
+        return self
+
+    @model_validator(mode="after")
+    def _riff_has_events(self) -> Self:
+        if self.riff is not None and not self.riff.events:
+            raise ValueError(f"sección '{self.id}': un riff debe tener eventos (sin riff, null)")
         return self
 
 
@@ -173,6 +182,16 @@ class SongChartContent(_Strict):
         return self
 
     @model_validator(mode="after")
+    def _riffs_fit_inside_their_section(self) -> Self:
+        for section in self.sections:
+            if section.riff is None:
+                continue
+            limit = section_length_beats(section, self.bpm, self.beat_grid) + RIFF_TOLERANCE_BEATS
+            if any(event.t + event.dur > limit for event in section.riff.events):
+                raise ValueError(f"sección '{section.id}': el riff se pasa del final de la sección")
+        return self
+
+    @model_validator(mode="after")
     def _beat_grid_is_inside_the_song(self) -> Self:
         end_of_song = self.sections[-1].end_s
         if self.beat_grid and self.beat_grid.beats_s[0] > end_of_song:
@@ -186,6 +205,13 @@ def seconds_to_beats(t_s: float, beat_grid: BeatGrid) -> float:
     index = min(max(bisect.bisect_right(beats, t_s) - 1, 0), len(beats) - 2)
     start, end = beats[index], beats[index + 1]
     return index + (t_s - start) / (end - start)
+
+
+def section_length_beats(section: ChartSection, bpm: float, beat_grid: BeatGrid | None) -> float:
+    """Duración de la sección en beats: por la grilla si hay, si no por el BPM del chart."""
+    if beat_grid is None:
+        return (section.end_s - section.start_s) * bpm / 60
+    return seconds_to_beats(section.end_s, beat_grid) - seconds_to_beats(section.start_s, beat_grid)
 
 
 def overall_confidence(content: SongChartContent) -> float | None:
