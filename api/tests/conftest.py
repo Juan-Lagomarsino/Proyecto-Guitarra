@@ -22,6 +22,12 @@ def alembic_config() -> Config:
 
 @pytest.fixture(scope="session")
 def database_url() -> Iterator[str]:
+    """Postgres de testcontainers; con `GUITAR_TEST_DATABASE_URL` usa esa base (vacía) en su lugar."""
+    external_url = os.environ.get("GUITAR_TEST_DATABASE_URL")
+    if external_url:
+        os.environ["DATABASE_URL"] = external_url
+        yield external_url
+        return
     with PostgresContainer("postgres:16", driver="psycopg") as postgres:
         url = postgres.get_connection_url()
         os.environ["DATABASE_URL"] = url  # lo lee alembic/env.py
