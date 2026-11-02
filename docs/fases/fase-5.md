@@ -42,7 +42,7 @@ Lo que **sí** anda acá: PyPI, así que el modelo de transcripción se puede in
 | --- | --- | --- | --- | --- |
 | F5-T01 | 0 | Spike: elegir el transcriptor midiendo con riffs sintéticos; script para medir con riffs reales en la PC | — | pendiente |
 | F5-T02 | 0 | Esquema: `confidence` en eventos de notación y `riff` por sección del chart | — | pendiente |
-| F5-T03 | 0 | Core: digitación por programación dinámica con preferencias | — | pendiente |
+| F5-T03 | 0 | Core: digitación por programación dinámica con preferencias | — | hecha |
 | F5-T04 | 1 | Core: aprender preferencias de un par (automático, corregido) | T03 | pendiente |
 | F5-T05 | 1 | Worker: transcripción, secciones candidatas y cuantización a la grilla | T01, T02 | pendiente |
 | F5-T06 | 1 | API: riffs en el resultado de la separación, mezcla por sección con la versión del usuario | T02 | pendiente |
