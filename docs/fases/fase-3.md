@@ -49,7 +49,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F3-T05 | 1 | Worker: paso que convierte el original a `.m4a` y lo sube | T01 | hecha |
 | F3-T06 | 1 | UI: sintetizador Web Audio y fuentes metrónomo / batería / backing generado | T02, T03 | hecha |
 | F3-T07 | 2 | Worker: separación con Demucs, mezcla sin guitarra, caché y subida; `install.ps1` | T04, T05 | hecha (separación real sin probar: ver tabla) |
-| F3-T08 | 2 | UI: panel de acompañamiento en la vista de canción (selector, velocidad, loop por sección) | T01, T02, T06 | pendiente |
+| F3-T08 | 2 | UI: panel de acompañamiento en la vista de canción (selector, velocidad, loop por sección) | T01, T02, T06 | hecha |
 | F3-T09 | 3 | UI: sincronía de acordes, rasgueo, mástil y tab con el tiempo del acompañamiento | T08 | pendiente |
 | F3-T10 | 4 | Cierre: E2E con audio sintético, README, guía de validación en tu PC | todas | pendiente |
 
@@ -115,3 +115,4 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 
 - **F3-T01:** el `url` de `audio` en el detalle es relativo y sin token; la UI le agrega `?token=` para usarlo en `<audio src>` (solo ese endpoint lo acepta). Pendientes menores: si falla el registro después de escribir, queda un archivo huérfano; dos primeras subidas simultáneas del mismo tipo pueden dar 500 por el unique (el worker sube de a una).
 - **F3-T04:** contrato para el worker: el claim trae `job_type` (`analyze` | `separation`; gana el análisis si hay de los dos); el `result` de una separación es `{"worker_id": ...}` después de subir `no_guitar` por assets. El detalle de canción trae `separation_status` (`none|queued|running|done|error`). Pendientes menores: el chequeo "¿ya hay separación activa?" + insert no es atómico (en la práctica no hay dos análisis simultáneos de la misma canción); las constantes de tipos de trabajo viven en el repositorio de infra y convendría moverlas a dominio.
+- **F3-T08:** el loop por sección es un toggle "Repetir sección: <nombre>" que actúa sobre la sección elegida en la línea de tiempo (el click en la línea de tiempo sigue eligiendo la sección para el detalle); con el toggle activo, tocar otra sección mueve el loop. `BackingSource.play()` devuelve `Promise<void>` y propaga el bloqueo de autoplay al panel. `useBacking()` da `{source, position}` y la posición se publica también en pausa.

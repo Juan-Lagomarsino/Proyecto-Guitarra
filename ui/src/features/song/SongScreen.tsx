@@ -12,6 +12,8 @@ import {
 import type { SongChartContent } from '../../songs/types'
 import { AsyncView } from '../study/AsyncView'
 import { useAsyncData } from '../study/useAsyncData'
+import { BackingProvider } from '../../backing/BackingContext'
+import { BackingPanel } from './BackingPanel'
 import { CifraPanel } from './CifraPanel'
 import { PracticeSection } from './PracticeSection'
 import { SectionDetail } from './SectionDetail'
@@ -177,16 +179,24 @@ function Chart({
   const content = chart.content
   const sections = timelineSections(content)
   const [selectedId, setSelectedId] = useState(sections[0]?.id ?? '')
+  const [loopId, setLoopId] = useState<string | null>(null)
   const selected = sections.find((s) => s.id === selectedId) ?? sections[0]
   if (!selected)
     return <p className="page-note">Esta canción todavía no tiene secciones.</p>
   const stored = song.sections.find((s) => s.slug === selected.id && !s.stale)
   return (
-    <>
+    <BackingProvider>
+      <BackingPanel
+        song={song}
+        content={content}
+        selected={selected}
+        onLoopChange={setLoopId}
+      />
       <SectionTimeline
         sections={sections}
         selectedId={selected.id}
         onSelect={setSelectedId}
+        loopId={loopId}
       />
       <Legend />
       <SectionEditing
@@ -207,7 +217,7 @@ function Chart({
           onCreated={onCreated}
         />
       )}
-    </>
+    </BackingProvider>
   )
 }
 

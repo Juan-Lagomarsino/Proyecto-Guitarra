@@ -30,6 +30,15 @@ export interface SongSectionInfo {
   stale: boolean
 }
 
+/** Asset de audio de la canción; `url` es relativa y sin token (ver `withToken`). */
+export interface SongAudio {
+  kind: 'original' | 'no_guitar' | (string & {})
+  format: string
+  url: string
+}
+
+export type SeparationStatus = 'none' | 'queued' | 'running' | 'done' | 'error'
+
 export interface SongDetail extends SongSummary {
   duration_s: number | null
   year: number | null
@@ -37,6 +46,8 @@ export interface SongDetail extends SongSummary {
   has_cifra: boolean
   cifra_url: string | null
   sections: SongSectionInfo[]
+  audio: SongAudio[]
+  separation_status: SeparationStatus
 }
 
 export interface CifraInput {

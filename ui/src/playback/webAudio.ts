@@ -8,7 +8,7 @@ const FRAME_FALLBACK_MS = 25
  * Ojo: `currentTime` no compensa `outputLatency`; el resaltado puede
  * adelantarse unos ms al sonido.
  */
-class AudioContextClock implements Clock {
+export class AudioContextClock implements Clock {
   constructor(private readonly ctx: AudioContext) {}
 
   now(): number {

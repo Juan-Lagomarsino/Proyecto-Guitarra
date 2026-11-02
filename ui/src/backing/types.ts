@@ -9,7 +9,8 @@ export interface LoopRange {
  * segundos de la canción.
  */
 export interface BackingSource {
-  play(): void
+  /** Rechaza si el navegador no deja sonar (autoplay bloqueado). */
+  play(): Promise<void>
   pause(): void
   /** Salta a `seconds` (se acota a [0, duración]). */
   seek(seconds: number): void

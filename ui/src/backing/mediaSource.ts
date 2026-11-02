@@ -30,7 +30,7 @@ export class MediaBackingSource implements BackingSource {
     // Con loop activo, llegar al final del archivo no termina: vuelve a A.
     if (this.loop !== null) {
       this.media.currentTime = this.loop.startS
-      this.play()
+      this.play().catch(() => undefined)
       return
     }
     this.endedListeners.forEach((fn) => fn())
@@ -45,9 +45,9 @@ export class MediaBackingSource implements BackingSource {
     this.stopFrames = clock.onFrame(() => this.checkLoop())
   }
 
-  play(): void {
-    // El rechazo de play() (p. ej. autoplay bloqueado) no debe romper la UI.
-    void Promise.resolve(this.media.play()).catch(() => undefined)
+  play(): Promise<void> {
+    // El rechazo (p. ej. autoplay bloqueado) se propaga: lo muestra la UI.
+    return Promise.resolve(this.media.play())
   }
 
   pause(): void {

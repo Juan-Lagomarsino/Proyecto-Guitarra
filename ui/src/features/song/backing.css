@@ -1,0 +1,151 @@
+/* Panel de acompañamiento. Solo tokens. */
+.backing {
+  min-width: 0;
+  margin: 0 0 16px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.backing .progress-subtitle {
+  margin: 0;
+}
+
+.backing__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.backing__option {
+  flex: 1 1 200px;
+  min-width: 0;
+  min-height: 48px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.backing__option:has(input:checked) {
+  border-color: var(--accent);
+}
+
+.backing__option:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.backing__option[data-disabled='true'] {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.backing__option input {
+  flex: none;
+  margin-top: 3px;
+  accent-color: var(--accent);
+}
+
+.backing__option-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-wrap: anywhere;
+}
+
+.backing__option-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.backing__chip {
+  padding: 1px 8px;
+  border: 1px dashed var(--warn);
+  border-radius: 999px;
+  color: var(--warn);
+  font-size: 11px;
+}
+
+.backing__hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.backing__sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.backing__speed {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  font-size: 13px;
+}
+
+.backing__speed input[type='range'] {
+  flex: 1 1 140px;
+  min-width: 0;
+  accent-color: var(--accent);
+}
+
+.backing__speed-value,
+.backing__bpm {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.backing__bpm {
+  color: var(--accent);
+}
+
+.backing__transport {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.backing__transport button {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.backing__transport button:focus-visible,
+.backing__sub button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.backing__error {
+  margin: 0;
+  color: var(--warn);
+  font-size: 13px;
+}
+
+/* Sección en loop dentro de la línea de tiempo. */
+.song-timeline__button[data-looping='true'] {
+  border-style: dashed;
+  border-color: var(--good);
+}
+
+.song-timeline__loop {
+  font-size: 11px;
+  color: var(--good);
+}

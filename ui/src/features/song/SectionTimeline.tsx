@@ -5,6 +5,8 @@ interface SectionTimelineProps {
   sections: ChartSection[]
   selectedId: string
   onSelect: (id: string) => void
+  /** Sección que está repitiéndose en loop, si hay. */
+  loopId?: string | null
 }
 
 /** Línea de tiempo: cada sección ocupa un ancho proporcional a su duración. */
@@ -12,6 +14,7 @@ export function SectionTimeline({
   sections,
   selectedId,
   onSelect,
+  loopId = null,
 }: SectionTimelineProps) {
   return (
     <ol className="song-timeline" aria-label="Secciones de la canción">
@@ -25,12 +28,16 @@ export function SectionTimeline({
             type="button"
             className="song-timeline__button"
             aria-pressed={section.id === selectedId}
+            data-looping={section.id === loopId}
             onClick={() => onSelect(section.id)}
           >
             <span className="song-timeline__name">{section.name}</span>
             <span className="song-timeline__time">
               {formatTime(section.start_s)}
             </span>
+            {section.id === loopId && (
+              <span className="song-timeline__loop">↻ en loop</span>
+            )}
           </button>
         </li>
       ))}

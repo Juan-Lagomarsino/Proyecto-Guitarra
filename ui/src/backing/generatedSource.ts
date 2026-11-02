@@ -173,12 +173,13 @@ export class GeneratedBackingSource implements BackingSource {
     this.events = buildEvents(content, mode, this.durationS)
   }
 
-  play(): void {
-    if (this.playing) return
+  play(): Promise<void> {
+    if (this.playing) return Promise.resolve()
     if (this.anchorSong >= this.durationS) this.anchorSong = 0
     this.playing = true
     this.reanchor(this.anchorSong, true)
     this.stopTimer = this.clock.every(() => this.tick(), TICK_MS)
+    return Promise.resolve()
   }
 
   pause(): void {

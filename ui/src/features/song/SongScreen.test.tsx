@@ -27,6 +27,8 @@ const song: SongDetail = {
   year: 1969,
   has_cifra: false,
   cifra_url: null,
+  audio: [],
+  separation_status: 'none',
   sections: [
     {
       id: 3,

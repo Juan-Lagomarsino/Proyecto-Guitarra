@@ -59,6 +59,12 @@ describe('MediaBackingSource', () => {
     expect(media.preservesPitch).toBe(true)
   })
 
+  it('propaga el rechazo de play() (autoplay bloqueado)', async () => {
+    const { media, source } = setup()
+    media.play = () => Promise.reject(new DOMException('x', 'NotAllowedError'))
+    await expect(source.play()).rejects.toThrow()
+  })
+
   it('play/pause/isPlaying reflejan el media', () => {
     const { media, source } = setup()
     source.play()
