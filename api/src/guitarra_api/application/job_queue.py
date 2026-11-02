@@ -10,10 +10,11 @@ from sqlalchemy.orm import Session
 from guitarra_api.application.clock import Clock, utc_now
 from guitarra_api.domain.analysis_result import AnalysisResult
 from guitarra_api.infra.db.models import AnalysisJob, Exercise, Song, SongSection
-from guitarra_api.infra.db.repositories.jobs import JobRepository
+from guitarra_api.infra.db.repositories.jobs import ANALYZE_JOB, SEPARATION_JOB, JobRepository
 from guitarra_api.infra.db.repositories.songs import SongRepository
 
 AUTO_ORIGIN = "auto"
+NO_GUITAR_KIND = "no_guitar"
 
 
 class JobNotFound(Exception):
@@ -24,6 +25,10 @@ class JobNotOwned(Exception):
     """El job no está `running` o lo tiene otro worker."""
 
 
+class ResultTypeMismatch(Exception):
+    """El cuerpo del resultado no corresponde al tipo del trabajo."""
+
+
 class YoutubeIdConflict(Exception):
     """La búsqueda resolvió a un video que ya pertenece a otra canción."""
 
@@ -31,6 +36,7 @@ class YoutubeIdConflict(Exception):
 @dataclass(frozen=True)
 class ClaimedJob:
     job_id: int
+    job_type: str
     song_id: int
     title: str | None
     artist: str | None
@@ -66,7 +72,8 @@ class JobQueue:
             job.lease_until = now + self._lease
             job.current_step = None
             job.error = None
-            song.analysis_status = "processing"
+            if job.type == ANALYZE_JOB:
+                song.analysis_status = "processing"
             self._session.commit()
             return self._claimed(job, song)
         self._session.rollback()
@@ -79,15 +86,17 @@ class JobQueue:
         self._session.commit()
         return job
 
-    def complete(self, job_id: int, worker_id: str, result: AnalysisResult) -> AnalysisJob:
+    def complete(self, job_id: int, worker_id: str, result: AnalysisResult | None) -> AnalysisJob:
+        """`result` es el análisis, o `None` para un trabajo de separación (sin chart)."""
         job = self._lock_owned(job_id, worker_id)
+        if (job.type == ANALYZE_JOB) != (result is not None):
+            self._session.rollback()
+            raise ResultTypeMismatch(f"El cuerpo no corresponde a un trabajo '{job.type}'")
         try:
             song = self._require_song(job.song_id)
-            self._apply_metadata(song, result)
-            self._sync_sections(song, result)
-            for chart in result.charts:
-                self._songs.stage_chart(song.id, AUTO_ORIGIN, chart)
-            song.analysis_status = "ready"
+            if result is not None:
+                self._store_analysis(song, result)
+                self._enqueue_separation_if_needed(song)
             job.status = "done"
             job.error = None
             job.finished_at = self._clock()
@@ -103,6 +112,20 @@ class JobQueue:
             raise
         return job
 
+    def _store_analysis(self, song: Song, result: AnalysisResult) -> None:
+        self._apply_metadata(song, result)
+        self._sync_sections(song, result)
+        for chart in result.charts:
+            self._songs.stage_chart(song.id, AUTO_ORIGIN, chart)
+        song.analysis_status = "ready"
+
+    def _enqueue_separation_if_needed(self, song: Song) -> None:
+        if self._songs.has_audio_asset(song.id, NO_GUITAR_KIND):
+            return
+        if self._songs.active_job(song.id, SEPARATION_JOB) is not None:
+            return
+        self._jobs.stage_separation(song.id)
+
     def fail(self, job_id: int, worker_id: str, error: str, retryable: bool) -> AnalysisJob:
         job = self._lock_owned(job_id, worker_id)
         song = self._require_song(job.song_id)
@@ -112,7 +135,8 @@ class JobQueue:
             job.claimed_by = None
             job.lease_until = None
             job.current_step = None
-            song.analysis_status = "queued"
+            if job.type == ANALYZE_JOB:
+                song.analysis_status = "queued"
         else:
             self._give_up(job, song, error, self._clock())
         self._session.commit()
@@ -140,7 +164,8 @@ class JobQueue:
         job.error = error
         job.finished_at = now
         job.lease_until = None
-        song.analysis_status = "error"
+        if job.type == ANALYZE_JOB:
+            song.analysis_status = "error"
 
     def _apply_metadata(self, song: Song, result: AnalysisResult) -> None:
         metadata = result.metadata
@@ -194,6 +219,7 @@ class JobQueue:
         assert job.lease_until is not None
         return ClaimedJob(
             job_id=job.id,
+            job_type=job.type,
             song_id=song.id,
             title=song.title,
             artist=song.artist,

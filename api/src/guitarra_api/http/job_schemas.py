@@ -1,5 +1,5 @@
 import datetime as dt
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -18,6 +18,7 @@ class ClaimRequest(_Strict):
 
 class ClaimedJobOut(BaseModel):
     job_id: int
+    job_type: Literal["analyze", "separation"]
     song_id: int
     title: str | None
     artist: str | None
@@ -43,6 +44,12 @@ class HeartbeatOut(BaseModel):
 
 
 class ResultRequest(AnalysisResult):
+    worker_id: WorkerId
+
+
+class SeparationResultRequest(_Strict):
+    """Resultado de una separación: los audios ya se subieron por `assets`, no hay chart."""
+
     worker_id: WorkerId
 
 

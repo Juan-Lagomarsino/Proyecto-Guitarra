@@ -84,6 +84,7 @@ def _detail(detail: SongEntry) -> SongDetailOut:
         has_cifra=bool(song.cifra_text),
         cifra_url=song.cifra_url,
         sections=song.sections,
+        separation_status=detail.separation_status,
         audio=[
             AudioAssetOut(
                 kind=asset.kind,

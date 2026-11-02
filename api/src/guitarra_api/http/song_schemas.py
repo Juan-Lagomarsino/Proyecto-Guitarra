@@ -94,6 +94,7 @@ class SongDetailOut(SongSummaryOut):
     cifra_url: str | None
     sections: list[SongSectionOut]
     audio: list[AudioAssetOut]
+    separation_status: Literal["none", "queued", "running", "done", "error"]
 
 
 class SongChartOut(BaseModel):

@@ -6,11 +6,12 @@ from dataclasses import dataclass
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from guitarra_api.application.job_queue import NO_GUITAR_KIND
 from guitarra_api.domain.chart_diff import diff_charts
 from guitarra_api.domain.song_chart import SongChartContent
 from guitarra_api.domain.song_source import ParsedSongUrl, parse_song_url
 from guitarra_api.infra.db.models import Song, SongChart
-from guitarra_api.infra.db.repositories.jobs import JobRepository
+from guitarra_api.infra.db.repositories.jobs import SEPARATION_JOB, JobRepository
 from guitarra_api.infra.db.repositories.songs import USER_ORIGIN, SongRepository
 
 
@@ -54,6 +55,7 @@ class SongEntry:
     song: Song
     current_step: str | None
     error: str | None = None
+    separation_status: str = "none"  # none | queued | running | done | error
 
 
 @dataclass(frozen=True)
@@ -210,4 +212,14 @@ class SongService:
             song,
             current_step=active.current_step if active else None,
             error=latest.error if latest else None,
+            separation_status=self._separation_status(song.id),
         )
+
+    def _separation_status(self, song_id: int) -> str:
+        active = self._repo.active_job(song_id, SEPARATION_JOB)
+        if active is not None:
+            return active.status
+        if self._repo.has_audio_asset(song_id, NO_GUITAR_KIND):
+            return "done"
+        latest = self._repo.latest_job(song_id, SEPARATION_JOB)
+        return latest.status if latest else "none"
