@@ -13,6 +13,7 @@ import type { SongChartContent } from '../../songs/types'
 import { AsyncView } from '../study/AsyncView'
 import { useAsyncData } from '../study/useAsyncData'
 import { BackingProvider } from '../../backing/BackingContext'
+import { useBackingSync } from '../../backing/useBackingSync'
 import { BackingPanel } from './BackingPanel'
 import { CifraPanel } from './CifraPanel'
 import { PracticeSection } from './PracticeSection'
@@ -181,11 +182,12 @@ function Chart({
   const [selectedId, setSelectedId] = useState(sections[0]?.id ?? '')
   const [loopId, setLoopId] = useState<string | null>(null)
   const selected = sections.find((s) => s.id === selectedId) ?? sections[0]
+  const sync = useBackingSync(content)
   if (!selected)
     return <p className="page-note">Esta canción todavía no tiene secciones.</p>
   const stored = song.sections.find((s) => s.slug === selected.id && !s.stale)
   return (
-    <BackingProvider>
+    <>
       <BackingPanel
         song={song}
         content={content}
@@ -197,6 +199,7 @@ function Chart({
         selectedId={selected.id}
         onSelect={setSelectedId}
         loopId={loopId}
+        playingId={sync.activeSection?.id ?? null}
       />
       <Legend />
       <SectionEditing
@@ -205,7 +208,11 @@ function Chart({
         section={selected}
         onChange={setChart}
       >
-        <SectionDetail section={selected} instrument={content.instrument} />
+        <SectionDetail
+          section={selected}
+          instrument={content.instrument}
+          sync={sync.forSection(selected)}
+        />
       </SectionEditing>
       {stored && (
         <PracticeSection
@@ -217,7 +224,7 @@ function Chart({
           onCreated={onCreated}
         />
       )}
-    </BackingProvider>
+    </>
   )
 }
 
@@ -240,7 +247,7 @@ function SongBody({
   const [exercisesKey, setExercisesKey] = useState(0)
 
   return (
-    <>
+    <BackingProvider>
       <Header song={song} content={content} />
       <CifraUnusedNotice song={song} content={content} />
       <InstrumentSelector value={instrument} onChange={setInstrument} />
@@ -262,7 +269,12 @@ function SongBody({
           )
         }
       </AsyncView>
-      <SongExercises songId={song.id} refreshKey={exercisesKey} />
+      <SongExercises
+        songId={song.id}
+        refreshKey={exercisesKey}
+        sections={song.sections}
+        content={content}
+      />
       <StaleSections sections={stale} />
       <CifraPanel
         songId={song.id}
@@ -270,7 +282,7 @@ function SongBody({
         cifraUrl={song.cifra_url}
         onChanged={onCifraChanged}
       />
-    </>
+    </BackingProvider>
   )
 }
 

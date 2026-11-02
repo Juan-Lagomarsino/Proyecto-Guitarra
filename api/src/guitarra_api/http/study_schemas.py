@@ -1,7 +1,10 @@
 import datetime as dt
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from guitarra_api.domain.notation import Notation
+from guitarra_api.domain.song_exercise import complete_with_events
 
 
 class LevelOut(BaseModel):
@@ -41,6 +44,14 @@ class ExerciseOut(BaseModel):
     duration_min: int
     description: str | None
     notation: dict[str, Any]
+
+    @model_validator(mode="after")
+    def _complete_song_notation(self) -> "ExerciseOut":
+        """Los ejercicios de canción guardados sin `events` se completan al leerlos."""
+        if self.song_section_id is not None and not self.notation.get("events"):
+            completed = complete_with_events(Notation.model_validate(self.notation))
+            self.notation = completed.model_dump(mode="json")
+        return self
 
 
 class ExerciseDetailOut(ExerciseOut):

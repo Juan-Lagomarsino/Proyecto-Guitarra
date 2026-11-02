@@ -1,3 +1,4 @@
+import type { SectionSync } from '../../backing/useBackingSync'
 import { ChordDiagram } from '../../components/ChordDiagram/ChordDiagram'
 import type { ChartSection, SongChartContent } from '../../songs/types'
 import {
@@ -25,11 +26,13 @@ function Pattern({
   accents,
   label,
   confidence,
+  activeIndex,
 }: {
   cells: string[]
   accents: number[]
   label: string
   confidence: number
+  activeIndex: number | null
 }) {
   return (
     <div
@@ -43,6 +46,7 @@ function Pattern({
           key={index}
           className="song-pattern__cell"
           data-accent={accents.includes(index) ? 'true' : undefined}
+          data-now={index === activeIndex ? 'true' : undefined}
         >
           {cell}
         </span>
@@ -54,9 +58,11 @@ function Pattern({
 function Playing({
   section,
   instrument,
+  strumIndex,
 }: {
   section: ChartSection
   instrument: Instrument
+  strumIndex: number | null
 }) {
   const { arpeggio, strum } = section
   if (instrument === 'classical' && arpeggio) {
@@ -68,6 +74,7 @@ function Playing({
           accents={[]}
           label={`Arpegio ${arpeggio.pattern}`}
           confidence={arpeggio.confidence}
+          activeIndex={null}
         />
       </div>
     )
@@ -81,6 +88,7 @@ function Playing({
           accents={strum.accent ?? []}
           label={`Rasgueo ${strum.pattern}`}
           confidence={strum.confidence}
+          activeIndex={strumIndex}
         />
       </div>
     )
@@ -91,9 +99,12 @@ function Playing({
 export function SectionDetail({
   section,
   instrument,
+  sync = null,
 }: {
   section: ChartSection
   instrument: Instrument
+  /** Acorde y golpe que suenan ahora (si el acompañamiento está en esta sección). */
+  sync?: SectionSync | null
 }) {
   const chords = section.chords ?? []
   const sourceLabel = CHORD_SOURCE_LABELS[section.chord_source]
@@ -117,6 +128,7 @@ export function SectionDetail({
                 key={index}
                 className="song-progression__chord"
                 data-confidence={confidenceFlag(chord.confidence)}
+                data-now={index === sync?.chordIndex ? 'true' : undefined}
               >
                 {chord.name}
               </li>
@@ -139,7 +151,11 @@ export function SectionDetail({
           </ul>
         </>
       )}
-      <Playing section={section} instrument={instrument} />
+      <Playing
+        section={section}
+        instrument={instrument}
+        strumIndex={sync?.strumIndex ?? null}
+      />
     </article>
   )
 }

@@ -214,4 +214,19 @@ describe('Tab', () => {
     )
     expect(container.innerHTML).not.toMatch(/#[0-9a-f]{3,8}\b|rgb\(|hsl\(/i)
   })
+
+  it('con activeIndices ilumina todas las notas del acorde y apila las del mismo t', () => {
+    const chord = [ev(0, 6, 3), ev(0, 5, 2), ev(0, 4, 0), ev(1, 3, 0)]
+    const { container } = render(
+      <Tab notation={make(chord)} activeIndices={[0, 1, 2]} width={640} />,
+    )
+    const active = container.querySelectorAll(
+      '[data-role="note"][data-active="true"]',
+    )
+    expect(active).toHaveLength(3)
+    expect(container.querySelectorAll('[data-role="column"]')).toHaveLength(2)
+    expect(
+      container.querySelectorAll('[data-role="note"][data-active="false"]'),
+    ).toHaveLength(1)
+  })
 })

@@ -9,6 +9,9 @@ import { completeExercise, fetchExercise } from './studyApi'
 import type { Completion, Exercise, Instrument } from './types'
 import { useAsyncData } from './useAsyncData'
 
+const NO_INDICES: readonly number[] = []
+const singleIndex = (index: number | null): readonly number[] =>
+  index === null ? NO_INDICES : [index]
 const MIN_BPM = 20
 const MAX_BPM_FLOOR = 240
 
@@ -18,6 +21,11 @@ export interface ExerciseCardProps {
   inTodaySession?: boolean
   /** Se llama después de registrar el Terminé en la API. */
   onCompleted?: (completion: Completion) => void
+  /**
+   * Evento que suena según el acompañamiento de una canción. Solo se usa cuando
+   * el motor propio del ejercicio no está sonando (si no, manda el motor).
+   */
+  backingActiveIndices?: readonly number[]
   /** Solo para tests: audio inyectado (con identidad estable). */
   audio?: () => PlaybackAudio
 }
@@ -69,6 +77,7 @@ export function ExerciseCard({
   exercise,
   inTodaySession = false,
   onCompleted,
+  backingActiveIndices = NO_INDICES,
   audio,
 }: ExerciseCardProps) {
   const { notation } = exercise
@@ -113,6 +122,10 @@ export function ExerciseCard({
     }
   }
 
+  const engineRules = playback.isPlaying || playback.activeIndex !== null
+  const activeIndices = engineRules
+    ? singleIndex(playback.activeIndex)
+    : backingActiveIndices
   const stepping = playback.mode === 'step'
   const maxBpm = Math.max(MAX_BPM_FLOOR, exercise.bpm_target ?? 0)
 
@@ -136,10 +149,10 @@ export function ExerciseCard({
       )}
 
       <div className="exercise-card__board">
-        <Fretboard notation={notation} activeIndex={playback.activeIndex} />
+        <Fretboard notation={notation} activeIndices={activeIndices} />
       </div>
       <div className="exercise-card__tab">
-        <Tab notation={notation} activeIndex={playback.activeIndex} />
+        <Tab notation={notation} activeIndices={activeIndices} />
       </div>
 
       <div className="exercise-card__transport">

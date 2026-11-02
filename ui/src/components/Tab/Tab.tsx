@@ -18,7 +18,9 @@ import { useContainerWidth } from './useContainerWidth'
 export interface TabProps {
   notation: Notation
   /** Índice en `notation.events` del evento que suena; resalta toda su columna. */
-  activeIndex: number | null
+  activeIndex?: number | null
+  /** Índices que suenan a la vez (un acorde); si viene, manda sobre `activeIndex`. */
+  activeIndices?: readonly number[]
   /** Ancho en px. Si falta, se mide el contenedor. */
   width?: number
 }
@@ -140,7 +142,13 @@ function ColumnView({
   )
 }
 
-export function Tab({ notation, activeIndex, width }: TabProps) {
+export function Tab({
+  notation,
+  activeIndex = null,
+  activeIndices,
+  width,
+}: TabProps) {
+  const indices = activeIndices ?? (activeIndex === null ? [] : [activeIndex])
   const [ref, measured] = useContainerWidth<HTMLDivElement>(width)
   const totalWidth = measured > 0 ? measured : FALLBACK_WIDTH
   const tuning = notation.tuning ?? STANDARD_TUNING
@@ -183,8 +191,8 @@ export function Tab({ notation, activeIndex, width }: TabProps) {
               key={positioned.column.t}
               layout={layout}
               positioned={positioned}
-              active={positioned.column.notes.some(
-                (n) => n.index === activeIndex,
+              active={positioned.column.notes.some((n) =>
+                indices.includes(n.index),
               )}
             />
           ))}

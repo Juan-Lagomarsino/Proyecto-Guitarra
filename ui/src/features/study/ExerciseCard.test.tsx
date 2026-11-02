@@ -192,6 +192,22 @@ describe('ExerciseCard', () => {
     await user.click(screen.getByRole('button', { name: /pausar/i }))
   })
 
+  it('sin motor en marcha marca la nota del acompañamiento; con el motor en marcha manda el motor', async () => {
+    const user = userEvent.setup()
+    apiFetchMock.mockResolvedValue(detail(null))
+    const { container } = renderCard({ backingActiveIndices: [0] })
+    await screen.findByText(/sin marca/i)
+    expect(activeTabNotes(container)[0]).toHaveTextContent('5')
+
+    await user.click(screen.getByRole('button', { name: /reproducir/i }))
+    audio.clock.advance(1.05) // el motor propio llega a la segunda nota
+    await waitFor(() =>
+      expect(activeTabNotes(container)[0]).toHaveTextContent('7'),
+    )
+    expect(activeTabNotes(container)).toHaveLength(1)
+    await user.click(screen.getByRole('button', { name: /pausar/i }))
+  })
+
   it('en modo nota por nota, siguiente y anterior mueven la nota activa', async () => {
     const user = userEvent.setup()
     apiFetchMock.mockResolvedValue(detail(null))

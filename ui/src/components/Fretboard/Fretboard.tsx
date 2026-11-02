@@ -32,7 +32,9 @@ const ACTIVE_NOTE_RADIUS = 12.5
 export interface FretboardProps {
   notation: Notation
   /** Índice en `notation.events` del evento que suena ahora. */
-  activeIndex: number | null
+  activeIndex?: number | null
+  /** Índices que suenan a la vez (un acorde); si viene, manda sobre `activeIndex`. */
+  activeIndices?: readonly number[]
   /** Trastes visibles [desde, hasta]. Si falta, se calcula de los eventos. */
   fretRange?: [number, number]
   showLegend?: boolean
@@ -49,10 +51,12 @@ function boardLabel(range: FretRange, tonic: string | null | undefined) {
 
 function noteState(
   position: Position,
-  active: Position | null,
+  active: readonly Position[],
   tonicMatches: boolean,
 ): NoteState {
-  if (active?.string === position.string && active.fret === position.fret) {
+  if (
+    active.some((a) => a.string === position.string && a.fret === position.fret)
+  ) {
     return 'active'
   }
   return tonicMatches ? 'tonic' : 'other'
@@ -168,17 +172,19 @@ function Legend() {
 
 export function Fretboard({
   notation,
-  activeIndex,
+  activeIndex = null,
+  activeIndices,
   fretRange,
   showLegend = true,
 }: FretboardProps) {
   const events = notation.events ?? []
   const tuning = notation.tuning ?? STANDARD_TUNING
   const range = fretRange ?? computeFretRange(events)
-  const activeEvent = activeIndex === null ? null : events[activeIndex]
-  const active = activeEvent
-    ? { string: activeEvent.string, fret: activeEvent.fret }
-    : null
+  const indices = activeIndices ?? (activeIndex === null ? [] : [activeIndex])
+  const active = indices.flatMap((index) => {
+    const event = events[index]
+    return event ? [{ string: event.string, fret: event.fret }] : []
+  })
 
   return (
     <div className="fretboard">

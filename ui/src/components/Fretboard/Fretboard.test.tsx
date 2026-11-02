@@ -179,4 +179,15 @@ describe('Fretboard', () => {
     )
     expect(at(container, 6, 0)).toHaveAttribute('data-state', 'tonic')
   })
+
+  it('con activeIndices marca todas las notas indicadas y manda sobre activeIndex', () => {
+    const { container } = render(
+      <Fretboard
+        notation={notation()}
+        activeIndex={0}
+        activeIndices={[1, 2]}
+      />,
+    )
+    expect(container.querySelectorAll('[data-state="active"]')).toHaveLength(2)
+  })
 })
