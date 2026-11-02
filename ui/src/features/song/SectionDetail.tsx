@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import type { Notation } from '../../notation/types'
 import type { SectionSync } from '../../backing/useBackingSync'
 import { Fretboard } from '../../components/Fretboard/Fretboard'
@@ -134,11 +135,14 @@ export function SectionDetail({
   section,
   instrument,
   sync = null,
+  renderRiff = (view) => view,
 }: {
   section: ChartSection
   instrument: Instrument
   /** Acorde y golpe que suenan ahora (si el acompañamiento está en esta sección). */
   sync?: SectionSync | null
+  /** Envuelve la vista del riff (por ejemplo con el editor de tab). */
+  renderRiff?: (view: ReactNode) => ReactNode
 }) {
   const chords = section.chords ?? []
   const sourceLabel = CHORD_SOURCE_LABELS[section.chord_source]
@@ -190,8 +194,10 @@ export function SectionDetail({
         instrument={instrument}
         strumIndex={sync?.strumIndex ?? null}
       />
-      {section.riff && (
-        <Riff riff={section.riff} activeIndices={sync?.riffIndices ?? []} />
+      {renderRiff(
+        section.riff && (
+          <Riff riff={section.riff} activeIndices={sync?.riffIndices ?? []} />
+        ),
       )}
     </article>
   )

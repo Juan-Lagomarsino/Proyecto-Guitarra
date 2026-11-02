@@ -13,7 +13,7 @@ interface SectionEditingProps {
   children: ReactNode
 }
 
-function RevertButton({
+export function RevertButton({
   songId,
   chart,
   onChange,

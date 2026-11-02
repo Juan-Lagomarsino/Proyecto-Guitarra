@@ -18,6 +18,7 @@ import { BackingPanel } from './BackingPanel'
 import { CifraPanel } from './CifraPanel'
 import { PracticeSection } from './PracticeSection'
 import { SectionDetail } from './SectionDetail'
+import { RiffEditing } from './RiffEditing'
 import { SectionEditing } from './SectionEditing'
 import { SectionTimeline } from './SectionTimeline'
 import { SongExercises } from './SongExercises'
@@ -212,6 +213,16 @@ function Chart({
           section={selected}
           instrument={content.instrument}
           sync={sync.forSection(selected)}
+          renderRiff={(view) => (
+            <RiffEditing
+              songId={song.id}
+              chart={chart}
+              section={selected}
+              onChange={setChart}
+            >
+              {view}
+            </RiffEditing>
+          )}
         />
       </SectionEditing>
       {stored && (

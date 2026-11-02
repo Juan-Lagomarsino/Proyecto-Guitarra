@@ -69,6 +69,8 @@ export interface SongChartResponse {
   origin: 'auto' | 'cifraclub' | 'user'
   confidence: number | null
   content: SongChartContent
+  /** De dónde viene el riff de cada sección (id de sección); null si no tiene. */
+  riff_sources?: Record<string, 'auto' | 'usuario' | null>
   created_at: string
 }
 
