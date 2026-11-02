@@ -10,6 +10,7 @@ from guitarra_worker.adapters.btc import BtcChordRecognizer
 from guitarra_worker.adapters.demucs import DemucsSeparator, Separator
 from guitarra_worker.adapters.ffmpeg import convert_to_m4a, find_ffmpeg
 from guitarra_worker.adapters.spotify import SpotifyAdapter
+from guitarra_worker.adapters.transcriber import BasicPitchTranscriber, Transcriber
 from guitarra_worker.adapters.youtube import YoutubeAdapter
 from guitarra_worker.config import Settings
 from guitarra_worker.pipeline.step import Step
@@ -19,6 +20,7 @@ from guitarra_worker.steps.cifraclub import CifraClubStep
 from guitarra_worker.steps.download import DownloadStep
 from guitarra_worker.steps.key import KeyStep
 from guitarra_worker.steps.publish_audio import AssetUploader, PublishAudioStep
+from guitarra_worker.steps.riffs import BuildRiffsStep, RiffsStep, chart_info_of
 from guitarra_worker.steps.separate import (
     MixNoGuitarStep,
     SeparateStep,
@@ -81,9 +83,11 @@ def separation_steps(
     uploader: AssetUploader,
     settings: Settings | None = None,
     separator: Separator | None = None,
+    transcriber: Transcriber | None = None,
 ) -> list[Step]:
     """Pipeline del trabajo `separation`: descarga (si no está en caché) -> separar -> mezclar sin
-    guitarra -> m4a -> subir como `no_guitar`. Sin Demucs instalado falla recién en `separate`."""
+    guitarra -> m4a -> subir como `no_guitar` -> riffs (transcribir la pista de guitarra y digitar).
+    Sin Demucs instalado falla recién en `separate`; sin basic-pitch o sin chart no hay riffs."""
     settings = settings or Settings()
     separator = separator or DemucsSeparator(settings.demucs_model_path)
     publish = PublishAudioStep(
@@ -99,4 +103,6 @@ def separation_steps(
         SeparateStep(separator),
         MixNoGuitarStep(),
         publish,
+        RiffsStep(transcriber or BasicPitchTranscriber(), chart_info_of),
+        BuildRiffsStep(),
     ]

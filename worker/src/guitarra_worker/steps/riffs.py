@@ -1,17 +1,24 @@
 """Paso de riffs (F5): pista de guitarra -> notas -> secciones candidatas -> eventos en beats.
 
-Todavía NO digita ni envía a la API (eso es F5-T08). Salida: `{riffs: {section_id: [{midi, t,
-dur, confidence}]}, skipped: motivo | None}`, con `t`/`dur` en beats relativos al inicio de la
-sección. Sin basic-pitch el paso se saltea con un aviso: no falla el trabajo.
+`BuildRiffsStep` digita y arma la notación (F5-T08). Salida de `RiffsStep`:
+`{riffs: {section_id: [{midi, t, dur, confidence}]}, skipped: motivo | None}`, con `t`/`dur`
+en beats relativos al inicio de la sección. Sin basic-pitch el paso se saltea con un aviso:
+no falla el trabajo.
 """
 
+import hashlib
+import json
 from collections.abc import Callable, Sequence
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
+from guitarra_core.fingering import FingeringPreferences
+
 from guitarra_worker.adapters.transcriber import Transcriber, TranscriberUnavailable
+from guitarra_worker.api_client import Job
 from guitarra_worker.domain.quantize import BeatGrid, quantize_section
+from guitarra_worker.domain.riff_assembly import RiffChart, build_riffs
 from guitarra_worker.domain.riff_candidates import SectionSpan, choose_candidates
 from guitarra_worker.pipeline.step import PipelineContext
 
@@ -44,9 +51,28 @@ def transcribe_section_riffs(
     return riffs
 
 
+def _digest(data: object) -> str:
+    raw = json.dumps(data, sort_keys=True, default=str)
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:12]
+
+
+def chart_info_of(ctx: PipelineContext) -> ChartInfo | None:
+    """Secciones y grilla del chart del claim; sin chart o sin secciones, None."""
+    chart = ctx.job.chart
+    if chart is None or not chart.sections:
+        return None
+    beats = chart.beat_grid.beats_s if chart.beat_grid else []
+    sections = [SectionSpan(s.id, s.name, s.start_s, s.end_s) for s in chart.sections]
+    return ChartInfo(sections, BeatGrid(beats_s=beats, bpm=chart.bpm))
+
+
 class RiffsStep:
     name = "riffs"
     version = "1"
+
+    def cache_token(self, job: Job) -> str:
+        """Las secciones y la grilla del chart cambian qué se transcribe y cómo se cuantiza."""
+        return _digest(job.chart.model_dump()) if job.chart else ""
 
     def __init__(
         self, transcriber: Transcriber, chart_of: Callable[[PipelineContext], ChartInfo | None]
@@ -70,3 +96,27 @@ class RiffsStep:
             ctx.progress(f"Riffs salteados: {exc}")
             return {"riffs": {}, "skipped": str(exc)}
         return {"riffs": riffs, "skipped": None}
+
+
+class BuildRiffsStep:
+    """Digita los eventos de `riffs` (preferencias y capo) y arma la notación."""
+
+    name = "build_riffs"
+    version = "1"
+
+    def cache_token(self, job: Job) -> str:
+        return _digest(
+            {
+                "chart": job.chart.model_dump() if job.chart else None,
+                "preferences": job.fingering_preferences,
+            }
+        )
+
+    def run(self, ctx: PipelineContext) -> dict[str, Any]:
+        chart = ctx.job.chart
+        events = (ctx.outputs.get("riffs") or {}).get("riffs") or {}
+        if chart is None or not events:
+            return {"riffs": {}}
+        preferences = FingeringPreferences.from_json(ctx.job.fingering_preferences)
+        riff_chart = RiffChart(chart.bpm, chart.time_signature, chart.capo)
+        return {"riffs": build_riffs(events, riff_chart, preferences)}

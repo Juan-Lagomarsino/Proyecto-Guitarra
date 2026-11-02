@@ -17,9 +17,10 @@ log = logging.getLogger(__name__)
 SEPARATION = "separation"
 
 
-def separation_result(_outputs: dict[str, dict[str, Any]]) -> dict[str, Any]:
-    """El result de una separación solo confirma el trabajo: el audio ya se subió como asset."""
-    return {}
+def separation_result(outputs: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """El audio ya se subió como asset: el result solo suma los riffs, si hay."""
+    riffs = (outputs.get("build_riffs") or {}).get("riffs")
+    return {"riffs": riffs} if riffs else {}
 
 
 def next_backoff(current_s: float, max_s: float) -> float:

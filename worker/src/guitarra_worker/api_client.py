@@ -29,6 +29,28 @@ class ApiError(Exception):
         self.status_code = status_code
 
 
+class ChartBeatGrid(BaseModel):
+    beats_s: list[float]
+    downbeats_s: list[float] = []
+
+
+class ChartSectionInfo(BaseModel):
+    id: str
+    name: str
+    start_s: float
+    end_s: float
+
+
+class JobChart(BaseModel):
+    """Chart que trae el claim de una separación (F5-T06): secciones y grilla para los riffs."""
+
+    bpm: float
+    time_signature: str = "4/4"
+    capo: int = 0
+    beat_grid: ChartBeatGrid | None = None
+    sections: list[ChartSectionInfo] = []
+
+
 class Job(BaseModel):
     job_id: int | str
     song_id: int | str
@@ -45,6 +67,8 @@ class Job(BaseModel):
     # {instrumento: {acorde: {forma: peso}}} aprendido de las elecciones del usuario (F5-T12)
     chord_shape_preferences: dict[str, Any] = {}
     job_type: str = "analyze"  # "analyze" | "separation"; sin el campo (claim viejo) = análisis
+    chart: JobChart | None = None  # solo en separación: para transcribir riffs (F5)
+    fingering_preferences: dict = {}  # FingeringPreferences en JSON (F5-T07)
 
 
 class ApiClient:
