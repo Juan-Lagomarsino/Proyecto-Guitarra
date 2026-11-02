@@ -22,7 +22,7 @@ def alembic_config() -> Config:
 
 @pytest.fixture(scope="session")
 def database_url() -> Iterator[str]:
-    """Postgres de testcontainers; con `GUITAR_TEST_DATABASE_URL` usa esa base (vacía) en su lugar."""
+    """Postgres de testcontainers, o la base vacía de `GUITAR_TEST_DATABASE_URL` si está."""
     external_url = os.environ.get("GUITAR_TEST_DATABASE_URL")
     if external_url:
         os.environ["DATABASE_URL"] = external_url

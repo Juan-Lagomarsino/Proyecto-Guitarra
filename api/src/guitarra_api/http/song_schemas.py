@@ -4,6 +4,8 @@ from urllib.parse import urlparse
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from guitarra_api.http.audio_schemas import AudioAssetOut
+
 Instrument = Literal["classical", "electric"]
 
 
@@ -91,6 +93,7 @@ class SongDetailOut(SongSummaryOut):
     has_cifra: bool
     cifra_url: str | None
     sections: list[SongSectionOut]
+    audio: list[AudioAssetOut]
 
 
 class SongChartOut(BaseModel):

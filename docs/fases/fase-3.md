@@ -42,7 +42,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 
 | Id | Ola | Objetivo | Depende de | Estado |
 | --- | --- | --- | --- | --- |
-| F3-T01 | 0 | API: subida de audio por el worker, almacenamiento y `GET /songs/{id}/audio/{tipo}` con range | — | pendiente |
+| F3-T01 | 0 | API: subida de audio por el worker, almacenamiento y `GET /songs/{id}/audio/{tipo}` con range | — | hecha |
 | F3-T02 | 0 | UI: transporte de acompañamiento (`BackingSource`) sobre `<audio>` con velocidad sin cambio de tono y loop A-B | — | hecha |
 | F3-T03 | 0 | UI: generador puro del arreglo (chart → eventos de batería, bajo y acordes por beat) | — | hecha |
 | F3-T04 | 1 | API: tipo de trabajo `separation` (se encola tras el análisis, claim con tipo, result sin chart) | T01 | pendiente |
@@ -110,3 +110,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 2. Ola 1 en paralelo: T04, T05, T06.
 3. Ola 2 en paralelo: T07, T08.
 4. Ola 3: T09. Ola 4: T10 y cierre.
+
+## Notas de integración
+
+- **F3-T01:** el `url` de `audio` en el detalle es relativo y sin token; la UI le agrega `?token=` para usarlo en `<audio src>` (solo ese endpoint lo acepta). Pendientes menores: si falla el registro después de escribir, queda un archivo huérfano; dos primeras subidas simultáneas del mismo tipo pueden dar 500 por el unique (el worker sube de a una).

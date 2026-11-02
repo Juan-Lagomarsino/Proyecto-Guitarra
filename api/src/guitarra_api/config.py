@@ -30,3 +30,7 @@ class Settings(BaseSettings):
     guitar_strum_catalog: Path = (
         ENV_FILE.parent / "worker" / "src" / "guitarra_worker" / "strum" / "catalog.json"
     )
+    # Carpeta donde la API guarda el audio que sube el worker; en Docker la fija el compose.
+    guitar_audio_dir: Path = ENV_FILE.parent / "data" / "audio"
+    # Tope de tamaño de un archivo de audio subido (bytes); más que eso, 413.
+    guitar_audio_max_bytes: int = Field(default=200 * 1024 * 1024, gt=0)

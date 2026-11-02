@@ -233,6 +233,9 @@ class Song(Base):
     sections: Mapped[list["SongSection"]] = relationship(
         back_populates="song", order_by="SongSection.position"
     )
+    audio_assets: Mapped[list["AudioAsset"]] = relationship(
+        order_by="AudioAsset.kind", passive_deletes=True
+    )
 
 
 class SongSection(Base):
@@ -293,7 +296,10 @@ class SongChart(Base):
 
 class AudioAsset(Base):
     __tablename__ = "audio_assets"
-    __table_args__ = (CheckConstraint(_in_list("kind", AUDIO_ASSET_KINDS), name="kind_valid"),)
+    __table_args__ = (
+        CheckConstraint(_in_list("kind", AUDIO_ASSET_KINDS), name="kind_valid"),
+        UniqueConstraint("song_id", "kind", name="uq_audio_assets_song_kind"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     song_id: Mapped[int] = mapped_column(ForeignKey("songs.id", ondelete="CASCADE"), index=True)

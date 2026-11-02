@@ -28,6 +28,10 @@ services:
       GUITAR_API_TOKEN: ${GUITAR_API_TOKEN:-}
       GUITAR_WORKER_TOKEN: ${GUITAR_WORKER_TOKEN:-}
       GUITAR_JOB_LEASE_SECONDS: ${GUITAR_JOB_LEASE_SECONDS:-300}
+      GUITAR_AUDIO_DIR: /data/audio
+      GUITAR_AUDIO_MAX_BYTES: ${GUITAR_AUDIO_MAX_BYTES:-209715200}
+    volumes:
+      - audio:/data/audio
     ports:
       - "127.0.0.1:${API_PORT:-8000}:8000"
     depends_on:
@@ -36,3 +40,4 @@ services:
 
 volumes:
   pgdata:
+  audio:

@@ -23,6 +23,7 @@ from guitarra_api.domain.song_exercise import (
     SectionNotPlayableError,
 )
 from guitarra_api.domain.song_source import InvalidSongUrlError
+from guitarra_api.http.audio_schemas import AudioAssetOut
 from guitarra_api.http.auth import require_token
 from guitarra_api.http.song_schemas import (
     CifraIn,
@@ -83,6 +84,14 @@ def _detail(detail: SongEntry) -> SongDetailOut:
         has_cifra=bool(song.cifra_text),
         cifra_url=song.cifra_url,
         sections=song.sections,
+        audio=[
+            AudioAssetOut(
+                kind=asset.kind,
+                format=asset.format,
+                url=f"/api/v1/songs/{song.id}/audio/{asset.kind}",
+            )
+            for asset in song.audio_assets
+        ],
     )
 
 
