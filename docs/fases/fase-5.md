@@ -1,6 +1,6 @@
 # Fase 5 — Riffs y aprendizaje
 
-Estado: **en curso** (plan aprobado por Juan Pedro el 2026-11-02)
+Estado: **cerrada, pendiente de demo** (plan aprobado por Juan Pedro el 2026-11-02)
 Referencia: `docs/PLAN.md` § Pipeline de análisis (paso 7, Riffs), § Cómo "aprende", § Formato interno de notación, § Modelo de datos (`SongChart`, `Correction`), § UI y diseño (tablatura, confianza en otro color). La Fase 4 (Rig) queda afuera de esta sesión: necesita la PC.
 
 ## Criterios de aceptación de la fase (del plan)
@@ -52,7 +52,7 @@ Lo que **sí** anda acá: PyPI, así que el modelo de transcripción se puede in
 | F5-T10 | 3 | UI: editor de tab (traste, cuerda, técnica, duración, agregar y borrar) que guarda la versión del usuario | T09, T06 | hecha |
 | F5-T12 | 1 | Core + API: preferencias de forma de acorde (aprender de la versión del usuario, guardar, mandar en el claim) | — | hecha |
 | F5-T13 | 2 | UI: elegir la forma de un acorde; worker: usar la forma preferida al armar el chart | T12 | hecha |
-| F5-T11 | 4 | Cierre: test de punta a punta de "canción nueva usa lo aprendido", E2E, guía para la PC, README | todas | pendiente |
+| F5-T11 | 4 | Cierre: test de punta a punta de "canción nueva usa lo aprendido", E2E, guía para la PC, README | todas | hecha |
 
 ### F5-T01 — Spike de transcripción
 
@@ -133,3 +133,32 @@ Lo que **sí** anda acá: PyPI, así que el modelo de transcripción se puede in
 - **F5-T06:** contrato del `result` de separación: `{"worker_id", "riffs"?: {section_id: Notation}}`; cada riff se valida por separado y se descarta con log (sección inexistente, notación inválida, sin eventos, `bpm` distinto del chart, se pasa de la sección); nunca 500. Con al menos uno válido se crea una versión `auto` por instrumento. El claim de `separation` trae `chart: {bpm, time_signature, capo, beat_grid|null, sections:[{id,name,start_s,end_s}]} | null`. `GET chart` devuelve la vista mezclada y `riff_sources: {section_id: auto|usuario|null}`; una sección cuenta como "tocada" si alguna corrección de usuario no descartada cambió su `riff`. Reanálisis: los riffs auto se arrastran si siguen cabiendo. Los ejercicios de canción usan la vista mezclada.
 - **F5-T10:** el editor elige notas desde una lista de botones (la tab SVG queda como vista previa; a 375 px sus columnas son muy chicas para tocar). No hay "quitar solo el riff": "Volver a la automática" descarta la versión de usuario entera. No se puede mover el `t` de una nota existente (se borra y se agrega).
 - **F5-T07:** las preferencias de digitación se guardan y viajan con trastes y zonas ABSOLUTOS (los del mástil); quien las usa aplica `FingeringPreferences.for_capo(capo)`. Así lo aprendido con capo vale en una canción sin capo y al revés. Tabla de fila única (migración 0008). Las zonas pierden algo de precisión al cambiar de capo (reubicación aproximada).
+
+## Resumen de cierre
+
+Cierre el 2026-11-02, en la misma sesión en la nube que la Fase 3 (Linux, sin Docker Hub, sin YouTube, sin Hugging Face ni PyTorch, sin audio real). Tareas F5-T01 a F5-T13 hechas, cada una con revisión; T12 y T13 se sumaron al aprobar (formas de acorde preferidas). ADR 0017 (basic-pitch con ONNX, umbrales) y 0018 (riff en el chart).
+
+### Criterios, uno por uno
+
+| # | Criterio | Estado | Evidencia |
+| --- | --- | --- | --- |
+| 1 | Transcripción de riffs a tablatura en secciones candidatas, con confianza visible | Cumple el circuito completo; **la calidad con guitarra real no se midió** | Spike F5-T01: basic-pitch F1 0,90 sobre 7 riffs sintéticos (pYIN 0,67), corrido de verdad acá. Worker: transcripción → candidatas → cuantización → digitación → `result.riffs` (tests con basic-pitch real sobre audio sintético y con transcriptor falso; salida aceptada por el validador de la API). UI: tab y mástil con notas dudosas en `--warn` punteado y leyenda (E2E `zzz-riffs` 1, captura `fase-5/capturas/riff-con-baja-confianza.png`). |
+| 2 | Editor de tab; las correcciones actualizan las preferencias de digitación | Cumple | Editor F5-T10 (traste, cuerda conservando altura, técnica, duración, agregar/borrar, deshacer). E2E `zzz-riffs` 2: cambiar de cuerda y guardar → "Riff editado por vos" y `GET /preferences/fingering` pasa de vacío a `57 → "4,7"`. Tests de API de F5-T07. |
+| 3 | Una canción nueva usa las posiciones preferidas aprendidas (test con datos de ejemplo) | Cumple | `api/tests/http/test_aprendizaje_punta_a_punta.py` (canción A con capo 2: 4 correcciones de digitación + una forma de Am; claim de la canción B sin capo trae las preferencias) encadenado por fixture con `worker/tests/test_aprende_de_correcciones.py` (`build_riffs` del worker con `for_capo(0)` elige las posiciones corregidas; `voicings_for` elige la forma de Am con capo 0 y 2). |
+
+### Suites al cierre
+
+Core 443, worker 436 (6 omitidos, ya existían), API 854, UI 643, E2E 24 de 24 con `scripts/e2e-nativo.sh` (dos corridas seguidas en verde).
+
+### Queda para la PC de Juan Pedro
+
+Ver `fase-5/validacion-en-pc.md`: `install.ps1` (Demucs + riffs), transcribir 2–3 riffs reales, comparar con una tab de referencia, `spikes/riffs/medir_audio_real.py --barrido` para calibrar umbrales (de basic-pitch y de secciones candidatas) y los costos de digitación, `scripts\e2e.ps1`.
+
+### Quedó pendiente o a vigilar
+
+- Umbrales de transcripción, de secciones candidatas y costos de digitación: calibrados solo con audio sintético o a criterio.
+- Bends, slides y demás técnicas no se detectan: se marcan en el editor.
+- No hay "quitar solo el riff" ni mover una nota en el tiempo en el editor.
+- Mover los límites de una sección puede dejar un riff más largo que la sección (el `PUT` da 422).
+- Las zonas de mano aprendidas pierden algo de precisión al cambiar de capo.
+- Hay una entrada `f5t07-wip` en `git stash` (ya aplicada); el sistema de permisos no dejó borrarla.

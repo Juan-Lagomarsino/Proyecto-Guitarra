@@ -1,0 +1,44 @@
+{
+  "chart": {
+    "beat_grid": null,
+    "bpm": 100.0,
+    "capo": 0,
+    "sections": [
+      {
+        "end_s": 10.0,
+        "id": "intro",
+        "name": "Intro",
+        "start_s": 0.0
+      }
+    ],
+    "time_signature": "4/4"
+  },
+  "chord_shape_preferences": {
+    "electric": {
+      "Am": {
+        "5,7,7,5,5,5": 0.3
+      }
+    }
+  },
+  "fingering_preferences": {
+    "positions": {
+      "57": {
+        "4,7": 0.3
+      },
+      "59": {
+        "4,9": 0.3
+      },
+      "60": {
+        "4,10": 0.3
+      },
+      "62": {
+        "3,7": 0.3
+      }
+    },
+    "zones": {
+      "1": 0.51,
+      "2": 0.51
+    }
+  },
+  "job_type": "separation"
+}
