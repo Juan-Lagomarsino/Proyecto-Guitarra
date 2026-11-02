@@ -43,7 +43,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | Id | Ola | Objetivo | Depende de | Estado |
 | --- | --- | --- | --- | --- |
 | F3-T01 | 0 | API: subida de audio por el worker, almacenamiento y `GET /songs/{id}/audio/{tipo}` con range | — | pendiente |
-| F3-T02 | 0 | UI: transporte de acompañamiento (`BackingSource`) sobre `<audio>` con velocidad sin cambio de tono y loop A-B | — | pendiente |
+| F3-T02 | 0 | UI: transporte de acompañamiento (`BackingSource`) sobre `<audio>` con velocidad sin cambio de tono y loop A-B | — | hecha |
 | F3-T03 | 0 | UI: generador puro del arreglo (chart → eventos de batería, bajo y acordes por beat) | — | pendiente |
 | F3-T04 | 1 | API: tipo de trabajo `separation` (se encola tras el análisis, claim con tipo, result sin chart) | T01 | pendiente |
 | F3-T05 | 1 | Worker: paso que convierte el original a `.m4a` y lo sube | T01 | pendiente |
