@@ -1,0 +1,191 @@
+[
+ {
+  "onset_threshold": 0.7,
+  "frame_threshold": 0.3,
+  "minimum_note_length": 127.7,
+  "f1": 0.9042538016156731,
+  "f1_off": 0.31686981095891
+ },
+ {
+  "onset_threshold": 0.7,
+  "frame_threshold": 0.4,
+  "minimum_note_length": 127.7,
+  "f1": 0.9042538016156731,
+  "f1_off": 0.40547164383650197
+ },
+ {
+  "onset_threshold": 0.7,
+  "frame_threshold": 0.4,
+  "minimum_note_length": 58.0,
+  "f1": 0.9013383497206294,
+  "f1_off": 0.4087515272184262
+ },
+ {
+  "onset_threshold": 0.7,
+  "frame_threshold": 0.4,
+  "minimum_note_length": 80.0,
+  "f1": 0.9013383497206294,
+  "f1_off": 0.4087515272184262
+ },
+ {
+  "onset_threshold": 0.7,
+  "frame_threshold": 0.3,
+  "minimum_note_length": 80.0,
+  "f1": 0.8943546249668699,
+  "f1_off": 0.31539888682745826
+ },
+ {
+  "onset_threshold": 0.7,
+  "frame_threshold": 0.3,
+  "minimum_note_length": 58.0,
+  "f1": 0.8855512206973722,
+  "f1_off": 0.31056820191078544
+ },
+ {
+  "onset_threshold": 0.7,
+  "frame_threshold": 0.2,
+  "minimum_note_length": 127.7,
+  "f1": 0.8663803846034702,
+  "f1_off": 0.225600093696015
+ },
+ {
+  "onset_threshold": 0.5,
+  "frame_threshold": 0.4,
+  "minimum_note_length": 127.7,
+  "f1": 0.864942651791634,
+  "f1_off": 0.4541131205123503
+ },
+ {
+  "onset_threshold": 0.5,
+  "frame_threshold": 0.3,
+  "minimum_note_length": 127.7,
+  "f1": 0.8458825373839156,
+  "f1_off": 0.3939086062584424
+ },
+ {
+  "onset_threshold": 0.5,
+  "frame_threshold": 0.4,
+  "minimum_note_length": 80.0,
+  "f1": 0.8312812282484597,
+  "f1_off": 0.5185207685809866
+ },
+ {
+  "onset_threshold": 0.3,
+  "frame_threshold": 0.4,
+  "minimum_note_length": 127.7,
+  "f1": 0.8294892465773062,
+  "f1_off": 0.46455032140569197
+ },
+ {
+  "onset_threshold": 0.5,
+  "frame_threshold": 0.4,
+  "minimum_note_length": 58.0,
+  "f1": 0.8211191068479903,
+  "f1_off": 0.5302141822425293
+ },
+ {
+  "onset_threshold": 0.5,
+  "frame_threshold": 0.3,
+  "minimum_note_length": 80.0,
+  "f1": 0.8119577255935857,
+  "f1_off": 0.45281732138801145
+ },
+ {
+  "onset_threshold": 0.7,
+  "frame_threshold": 0.2,
+  "minimum_note_length": 80.0,
+  "f1": 0.8014343870506017,
+  "f1_off": 0.20107654867380265
+ },
+ {
+  "onset_threshold": 0.5,
+  "frame_threshold": 0.3,
+  "minimum_note_length": 58.0,
+  "f1": 0.7883136668792359,
+  "f1_off": 0.4618031559787097
+ },
+ {
+  "onset_threshold": 0.3,
+  "frame_threshold": 0.3,
+  "minimum_note_length": 127.7,
+  "f1": 0.7849737813561867,
+  "f1_off": 0.40782882045025765
+ },
+ {
+  "onset_threshold": 0.5,
+  "frame_threshold": 0.2,
+  "minimum_note_length": 127.7,
+  "f1": 0.7823824713644038,
+  "f1_off": 0.3397852368862245
+ },
+ {
+  "onset_threshold": 0.3,
+  "frame_threshold": 0.4,
+  "minimum_note_length": 80.0,
+  "f1": 0.7777811847854039,
+  "f1_off": 0.5679764851789161
+ },
+ {
+  "onset_threshold": 0.3,
+  "frame_threshold": 0.4,
+  "minimum_note_length": 58.0,
+  "f1": 0.759339084161106,
+  "f1_off": 0.577327999919362
+ },
+ {
+  "onset_threshold": 0.3,
+  "frame_threshold": 0.3,
+  "minimum_note_length": 80.0,
+  "f1": 0.7551204510773244,
+  "f1_off": 0.5101808743318177
+ },
+ {
+  "onset_threshold": 0.7,
+  "frame_threshold": 0.2,
+  "minimum_note_length": 58.0,
+  "f1": 0.7498943383698375,
+  "f1_off": 0.19678670501038922
+ },
+ {
+  "onset_threshold": 0.3,
+  "frame_threshold": 0.3,
+  "minimum_note_length": 58.0,
+  "f1": 0.718328730823323,
+  "f1_off": 0.5127166819226658
+ },
+ {
+  "onset_threshold": 0.5,
+  "frame_threshold": 0.2,
+  "minimum_note_length": 80.0,
+  "f1": 0.7146942934395847,
+  "f1_off": 0.3601513881414635
+ },
+ {
+  "onset_threshold": 0.3,
+  "frame_threshold": 0.2,
+  "minimum_note_length": 127.7,
+  "f1": 0.7077199593879715,
+  "f1_off": 0.38554580339262234
+ },
+ {
+  "onset_threshold": 0.5,
+  "frame_threshold": 0.2,
+  "minimum_note_length": 58.0,
+  "f1": 0.6699496158634461,
+  "f1_off": 0.34358303149894065
+ },
+ {
+  "onset_threshold": 0.3,
+  "frame_threshold": 0.2,
+  "minimum_note_length": 80.0,
+  "f1": 0.6316527066291161,
+  "f1_off": 0.43580284220157306
+ },
+ {
+  "onset_threshold": 0.3,
+  "frame_threshold": 0.2,
+  "minimum_note_length": 58.0,
+  "f1": 0.5918029919498986,
+  "f1_off": 0.4199238471763262
+ }
+]

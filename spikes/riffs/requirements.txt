@@ -1,0 +1,11 @@
+numpy
+scipy
+scikit-learn
+librosa
+resampy
+soundfile
+mir_eval
+pretty_midi
+onnxruntime
+# basic-pitch se instala aparte y sin dependencias (declara tensorflow<2.15.1, que no existe para 3.12):
+#   python -m pip install basic-pitch --no-deps

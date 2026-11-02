@@ -20,3 +20,5 @@ spikes/analisis/.venv/
 
 # tsc -b
 ui/tsconfig.tsbuildinfo
+spikes/riffs/.venv/
+spikes/riffs/salida/
