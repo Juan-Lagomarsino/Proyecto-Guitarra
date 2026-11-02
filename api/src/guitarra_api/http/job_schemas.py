@@ -1,5 +1,5 @@
 import datetime as dt
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -30,6 +30,8 @@ class ClaimedJobOut(BaseModel):
     attempt: int
     max_attempts: int
     lease_until: dt.datetime
+    # {instrumento: {acorde: {forma: peso}}}; la forma son 6 trastes absolutos (core)
+    chord_shape_preferences: dict[str, Any] = Field(default_factory=dict)
 
 
 class HeartbeatRequest(_Strict):

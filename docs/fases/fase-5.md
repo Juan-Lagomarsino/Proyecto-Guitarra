@@ -50,7 +50,7 @@ Lo que **sí** anda acá: PyPI, así que el modelo de transcripción se puede in
 | F5-T08 | 2 | Worker: armado de riffs (digitación con preferencias → notación) y envío en el resultado | T03, T05, T06 | pendiente |
 | F5-T09 | 2 | UI: riff por sección con tab y mástil, confianza visible, sincronizado con el acompañamiento | T02 | pendiente |
 | F5-T10 | 3 | UI: editor de tab (traste, cuerda, técnica, duración, agregar y borrar) que guarda la versión del usuario | T09, T06 | pendiente |
-| F5-T12 | 1 | Core + API: preferencias de forma de acorde (aprender de la versión del usuario, guardar, mandar en el claim) | — | pendiente |
+| F5-T12 | 1 | Core + API: preferencias de forma de acorde (aprender de la versión del usuario, guardar, mandar en el claim) | — | hecha |
 | F5-T13 | 2 | UI: elegir la forma de un acorde; worker: usar la forma preferida al armar el chart | T12 | pendiente |
 | F5-T11 | 4 | Cierre: test de punta a punta de "canción nueva usa lo aprendido", E2E, guía para la PC, README | todas | pendiente |
 

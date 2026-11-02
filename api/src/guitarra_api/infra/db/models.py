@@ -351,3 +351,18 @@ class Correction(Base):
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+
+class ChordShapePreference(Base):
+    """Formas de acorde que el usuario prefiere en un instrumento: `{acorde: {forma: peso}}`."""
+
+    __tablename__ = "chord_shape_preferences"
+    __table_args__ = (
+        CheckConstraint(_in_list("instrument", INSTRUMENTS), name="instrument_valid"),
+    )
+
+    instrument: Mapped[str] = mapped_column(String(20), primary_key=True)
+    weights: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )

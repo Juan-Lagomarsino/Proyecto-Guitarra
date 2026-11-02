@@ -3,6 +3,7 @@
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from guitarra_core.chord_preferences import chosen_shapes
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -11,6 +12,7 @@ from guitarra_api.domain.chart_diff import diff_charts
 from guitarra_api.domain.song_chart import SongChartContent
 from guitarra_api.domain.song_source import ParsedSongUrl, parse_song_url
 from guitarra_api.infra.db.models import Song, SongChart
+from guitarra_api.infra.db.repositories.chord_preferences import ChordShapePreferenceRepository
 from guitarra_api.infra.db.repositories.jobs import SEPARATION_JOB, JobRepository
 from guitarra_api.infra.db.repositories.songs import USER_ORIGIN, SongRepository
 
@@ -75,6 +77,7 @@ class SongService:
         self._session = session
         self._repo = SongRepository(session)
         self._jobs = JobRepository(session)
+        self._chord_preferences = ChordShapePreferenceRepository(session)
 
     def add_from_url(self, url: str) -> CreatedSong:
         """Raises: InvalidSongUrlError si el link no es de YouTube ni de un tema de Spotify."""
@@ -129,11 +132,19 @@ class SongService:
         try:
             chart = self._repo.stage_chart(song_id, USER_ORIGIN, content)
             self._repo.stage_correction(chart, diff)
+            self._learn_chord_shapes(instrument, current.content, content)
             self._session.commit()
         except Exception:
             self._session.rollback()
             raise
         return chart
+
+    def _learn_chord_shapes(self, instrument: str, before: dict, content: SongChartContent) -> None:
+        """Suma a las preferencias las formas que el usuario cambió respecto de la vigente."""
+        choices = chosen_shapes(before, content.model_dump(mode="json"))
+        if choices:
+            learned = self._chord_preferences.load().learn(instrument, choices)
+            self._chord_preferences.stage_instrument(instrument, learned)
 
     def discard_user_chart(self, song_id: int, instrument: str) -> SongChart:
         """Vuelve a la versión automática. Raises: NoUserChartError si no había edición."""

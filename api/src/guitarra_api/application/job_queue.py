@@ -2,6 +2,7 @@
 
 import datetime as dt
 from dataclasses import dataclass
+from typing import Any
 
 from sqlalchemy import exists, select
 from sqlalchemy.exc import IntegrityError
@@ -10,6 +11,7 @@ from sqlalchemy.orm import Session
 from guitarra_api.application.clock import Clock, utc_now
 from guitarra_api.domain.analysis_result import AnalysisResult
 from guitarra_api.infra.db.models import AnalysisJob, Exercise, Song, SongSection
+from guitarra_api.infra.db.repositories.chord_preferences import ChordShapePreferenceRepository
 from guitarra_api.infra.db.repositories.jobs import ANALYZE_JOB, SEPARATION_JOB, JobRepository
 from guitarra_api.infra.db.repositories.songs import SongRepository
 
@@ -48,6 +50,7 @@ class ClaimedJob:
     attempt: int
     max_attempts: int
     lease_until: dt.datetime
+    chord_shape_preferences: dict[str, Any]
 
 
 class JobQueue:
@@ -55,6 +58,7 @@ class JobQueue:
         self._session = session
         self._jobs = JobRepository(session)
         self._songs = SongRepository(session)
+        self._chord_preferences = ChordShapePreferenceRepository(session)
         self._lease = dt.timedelta(seconds=lease_seconds)
         self._clock = clock
 
@@ -75,7 +79,7 @@ class JobQueue:
             if job.type == ANALYZE_JOB:
                 song.analysis_status = "processing"
             self._session.commit()
-            return self._claimed(job, song)
+            return self._claimed(job, song, self._chord_preferences.load().to_json())
         self._session.rollback()
         return None
 
@@ -215,7 +219,9 @@ class JobQueue:
             self._session.delete(section)
 
     @staticmethod
-    def _claimed(job: AnalysisJob, song: Song) -> ClaimedJob:
+    def _claimed(
+        job: AnalysisJob, song: Song, chord_shape_preferences: dict[str, Any]
+    ) -> ClaimedJob:
         assert job.lease_until is not None
         return ClaimedJob(
             job_id=job.id,
@@ -231,4 +237,5 @@ class JobQueue:
             attempt=job.attempts,
             max_attempts=job.max_attempts,
             lease_until=job.lease_until,
+            chord_shape_preferences=chord_shape_preferences,
         )
