@@ -117,6 +117,9 @@ class BuildRiffsStep:
         events = (ctx.outputs.get("riffs") or {}).get("riffs") or {}
         if chart is None or not events:
             return {"riffs": {}}
-        preferences = FingeringPreferences.from_json(ctx.job.fingering_preferences)
+        # La API guarda trastes absolutos; el armado digita relativo al capo.
+        preferences = FingeringPreferences.from_json(ctx.job.fingering_preferences).for_capo(
+            chart.capo
+        )
         riff_chart = RiffChart(chart.bpm, chart.time_signature, chart.capo)
         return {"riffs": build_riffs(events, riff_chart, preferences)}

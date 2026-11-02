@@ -75,9 +75,11 @@ class FingeringPreferences:
     """Lo que el usuario prefiere, serializable a JSON.
 
     positions: altura MIDI -> {"cuerda,traste": peso}. Peso en [0, 1] (se recorta); 1.0 es
-        "siempre acá". El traste es relativo al capo, igual que la salida.
+        "siempre acá". El traste es ABSOLUTO (el real del mástil): lo aprendido en una
+        canción con capo vale en otra. `for_capo(capo)` lo pasa a relativo al capo, que es
+        lo que usa `finger_steps`.
     zones: zona de la mano -> peso en [0, 1]. Zona = traste // ZONE_WIDTH (0 = trastes 0 a 3,
-        1 = 4 a 7, ...). No cuenta para cuerdas al aire.
+        1 = 4 a 7, ...), también absoluta. No cuenta para cuerdas al aire.
 
     JSON: {"positions": {"69": {"5,12": 0.8}}, "zones": {"1": 0.5}} (las claves son texto).
     """
@@ -104,11 +106,41 @@ class FingeringPreferences:
             "zones": {str(zone): _clamp01(w) for zone, w in sorted(self.zones.items())},
         }
 
+    def for_capo(self, capo: int) -> "FingeringPreferences":
+        """Las mismas preferencias con los trastes relativos a `capo`.
+
+        Descarta lo que queda bajo el capo. Una zona absoluta (4z a 4z+3) se reubica por su
+        primer traste jugable; si dos zonas caen en la misma, queda el mayor peso.
+        """
+        if capo == 0:
+            return self
+        positions: dict[int, dict[str, float]] = {}
+        for midi, places in self.positions.items():
+            shifted = {}
+            for key, weight in places.items():
+                string, fret = _parse_key(key)
+                if fret >= capo:
+                    shifted[f"{string},{fret - capo}"] = weight
+            if shifted:
+                positions[midi] = shifted
+        zones: dict[int, float] = {}
+        for zone, weight in self.zones.items():
+            if (zone + 1) * ZONE_WIDTH - 1 < capo:
+                continue
+            relative = max(zone * ZONE_WIDTH - capo, 0) // ZONE_WIDTH
+            zones[relative] = max(zones.get(relative, 0.0), weight)
+        return FingeringPreferences(positions=positions, zones=zones)
+
     def position_weight(self, midi: int, string: int, fret: int) -> float:
         return _clamp01(self.positions.get(midi, {}).get(f"{string},{fret}", 0.0))
 
     def zone_weight(self, fret: int) -> float:
         return _clamp01(self.zones.get(fret // ZONE_WIDTH, 0.0))
+
+
+def _parse_key(key: str) -> tuple[int, int]:
+    string, fret = key.split(",")
+    return int(string), int(fret)
 
 
 def _valid_key(key: str) -> str:

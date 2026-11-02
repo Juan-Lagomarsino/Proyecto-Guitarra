@@ -3,18 +3,25 @@
 import datetime as dt
 from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Any
 
 from guitarra_core.chord_preferences import chosen_shapes
+from guitarra_core.fingering_preferences import learn_from_correction
+from guitarra_core.theory import parse_pitch
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from guitarra_api.application.job_queue import NO_GUITAR_KIND
 from guitarra_api.domain.chart_diff import diff_charts
 from guitarra_api.domain.chart_riffs import merge_user_with_auto, riff_sources_of
+from guitarra_api.domain.notation import Notation
 from guitarra_api.domain.song_chart import SongChartContent
 from guitarra_api.domain.song_source import ParsedSongUrl, parse_song_url
 from guitarra_api.infra.db.models import Song, SongChart
 from guitarra_api.infra.db.repositories.chord_preferences import ChordShapePreferenceRepository
+from guitarra_api.infra.db.repositories.fingering_preferences import (
+    FingeringPreferenceRepository,
+)
 from guitarra_api.infra.db.repositories.jobs import SEPARATION_JOB, JobRepository
 from guitarra_api.infra.db.repositories.songs import USER_ORIGIN, SongRepository
 
@@ -96,6 +103,7 @@ class SongService:
         self._repo = SongRepository(session)
         self._jobs = JobRepository(session)
         self._chord_preferences = ChordShapePreferenceRepository(session)
+        self._fingering_preferences = FingeringPreferenceRepository(session)
 
     def add_from_url(self, url: str) -> CreatedSong:
         """Raises: InvalidSongUrlError si el link no es de YouTube ni de un tema de Spotify."""
@@ -171,6 +179,7 @@ class SongService:
             chart = self._repo.stage_chart(song_id, USER_ORIGIN, content)
             self._repo.stage_correction(chart, diff)
             self._learn_chord_shapes(instrument, current.content, content)
+            self._learn_fingerings(current.content, content)
             self._session.commit()
         except Exception:
             self._session.rollback()
@@ -183,6 +192,33 @@ class SongService:
         if choices:
             learned = self._chord_preferences.load().learn(instrument, choices)
             self._chord_preferences.stage_instrument(instrument, learned)
+
+    def _learn_fingerings(self, before: dict, content: SongChartContent) -> None:
+        """Aprende la digitación de cada riff que el usuario cambió respecto de la vigente.
+
+        Se guarda en trastes absolutos: a cada lado se le suma el capo de su propia versión.
+        """
+        previous = SongChartContent.model_validate(before)
+        previous_riffs = {section.id: section.riff for section in previous.sections}
+        preferences = self._fingering_preferences.load()
+        learned = preferences
+        for section in content.sections:
+            old, new = previous_riffs.get(section.id), section.riff
+            if old is None or new is None:
+                continue
+            old_events = _absolute_events(old, previous.capo)
+            new_events = _absolute_events(new, content.capo)
+            if old_events == new_events:
+                continue
+            learned = learn_from_correction(
+                old_events,
+                new_events,
+                tuning=[parse_pitch(note) for note in new.tuning],
+                capo=0,
+                previous=learned,
+            )
+        if learned is not preferences:
+            self._fingering_preferences.stage(learned)
 
     def discard_user_chart(self, song_id: int, instrument: str) -> ChartView:
         """Vuelve a la versión automática. Raises: NoUserChartError si no había edición."""
@@ -272,3 +308,8 @@ class SongService:
             return "done"
         latest = self._repo.latest_job(song_id, SEPARATION_JOB)
         return latest.status if latest else "none"
+
+
+def _absolute_events(riff: Notation, capo: int) -> list[dict[str, Any]]:
+    """Eventos del riff con el traste real del mástil (el del riff es relativo al capo)."""
+    return [{**e, "fret": e["fret"] + capo} for e in riff.model_dump(mode="json")["events"]]

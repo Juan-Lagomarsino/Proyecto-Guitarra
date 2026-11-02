@@ -14,6 +14,9 @@ from guitarra_api.domain.chart_riffs import accept_riff, carry_over_riffs, with_
 from guitarra_api.domain.song_chart import SongChartContent
 from guitarra_api.infra.db.models import AnalysisJob, Exercise, Song, SongSection
 from guitarra_api.infra.db.repositories.chord_preferences import ChordShapePreferenceRepository
+from guitarra_api.infra.db.repositories.fingering_preferences import (
+    FingeringPreferenceRepository,
+)
 from guitarra_api.infra.db.repositories.jobs import ANALYZE_JOB, SEPARATION_JOB, JobRepository
 from guitarra_api.infra.db.repositories.songs import SongRepository
 
@@ -53,6 +56,7 @@ class ClaimedJob:
     max_attempts: int
     lease_until: dt.datetime
     chord_shape_preferences: dict[str, Any]
+    fingering_preferences: dict[str, Any]
     chart: dict[str, Any] | None = None  # solo en separaciones
 
 
@@ -62,6 +66,7 @@ class JobQueue:
         self._jobs = JobRepository(session)
         self._songs = SongRepository(session)
         self._chord_preferences = ChordShapePreferenceRepository(session)
+        self._fingering_preferences = FingeringPreferenceRepository(session)
         self._lease = dt.timedelta(seconds=lease_seconds)
         self._clock = clock
 
@@ -82,7 +87,12 @@ class JobQueue:
             if job.type == ANALYZE_JOB:
                 song.analysis_status = "processing"
             self._session.commit()
-            claimed = self._claimed(job, song, self._chord_preferences.load().to_json())
+            claimed = self._claimed(
+                job,
+                song,
+                self._chord_preferences.load().to_json(),
+                self._fingering_preferences.load().to_json(),
+            )
             if job.type == SEPARATION_JOB:
                 claimed = replace(claimed, chart=self._chart_for_separation(song.id))
             return claimed
@@ -277,7 +287,10 @@ class JobQueue:
 
     @staticmethod
     def _claimed(
-        job: AnalysisJob, song: Song, chord_shape_preferences: dict[str, Any]
+        job: AnalysisJob,
+        song: Song,
+        chord_shape_preferences: dict[str, Any],
+        fingering_preferences: dict[str, Any],
     ) -> ClaimedJob:
         assert job.lease_until is not None
         return ClaimedJob(
@@ -295,4 +308,5 @@ class JobQueue:
             max_attempts=job.max_attempts,
             lease_until=job.lease_until,
             chord_shape_preferences=chord_shape_preferences,
+            fingering_preferences=fingering_preferences,
         )

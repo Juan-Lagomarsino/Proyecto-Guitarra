@@ -54,6 +54,9 @@ class ClaimedJobOut(BaseModel):
     lease_until: dt.datetime
     # {instrumento: {acorde: {forma: peso}}}; la forma son 6 trastes absolutos (core)
     chord_shape_preferences: dict[str, Any] = Field(default_factory=dict)
+    # {"positions": {midi: {"cuerda,traste": peso}}, "zones": {zona: peso}}; trastes ABSOLUTOS
+    # (los del mástil): el worker los pasa a relativos con FingeringPreferences.for_capo(capo)
+    fingering_preferences: dict[str, Any] = Field(default_factory=dict)
     chart: ClaimChartOut | None = None
 
 

@@ -114,3 +114,31 @@ def test_transpose():
     assert transpose_chord(parse_chord("Bm"), -2).name == "Am"
     assert transpose_chord(parse_chord("D/F#"), -2).name == "C/E"
     assert transpose_chord(parse_chord("C"), -1).name == "B"
+
+
+@pytest.mark.parametrize(
+    ("text", "midi"),
+    [
+        ("E2", 40),
+        ("A2", 45),
+        ("E4", 64),
+        ("C4", 60),
+        ("F#3", 54),
+        ("Bb3", 58),
+        ("F♯3", 54),
+        ("B♭3", 58),
+        ("C0", 12),
+    ],
+)
+def test_parse_pitch_a_midi(text, midi):
+    from guitarra_core.theory import parse_pitch
+
+    assert parse_pitch(text) == midi
+
+
+@pytest.mark.parametrize("text", ["E", "H2", "E22", "", "Em2"])
+def test_parse_pitch_invalido(text):
+    from guitarra_core.theory import parse_pitch
+
+    with pytest.raises(ChordParseError):
+        parse_pitch(text)

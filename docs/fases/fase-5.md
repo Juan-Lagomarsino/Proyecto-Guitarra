@@ -46,7 +46,7 @@ Lo que **sí** anda acá: PyPI, así que el modelo de transcripción se puede in
 | F5-T04 | 1 | Core: aprender preferencias de un par (automático, corregido) | T03 | hecha |
 | F5-T05 | 1 | Worker: transcripción, secciones candidatas y cuantización a la grilla | T01, T02 | hecha |
 | F5-T06 | 1 | API: riffs en el resultado de la separación, mezcla por sección con la versión del usuario | T02 | hecha |
-| F5-T07 | 2 | API: preferencias de digitación (tabla, actualización en el `PUT` del chart, envío en el claim) | T04, T06 | pendiente |
+| F5-T07 | 2 | API: preferencias de digitación (tabla, actualización en el `PUT` del chart, envío en el claim) | T04, T06 | hecha |
 | F5-T08 | 2 | Worker: armado de riffs (digitación con preferencias → notación) y envío en el resultado | T03, T05, T06 | hecha |
 | F5-T09 | 2 | UI: riff por sección con tab y mástil, confianza visible, sincronizado con el acompañamiento | T02 | hecha |
 | F5-T10 | 3 | UI: editor de tab (traste, cuerda, técnica, duración, agregar y borrar) que guarda la versión del usuario | T09, T06 | hecha |
@@ -132,3 +132,4 @@ Lo que **sí** anda acá: PyPI, así que el modelo de transcripción se puede in
 
 - **F5-T06:** contrato del `result` de separación: `{"worker_id", "riffs"?: {section_id: Notation}}`; cada riff se valida por separado y se descarta con log (sección inexistente, notación inválida, sin eventos, `bpm` distinto del chart, se pasa de la sección); nunca 500. Con al menos uno válido se crea una versión `auto` por instrumento. El claim de `separation` trae `chart: {bpm, time_signature, capo, beat_grid|null, sections:[{id,name,start_s,end_s}]} | null`. `GET chart` devuelve la vista mezclada y `riff_sources: {section_id: auto|usuario|null}`; una sección cuenta como "tocada" si alguna corrección de usuario no descartada cambió su `riff`. Reanálisis: los riffs auto se arrastran si siguen cabiendo. Los ejercicios de canción usan la vista mezclada.
 - **F5-T10:** el editor elige notas desde una lista de botones (la tab SVG queda como vista previa; a 375 px sus columnas son muy chicas para tocar). No hay "quitar solo el riff": "Volver a la automática" descarta la versión de usuario entera. No se puede mover el `t` de una nota existente (se borra y se agrega).
+- **F5-T07:** las preferencias de digitación se guardan y viajan con trastes y zonas ABSOLUTOS (los del mástil); quien las usa aplica `FingeringPreferences.for_capo(capo)`. Así lo aprendido con capo vale en una canción sin capo y al revés. Tabla de fila única (migración 0008). Las zonas pierden algo de precisión al cambiar de capo (reubicación aproximada).

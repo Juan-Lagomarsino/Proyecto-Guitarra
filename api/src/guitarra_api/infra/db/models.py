@@ -366,3 +366,16 @@ class ChordShapePreference(Base):
     updated_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
+
+
+class FingeringPreference(Base):
+    """Preferencias de digitación (fila única, id = 1): `{"positions": ..., "zones": ...}`."""
+
+    __tablename__ = "fingering_preferences"
+    __table_args__ = (CheckConstraint("id = 1", name="single_row"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    weights: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )

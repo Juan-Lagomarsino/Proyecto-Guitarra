@@ -62,6 +62,7 @@ _QUALITY_TOKENS = {
     "5": "power",
 }
 _HARTE_BASS_INTERVAL = re.compile(r"^[b#]?\d+$")
+_PITCH = re.compile(r"^([A-G])([#b♯♭]?)(\d)$")
 _ROOT = re.compile(r"^([A-G])([#b♯♭]?)(.*)$", re.DOTALL)
 
 
@@ -92,6 +93,15 @@ def parse_note(text: str) -> int:
         raise ChordParseError(f"nota inválida: {text!r}")
     letter, accidental, _ = match.groups()
     return (_NATURAL_PC[letter] + _ACCIDENTAL.get(accidental, 0)) % 12
+
+
+def parse_pitch(text: str) -> int:
+    """Nota con octava ("E2", "F#3") a número MIDI (C4 = 60)."""
+    match = _PITCH.match(text.strip())
+    if not match:
+        raise ChordParseError(f"nota con octava inválida: {text!r}")
+    letter, accidental, octave = match.groups()
+    return (int(octave) + 1) * 12 + _NATURAL_PC[letter] + _ACCIDENTAL.get(accidental, 0)
 
 
 def note_name(pitch_class: int) -> str:

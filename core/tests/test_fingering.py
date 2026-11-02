@@ -243,3 +243,31 @@ def test_preferencias_con_clave_invalida_dan_error_claro():
 def test_to_json_recorta_pesos():
     prefs = FingeringPreferences(positions={60: {"1,1": 50.0}}, zones={0: -3.0})
     assert prefs.to_json() == {"positions": {"60": {"1,1": 1.0}}, "zones": {"0": 0.0}}
+
+
+def test_for_capo_resta_el_capo_a_claves_y_zonas():
+    absolute = FingeringPreferences(
+        positions={59: {"3,4": 0.6, "4,9": 0.2}}, zones={1: 0.5, 2: 0.4}
+    )
+    relative = absolute.for_capo(2)
+    assert relative.positions == {59: {"3,2": 0.6, "4,7": 0.2}}
+    # zona 1 = trastes 4-7 -> 2-5 (zona 0); zona 2 = 8-11 -> 6-9 (zona 1)
+    assert relative.zones == {0: 0.5, 1: 0.4}
+
+
+def test_for_capo_descarta_posiciones_bajo_el_capo():
+    absolute = FingeringPreferences(positions={55: {"3,0": 0.9, "3,2": 0.4}}, zones={0: 0.7})
+    relative = absolute.for_capo(2)
+    assert relative.positions == {55: {"3,0": 0.4}}
+    assert relative.zones == {0: 0.7}  # la zona 0 absoluta (0-3) todavia cubre trastes 2-3
+
+
+def test_for_capo_descarta_zonas_enteras_bajo_el_capo():
+    relative = FingeringPreferences(zones={0: 0.7, 1: 0.2}).for_capo(5)
+    assert relative.zones == {0: 0.2}
+
+
+def test_for_capo_cero_es_identidad_y_no_deja_entradas_vacias():
+    prefs = FingeringPreferences(positions={55: {"3,0": 0.9}}, zones={0: 0.7})
+    assert prefs.for_capo(0) == prefs
+    assert FingeringPreferences(positions={55: {"3,1": 0.9}}).for_capo(3).positions == {}

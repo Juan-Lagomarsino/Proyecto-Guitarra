@@ -88,3 +88,15 @@ def test_preferencias_nuevas_no_reusan_riffs_viejos(tmp_path):
     assert transcriber.calls == 1  # la transcripción se reusa, el armado no
     assert first != second
     assert any(e["string"] == 6 and e["fret"] == 5 for e in second)
+
+
+def test_preferencias_absolutas_se_aplican_relativas_al_capo(tmp_path):
+    # Con capo 2, A2 (45), Bb2 (46) y B2 (47) en la cuerda 6 son los trastes 3, 4 y 5 (5, 6 y 7
+    # en el mastil, que es como se guardan las preferencias).
+    prefs = {"positions": {"45": {"6,5": 1.0}, "46": {"6,6": 1.0}, "47": {"6,7": 1.0}}}
+    chart = {**CHART, "capo": 2}
+    job = {**SEPARATION_JOB, "chart": chart, "fingering_preferences": prefs}
+    api, client, settings, steps = build(tmp_path, [job], FakeTranscriber())
+    run_once(client, settings, steps)
+    events = api.results[0]["riffs"]["verso-1"]["events"]
+    assert {(e["string"], e["fret"]) for e in events} == {(6, 3), (6, 4), (6, 5)}
