@@ -81,6 +81,10 @@ const DEFAULT_SIGNATURE = '4/4'
 const patternFor = (signature: string | undefined): BarPattern =>
   PATTERNS[signature ?? DEFAULT_SIGNATURE] ?? PATTERNS[DEFAULT_SIGNATURE]
 
+/** Beats de grilla por compás (en 6/8 el beat es la negra con puntillo: 2). */
+export const gridBeatsPerBar = (signature: string | undefined): number =>
+  patternFor(signature).beatsPerBar
+
 // ---------------------------------------------------------------- acordes
 
 const NOTE_PITCH: Record<string, number> = {

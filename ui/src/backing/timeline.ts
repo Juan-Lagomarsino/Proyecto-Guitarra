@@ -10,6 +10,16 @@ export function secondsToBeats(tS: number, beatsS: readonly number[]): number {
   return index + (tS - start) / (end - start)
 }
 
+/** Inversa de `secondsToBeats`: segundo en que cae `beat`, con la misma extrapolación. */
+export function beatsToSeconds(
+  beat: number,
+  beatsS: readonly number[],
+): number {
+  if (beatsS.length < 2) throw new Error('beats_s necesita al menos 2 beats')
+  const index = Math.min(Math.max(Math.floor(beat), 0), beatsS.length - 2)
+  return beatsS[index] + (beat - index) * (beatsS[index + 1] - beatsS[index])
+}
+
 /** Cantidad de elementos <= value (equivale a bisect_right). */
 function upperBound(sorted: readonly number[], value: number): number {
   let low = 0

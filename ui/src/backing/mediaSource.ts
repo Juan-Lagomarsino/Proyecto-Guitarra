@@ -1,4 +1,5 @@
 import type { Clock } from '../playback/clock'
+import { clamp } from './clamp'
 import { isValidLoop, loopJumpTarget } from './loop'
 import type { BackingSource, LoopRange } from './types'
 
@@ -19,9 +20,6 @@ export interface MediaLike {
   addEventListener(type: 'ended', fn: () => void): void
   removeEventListener(type: 'ended', fn: () => void): void
 }
-
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, value))
 
 /** Acompañamiento sobre un `<audio>`: velocidad nativa sin cambio de tono y loop A-B. */
 export class MediaBackingSource implements BackingSource {

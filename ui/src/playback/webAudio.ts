@@ -1,9 +1,6 @@
+import { playClickTone } from '../audio/clickTone'
 import type { ClickSink, Clock, PlaybackAudio } from './clock'
 
-const ACCENT_HZ = 1500
-const NORMAL_HZ = 1000
-const CLICK_SECONDS = 0.04
-const CLICK_GAIN = 0.4
 const FRAME_FALLBACK_MS = 25
 
 /**
@@ -48,13 +45,13 @@ class OscillatorClickSink implements ClickSink {
   constructor(private readonly ctx: AudioContext) {}
 
   click(time: number, accent: boolean): void {
-    const osc = this.ctx.createOscillator()
-    const gain = this.ctx.createGain()
-    osc.frequency.value = accent ? ACCENT_HZ : NORMAL_HZ
     const start = Math.max(time, this.ctx.currentTime)
-    gain.gain.setValueAtTime(CLICK_GAIN, start)
-    gain.gain.exponentialRampToValueAtTime(0.001, start + CLICK_SECONDS)
-    osc.connect(gain).connect(this.ctx.destination)
+    const { osc, gain } = playClickTone(
+      this.ctx,
+      this.ctx.destination,
+      start,
+      accent,
+    )
     const entry = { osc, start }
     this.pending.add(entry)
     osc.onended = () => {
@@ -62,8 +59,6 @@ class OscillatorClickSink implements ClickSink {
       osc.disconnect()
       gain.disconnect()
     }
-    osc.start(start)
-    osc.stop(start + CLICK_SECONDS)
   }
 
   cancel(): void {
