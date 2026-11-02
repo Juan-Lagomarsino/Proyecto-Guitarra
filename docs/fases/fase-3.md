@@ -1,6 +1,6 @@
 # Fase 3 — Acompañamiento
 
-Estado: **en curso** (plan aprobado por Juan Pedro el 2026-11-02)
+Estado: **cerrada, pendiente de demo** (plan aprobado por Juan Pedro el 2026-11-02)
 Referencia: `docs/PLAN.md` § Explorar (Acompañamiento), § Pipeline (paso 3, Demucs), § Contratos de API (`GET /songs/{id}/audio/{tipo}`), § Modelo de datos (`AudioAsset`, `AnalysisJob`), § Acompañamiento por el Rig, ADR 0004 (audio en el navegador) y ADR 0007 (Demucs pasa a la Fase 3).
 
 ## Criterios de aceptación de la fase (del plan)
@@ -51,7 +51,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F3-T07 | 2 | Worker: separación con Demucs, mezcla sin guitarra, caché y subida; `install.ps1` | T04, T05 | hecha (separación real sin probar: ver tabla) |
 | F3-T08 | 2 | UI: panel de acompañamiento en la vista de canción (selector, velocidad, loop por sección) | T01, T02, T06 | hecha |
 | F3-T09 | 3 | UI: sincronía de acordes, rasgueo, mástil y tab con el tiempo del acompañamiento | T08 | hecha |
-| F3-T10 | 4 | Cierre: E2E con audio sintético, README, guía de validación en tu PC | todas | pendiente |
+| F3-T10 | 4 | Cierre: E2E con audio sintético, README, guía de validación en tu PC | todas | hecha |
 
 ### F3-T01 — Audio en la API
 
@@ -118,3 +118,33 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 - **F3-T08:** el loop por sección es un toggle "Repetir sección: <nombre>" que actúa sobre la sección elegida en la línea de tiempo (el click en la línea de tiempo sigue eligiendo la sección para el detalle); con el toggle activo, tocar otra sección mueve el loop. `BackingSource.play()` devuelve `Promise<void>` y propaga el bloqueo de autoplay al panel. `useBacking()` da `{source, position}` y la posición se publica también en pausa.
 - **F3-T09 (decisión de Juan Pedro, 2026-11-02): acordes como notas.** Los ejercicios de canción (acordes, rasgueo) emiten `events`: una nota por cuerda de la forma, con `t`/`dur` hasta el próximo acorde, o repetida en cada golpe D/U del rasgueo. Los ya guardados se completan al leerlos, sin migración. El origen de los beats es el inicio de la sección en API y UI; 6/8 = 2 beats de grilla en los dos lados. Mástil y tab iluminan todas las notas del acorde que suena. Ejercicios viejos que contaban desde el primer acorde pueden quedar levemente corridos.
 - **Test intermitente:** `SongScreen.test.tsx` › "muestra la cabecera…" falla a veces con la suite completa en paralelo (pasa solo); viene de antes de la Fase 3. Se arregla en F3-T10.
+
+## Resumen de cierre
+
+Cierre el 2026-11-02, en una sesión en la nube (Linux, sin Docker Hub, sin YouTube, sin Hugging Face ni PyTorch, sin parlantes). Tareas F3-T01 a F3-T10 hechas, cada una con revisión. Decisiones de Juan Pedro: velocidad nativa del navegador (ADR 0014), síntesis con Web Audio (ADR 0016), Demucs solo de 6 pistas (ADR 0015) y acordes como notas (F3-T09). ADR 0013: audio AAC `.m4a` subido por el worker.
+
+### Criterios, uno por uno
+
+| # | Criterio | Estado | Evidencia |
+| --- | --- | --- | --- |
+| 1 | Selector con las 4 opciones: metrónomo/batería, original, sin guitarra (experimental), backing generado | Cumple en la UI y la API; **la separación real con Demucs no se probó** | E2E `zz-acompanamiento` 2: las 4 opciones, "sin guitarra" con chip experimental y deshabilitado con "separando…"; E2E 3 y 4: Original, Backing generado y Metrónomo suenan (la posición avanza). Separación: tests con separador falso y normalización comparada con el código fuente de demucs 4.0.1. Captura `fase-3/capturas/panel-acompanamiento.png`. |
+| 2 | Velocidad de 50 % a 100 % sin cambio de tono; loop A-B por sección | Cumple en el comportamiento; **el tono a 50 % no se escuchó** | E2E 3: a 50 % el `<audio>` tiene `playbackRate = 0.5` y `preservesPitch = true`; con "Repetir sección" la posición vuelve al inicio de la Intro al pasar el fin. Fuentes generadas: tests con reloj falso (50 % = doble de tiempo real por beat, loop A-B en beats). |
+| 3 | El mástil y la tab avanzan sincronizados con el audio | Cumple | F3-T09: ejercicios de canción con acordes como notas; tests de componentes (sección, acorde, golpe y todas las notas del acorde en mástil y tab, vuelve con el loop); E2E 4: el resaltado de sección y acorde se mueve con el backing. |
+
+### Suites al cierre
+
+Core 350, worker 372 (6 omitidos, ya existían), API 789, UI 553, E2E 19 de 19 con `scripts/e2e-nativo.sh` (API nativa + Postgres 16 local + Chromium del sistema; el compose no se pudo levantar por el 429 de Docker Hub).
+
+### Queda para la PC de Juan Pedro
+
+Ver `fase-3/validacion-en-pc.md`: `install.ps1` con Demucs y pesos, separación real (calidad del "sin guitarra" y tiempo en CPU), escuchar el tono a 50 %, el loop sin clic, los timbres y el volumen del backing generado, `docker compose up` y `scripts/e2e.ps1`.
+
+### Quedó pendiente o a vigilar
+
+- No hay botón "Reanalizar" en la UI (solo el endpoint); la guía lo hace por PowerShell.
+- Ejercicios de canción creados en la Fase 2 contaban beats desde el primer acorde: pueden quedar levemente corridos respecto del audio.
+- Carrera teórica al encolar separaciones (chequeo + insert no atómico) y archivo huérfano si falla el registro de un audio subido.
+- Si se borran las pistas de `stems/` pero queda la caché de pasos, la mezcla falla y pide borrar `steps/` de la canción.
+- `api/tests/http/test_song_exercises_api.py` (Fase 2) está commiteado con finales de línea CR sueltos.
+- Las capturas de las Fases 1 y 2 se regeneran distinto en Linux; no se commitearon las de esta corrida.
+- Push: GitHub respondió 403 toda la sesión (falta acceso de la Claude GitHub App al repo); los commits quedaron en la rama local `claude/fase-3-acompanamiento-s4ys05`.

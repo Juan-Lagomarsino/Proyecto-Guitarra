@@ -69,6 +69,7 @@ Qué ver:
 
 - **Hoy** (`/`): la sesión del día, con bloques de ejercicios. Reproducí, probá "Nota por nota" y marcá "Terminé".
 - **Estudio** (`/estudio`): niveles, lecciones con su teoría y las tarjetas de ejercicio con mástil y tablatura.
+- **Acompañamiento** (en la vista de cada canción, `/explorar/canciones/<id>`): panel con cuatro fuentes. *Metrónomo / batería* (clic o batería al tempo), *Original* (el audio de la canción), *Sin guitarra* (experimental; queda deshabilitada con el motivo "separando…" hasta que el worker termina de separar) y *Backing generado* (batería, bajo y acordes armados desde el análisis). Elegí una, tocá "Reproducir", bajá la velocidad hasta 50 % (el tono no cambia) y activá "Repetir sección" para ensayar la sección elegida en la línea de tiempo en loop. Los acordes, el rasgueo, el mástil y la tab se iluminan con lo que suena.
 - **Progreso** (`/progreso`): racha actual y máxima, heatmap del último año y avance por nivel.
 - **Ajustes** (`/ajustes`): colores del tema, tipografías y zona horaria.
 
@@ -82,10 +83,13 @@ Tus datos viven en el volumen `pgdata` de Docker; reiniciar el compose no los pi
 
 El script levanta un compose **aparte** (proyecto `guitarra-e2e`, con su propio volumen, la API en `127.0.0.1:18000`, Postgres en `127.0.0.1:15432` y los tokens de `.env.e2e`), espera `/api/v1/health`, corre Playwright (Chromium) y lo baja todo con `down -v`, también si algo falla. No toca tu base real, así que se puede correr aunque tengas la app levantada. Deja capturas en `docs/fases/fase-1/capturas/` y `docs/fases/fase-2/capturas/` y el reporte HTML en `e2e/playwright-report/`.
 
-Hay dos recorridos en `e2e/tests/`, en este orden y sobre la misma base vacía:
+En Linux sin Docker (Naxxon, la nube) usá `scripts/e2e-nativo.sh`: levanta la API nativa contra un Postgres existente (`E2E_PG_PORT`, base descartable `e2e_f3`) y un Chromium ya instalado (`E2E_CHROMIUM_PATH`); las variables están comentadas en el script.
+
+Hay tres recorridos en `e2e/tests/`, en este orden y sobre la misma base vacía:
 
 - `recorrido.spec.ts` (Fase 1): sesión del día, reproducción, Terminé, Progreso, Ajustes, 375 px y Estudio.
 - `z-canciones.spec.ts` (Fase 2): pegar un link en Explorar, worker simulado (`POST /jobs/claim` y `/jobs/{id}/result` con el resultado grabado `e2e/fixtures/resultado-grabado.json`, que valida con `AnalysisResult`), canción lista con diagramas y selector clásica/eléctrica, editar un acorde ("Editado por vos"), "Practicar esta sección" + Terminé, Progreso ("Canciones en curso") y 375 px sin scroll horizontal. No usa el worker real ni descarga nada.
+- `zz-acompanamiento.spec.ts` (Fase 3): sube un audio sintético (`e2e/fixtures/audio-sintetico.m4a`, tono y clics) como lo haría el worker; el panel de acompañamiento con "Sin guitarra" deshabilitada, Original avanzando, 50 % con `preservesPitch`, loop de sección, Backing generado y Metrónomo con el resaltado en movimiento, y 375 px sin scroll horizontal.
 
 ## Worker de análisis
 
@@ -110,6 +114,10 @@ En **Explorar** (`/explorar`) pegás un link de YouTube o Spotify (o buscás por
 1. Poné en el `.env` de la raíz `GUITAR_API_URL` y `GUITAR_WORKER_TOKEN` (el mismo valor que lee la API; es distinto de `GUITAR_API_TOKEN`).
 2. Instalá (idempotente): `.\scripts\install.ps1` crea `worker\.venv`, baja los pesos de beat_this, clona BTC y prepara la caché.
 3. Arrancalo: `.\worker\.venv\Scripts\python -m guitarra_worker` (o `--once`), o registralo al iniciar sesión con `.\scripts\worker-tarea.ps1`. Detalles en la sección "Worker de análisis".
+
+### Separación de pistas (Demucs)
+
+Cuando termina un análisis, la API encola un segundo trabajo, `separation`: el worker baja el audio, separa las pistas con Demucs (`htdemucs_6s`) y sube la mezcla sin guitarra. Es lo más lento (minutos en CPU), por eso es un trabajo aparte: mientras tanto la canción se practica con las otras tres fuentes. `.\scripts\install.ps1` instala Demucs (`worker[separation]`) y baja los pesos a `GUITAR_DEMUCS_MODEL_DIR` (por defecto `%USERPROFILE%\GuitarApp\models\demucs`); si falta, el trabajo falla con un mensaje que lo dice y el resto de la app sigue andando. Cómo probarlo en tu PC: `docs/fases/fase-3/validacion-en-pc.md`.
 
 ### Variables de entorno nuevas
 
