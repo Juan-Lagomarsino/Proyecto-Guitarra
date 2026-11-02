@@ -384,3 +384,22 @@ def test_nombre_y_acordes_salen_del_chart_y_no_de_song_sections(client, session,
     assert "Introducción" in body["title"] and "Nombre viejo" not in body["title"]
 
     assert body["song_section_id"] == section.id
+
+
+def test_crea_un_ejercicio_de_riff_con_la_notacion_de_la_seccion(client, session, song):
+    edited = chart().model_copy(deep=True)
+    riff = {"bpm": 100, "events": [{"t": 0, "dur": 1, "string": 5, "fret": 3, "confidence": 0.5}]}
+    edited.sections[0].riff = Notation.model_validate(riff)
+    SongRepository(session).add_chart(song.id, "auto", edited)
+    response = create(client, song, "riff")
+    assert response.status_code == 201
+    body = response.json()
+    assert body["type"] == "riff" and "riff" in body["title"]
+    assert body["notation"]["events"][0]["fret"] == 3
+    assert body["notation"]["events"][0]["confidence"] == 0.5
+
+
+def test_422_si_la_seccion_no_tiene_riff(client, song):
+    response = create(client, song, "riff")
+    assert response.status_code == 422
+    assert "riff" in response.json()["detail"]

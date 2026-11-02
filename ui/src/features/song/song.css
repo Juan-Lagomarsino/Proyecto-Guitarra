@@ -349,3 +349,16 @@
   background: var(--note-active);
   color: var(--bg);
 }
+
+/* Riff de la sección: tab y mástil, con las notas dudosas en el color de advertencia. */
+.song-riff {
+  min-width: 0;
+  margin-top: 16px;
+}
+
+.song-riff__tab,
+.song-riff__board {
+  min-width: 0;
+  max-width: 100%;
+  margin-top: 8px;
+}

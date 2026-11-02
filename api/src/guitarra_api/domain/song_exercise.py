@@ -18,7 +18,7 @@ from guitarra_api.domain.song_chart import (
     seconds_to_beats,
 )
 
-SectionExerciseKind = Literal["chords", "strumming"]
+SectionExerciseKind = Literal["chords", "strumming", "riff"]
 
 START_BPM_RATIO = 0.7
 MAX_EXERCISE_BEATS = 32.0
@@ -28,7 +28,7 @@ BEAT_DECIMALS = 3
 CYCLE_EPSILON = 1e-9
 BEATS_PER_BAR = {"4/4": 4, "3/4": 3, "6/8": 2}  # misma regla que gridBeatsPerBar en la UI
 SOUNDING_STROKES = "DU"
-_KIND_LABELS = {"chords": "cambio de acordes", "strumming": "rasgueo"}
+_KIND_LABELS = {"chords": "cambio de acordes", "strumming": "rasgueo", "riff": "riff"}
 
 
 class SectionNotFoundInChartError(Exception):
@@ -55,6 +55,8 @@ def build_section_exercise(
 ) -> SectionExercise:
     """Raises: SectionNotFoundInChartError, SectionNotPlayableError."""
     section = _find_section(content, section_id)
+    if kind == "riff":
+        return _riff_exercise(content, section)
     chords = _distinct_consecutive(section.chords)
     if not chords:
         raise SectionNotPlayableError(f"La sección '{section.name}' no tiene acordes")
@@ -90,6 +92,32 @@ def build_section_exercise(
         duration_min=DEFAULT_DURATION_MIN,
         description=_description(kind, bpm_start, bpm_target),
     )
+
+
+def _riff_exercise(content: SongChartContent, section: ChartSection) -> SectionExercise:
+    """El riff ya viene en beats desde el inicio de la sección: se usa tal cual."""
+    if section.riff is None:
+        raise SectionNotPlayableError(f"La sección '{section.name}' no tiene riff")
+    bpm_start, bpm_target = suggested_bpm(content.bpm)
+    return SectionExercise(
+        title_suffix=f"{section.name}: {_KIND_LABELS['riff']}",
+        notation=_clamped_riff(section.riff, bpm_start),
+        bpm_start=bpm_start,
+        bpm_target=bpm_target,
+        duration_min=DEFAULT_DURATION_MIN,
+        description=_description("riff", bpm_start, bpm_target),
+    )
+
+
+def _clamped_riff(riff: Notation, bpm: int) -> Notation:
+    """Como los otros tipos, el ejercicio no pasa de MAX_EXERCISE_BEATS: se descartan las
+    notas que empiezan después y se acorta la última que se pasa."""
+    events = [
+        event.model_copy(update={"dur": min(event.dur, MAX_EXERCISE_BEATS - event.t)})
+        for event in riff.events
+        if event.t < MAX_EXERCISE_BEATS
+    ]
+    return riff.model_copy(update={"bpm": bpm, "events": events})
 
 
 def suggested_bpm(song_bpm: float) -> tuple[int, int]:
@@ -157,6 +185,8 @@ def _description(kind: SectionExerciseKind, bpm_start: int, bpm_target: int) -> 
     what = (
         "Pasá de un acorde al siguiente sin cortar el tempo."
         if kind == "chords"
+        else "Tocá el riff de la sección, nota por nota."
+        if kind == "riff"
         else "Rasguá el patrón de la sección sobre su progresión."
     )
     return f"{what} Empezá a {bpm_start} bpm y subí hasta {bpm_target}, el tempo de la canción."

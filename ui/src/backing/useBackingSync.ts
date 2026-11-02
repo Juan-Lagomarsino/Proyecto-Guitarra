@@ -13,6 +13,8 @@ import {
 export interface SectionSync {
   chordIndex: number | null
   strumIndex: number | null
+  /** Índices de `section.riff.events` que suenan ahora (vacío sin riff). */
+  riffIndices: number[]
 }
 
 export interface BackingSync {
@@ -56,6 +58,9 @@ export function useBackingSync(content: SongChartContent | null): BackingSync {
           strumIndex: section.strum
             ? activeStrumIndex(beat, section.strum, signature)
             : null,
+          riffIndices: section.riff
+            ? activeEventIndices(section.riff, beat)
+            : [],
         }
       },
       eventIndices: (notation, range) => {

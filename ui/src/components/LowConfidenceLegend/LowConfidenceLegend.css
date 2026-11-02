@@ -1,0 +1,16 @@
+.low-confidence-legend {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Mismo look que la nota dudosa en tab y mástil: color de advertencia y trazo punteado. */
+.low-confidence-legend__swatch {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  margin-right: 6px;
+  vertical-align: -1px;
+  border: 1px dashed var(--warn);
+  border-radius: 50%;
+}

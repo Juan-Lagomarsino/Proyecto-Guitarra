@@ -201,3 +201,41 @@ def test_al_leer_se_completan_los_ejercicios_de_cancion_sin_events():
     legacy = {"bpm": 80, "chords": [{"t": 0, "name": "Am", "shape": AM}]}
     assert ExerciseOut.model_validate(_stored(5, legacy)).notation["events"]
     assert not ExerciseOut.model_validate(_stored(None, legacy)).notation.get("events")
+
+
+RIFF = {
+    "bpm": 120,
+    "events": [
+        {"t": 0, "dur": 1, "string": 5, "fret": 3, "confidence": 0.4},
+        {"t": 1, "dur": 1, "string": 4, "fret": 5},
+    ],
+}
+
+
+def test_riff_usa_la_notacion_del_riff_de_la_seccion():
+    exercise = build_section_exercise(content({"riff": RIFF}), "verso", "riff")
+    assert [(e.t, e.string, e.fret) for e in exercise.notation.events] == [(0, 5, 3), (1, 4, 5)]
+    assert exercise.notation.events[0].confidence == 0.4
+    assert exercise.notation.bpm == exercise.bpm_start == 84
+    assert not exercise.notation.chords and "riff" in exercise.title_suffix
+
+
+def test_riff_no_exige_acordes_pero_si_riff():
+    ok = content({"riff": RIFF, "chords": []})
+    assert build_section_exercise(ok, "verso", "riff").notation.events
+    with pytest.raises(SectionNotPlayableError, match="riff"):
+        build_section_exercise(content(), "verso", "riff")
+
+
+def test_riff_se_acota_a_32_beats():
+    long_riff = {
+        "bpm": 120,
+        "events": [
+            {"t": 0, "dur": 1, "string": 5, "fret": 3},
+            {"t": 31, "dur": 4, "string": 4, "fret": 5},
+            {"t": 40, "dur": 1, "string": 3, "fret": 7},
+        ],
+    }
+    section = {"riff": long_riff, "end_s": 60}
+    exercise = build_section_exercise(content(section), "verso", "riff")
+    assert [(e.t, e.dur) for e in exercise.notation.events] == [(0, 1), (31, 1)]

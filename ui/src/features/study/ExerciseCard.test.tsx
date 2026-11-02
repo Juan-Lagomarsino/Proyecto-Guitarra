@@ -226,3 +226,36 @@ describe('ExerciseCard', () => {
     expect(activeBoardNotes(container)[0]).toHaveAttribute('data-fret', '5')
   })
 })
+
+describe('ExerciseCard con notas poco seguras', () => {
+  const riff: Exercise = {
+    ...exercise,
+    notation: {
+      bpm: 60,
+      events: [
+        { t: 0, dur: 1, string: 6, fret: 5, confidence: 0.3 },
+        { t: 1, dur: 1, string: 5, fret: 7 },
+      ],
+    },
+  }
+
+  beforeEach(() => {
+    apiFetchMock.mockResolvedValue(detail(null))
+  })
+
+  it('marca las dudosas en tab y mástil y muestra la leyenda', () => {
+    const { container } = renderCard({ exercise: riff })
+    expect(
+      container.querySelectorAll('[data-role="note"][data-confidence="low"]'),
+    ).toHaveLength(1)
+    expect(
+      container.querySelectorAll('[data-testid="note"][data-confidence="low"]'),
+    ).toHaveLength(1)
+    expect(screen.getByText(/poco seguro/i)).toBeInTheDocument()
+  })
+
+  it('sin notas dudosas no hay leyenda', () => {
+    renderCard()
+    expect(screen.queryByText(/poco seguro/i)).toBeNull()
+  })
+})

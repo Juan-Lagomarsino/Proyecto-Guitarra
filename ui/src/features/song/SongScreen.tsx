@@ -221,6 +221,7 @@ function Chart({
           sectionId={stored.id}
           sectionName={selected.name}
           instrument={content.instrument}
+          hasRiff={!!selected.riff}
           onCreated={onCreated}
         />
       )}

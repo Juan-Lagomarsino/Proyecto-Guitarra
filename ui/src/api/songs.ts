@@ -161,7 +161,7 @@ export const fetchChordShapes = (name: string, signal?: AbortSignal) =>
 export const reanalyzeSong = (id: number) =>
   apiFetch<unknown>(`/songs/${id}/reanalyze`, { method: 'POST' })
 
-export type SectionExerciseType = 'chords' | 'strumming'
+export type SectionExerciseType = 'chords' | 'strumming' | 'riff'
 
 export const fetchSongExercises = (id: number, signal?: AbortSignal) =>
   apiFetch<Exercise[]>(`/songs/${id}/exercises`, { signal })

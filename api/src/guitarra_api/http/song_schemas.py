@@ -115,5 +115,7 @@ class SongChartOut(BaseModel):
 
 
 class SectionExerciseIn(BaseModel):
-    type: Literal["chords", "strumming"] = Field(description="Cambio de acordes o rasgueo")
+    type: Literal["chords", "strumming", "riff"] = Field(
+        description="Cambio de acordes, rasgueo o riff de la sección"
+    )
     instrument: Instrument = Field(description="Chart de qué guitarra se usa de base")

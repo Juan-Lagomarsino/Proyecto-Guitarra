@@ -1,8 +1,10 @@
 import { useCallback, useState } from 'react'
 import { Fretboard } from '../../components/Fretboard/Fretboard'
+import { LowConfidenceLegend } from '../../components/LowConfidenceLegend/LowConfidenceLegend'
 import { Tab } from '../../components/Tab/Tab'
 import type { PlaybackAudio } from '../../playback/clock'
 import { usePlayback } from '../../playback/usePlayback'
+import { LOW_CONFIDENCE } from '../song/chartView'
 import { categoryLabel } from './categories'
 import './ExerciseCard.css'
 import { completeExercise, fetchExercise } from './studyApi'
@@ -149,10 +151,19 @@ export function ExerciseCard({
       )}
 
       <div className="exercise-card__board">
-        <Fretboard notation={notation} activeIndices={activeIndices} />
+        <Fretboard
+          notation={notation}
+          activeIndices={activeIndices}
+          lowConfidenceBelow={LOW_CONFIDENCE}
+        />
       </div>
       <div className="exercise-card__tab">
-        <Tab notation={notation} activeIndices={activeIndices} />
+        <Tab
+          notation={notation}
+          activeIndices={activeIndices}
+          lowConfidenceBelow={LOW_CONFIDENCE}
+        />
+        <LowConfidenceLegend notation={notation} below={LOW_CONFIDENCE} />
       </div>
 
       <div className="exercise-card__transport">
