@@ -104,3 +104,13 @@ Al integrarlo al worker (F5-T05): `basic-pitch` va fijado en `==0.4.0` con `--no
 - Gana: transcripción polifónica en CPU, ~0.5 s por archivo corto, sin TensorFlow ni PyTorch, instalable con pip.
 - Cuesta: la instalación con `--no-deps` es frágil (hay que fijar versiones y verificar al instalar); precisión del 90 % en sintético no se traduce a guitarra real y separada por Demucs.
 - Vigilar: (1) validar en la PC con riffs reales y reajustar umbrales antes de fiarse de F5-T05; (2) notas fantasma con sangrado de otras pistas, por eso la confianza visible en la UI y el editor de tab (F5-T09/T10); (3) los avisos de logging de TensorFlow/CoreML al importar basic-pitch (se silencian); (4) si la validación real sale floja, reabrir este ADR con los números.
+
+## Umbrales de secciones candidatas (F5-T05)
+
+El worker transcribe solo las secciones candidatas (`domain/riff_candidates.py`): la intro y las de polifonía baja, con un mínimo de notas. Valores iniciales:
+
+- `MIN_NOTES = 8`: notas mínimas (ataques dentro de la sección).
+- `MAX_MEAN_POLYPHONY = 1.6`: notas simultáneas promedio por ataque; arriba de eso es rasgueo de acordes.
+- `SIMULTANEOUS_WINDOW_S = 0.05`: ataques a menos de 50 ms cuentan como el mismo golpe.
+
+**No están calibrados con audio real**: salen de razonar sobre el audio sintético del spike. Hay que ajustarlos con canciones de verdad (en la PC de Juan Pedro) antes de confiar en la selección.

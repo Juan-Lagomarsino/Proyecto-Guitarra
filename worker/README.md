@@ -44,6 +44,22 @@ todas las pistas menos la guitarra (una sola ganancia, pico <= -1 dBFS) -> m4a -
   con un mensaje que manda a `install.ps1`; el análisis no se ve afectado.
 - Los tests usan un separador falso; la separación real solo se prueba en tu PC.
 
+## Riffs (transcripción de la guitarra, Fase 5)
+
+Etapa que sigue a la separación (la arma F5-T08; hoy están las piezas): pista `guitar` ->
+`adapters/transcriber.py` (basic-pitch 0.4.0, modelo ONNX del paquete, umbrales del ADR 0017) ->
+`domain/riff_candidates.py` (intro + secciones de polifonía media <= 1.6 con al menos 8 notas) ->
+`domain/quantize.py` (beats relativos a la sección; semicorchea o tresillo por beat según el menor
+error; la duración llega al siguiente ataque; fuera del rango E2-E6 se descarta) ->
+`steps/riffs.py` (`{section_id: [{midi, t, dur, confidence}]}`; todavía sin digitación ni envío).
+
+- Requiere el extra `riffs` y `basic-pitch==0.4.0 --no-deps` (`install.ps1` lo hace; no bloquea si
+  falla). Sin basic-pitch la etapa se saltea con un aviso y el trabajo no falla.
+- Contrato pendiente (F5-T06/T08): el claim de `separation` hoy trae solo `youtube_id`; el paso
+  necesita las secciones del chart (`id`, `name`, `start_s`, `end_s`), `beat_grid.beats_s` y el
+  `bpm`. Hay que agregarlos al claim (`chart: {bpm, beat_grid, sections}`) o pedirlos con un GET.
+  `RiffsStep` los recibe por un `chart_of(ctx) -> ChartInfo | None`, así no depende del formato.
+
 ## Tests
 
 ```powershell

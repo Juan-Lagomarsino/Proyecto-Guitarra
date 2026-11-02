@@ -50,6 +50,18 @@ function Install-WorkerVenv {
     if ($LASTEXITCODE -ne 0) { throw 'pip install del worker falló' }
 }
 
+function Install-Riffs {
+    # Transcripcion de riffs (ADR 0017): basic-pitch 0.4.0 SIN dependencias (declara tensorflow, que
+    # no existe para Python 3.12) y sus dependencias livianas (extra riffs: onnxruntime, etc.).
+    # Idempotente. Si falla no bloquea: el worker sigue y la etapa de riffs se saltea.
+    $workerDir = Join-Path $root 'worker'
+    & $venvPython -m pip install --quiet --disable-pip-version-check -e "$workerDir[riffs]"
+    if ($LASTEXITCODE -eq 0) {
+        & $venvPython -m pip install --quiet --disable-pip-version-check basic-pitch==0.4.0 --no-deps
+    }
+    if ($LASTEXITCODE -ne 0) { Write-Warning 'No se pudo instalar basic-pitch; reintenta scripts\install.ps1. Los riffs se saltean hasta entonces.' }
+}
+
 function Install-Btc {
     # BTC (acordes, MIT) no es un paquete: se clona en un commit fijo. Los parches de compatibilidad
     # (yaml.safe_load, np.float) los aplica el adaptador al cargarlo, así el clon queda limpio.
@@ -125,6 +137,7 @@ function Test-WorkerToken {
 
 try {
     Install-WorkerVenv
+    Install-Riffs
     Install-Btc
     Install-Ffmpeg
     Update-YtDlp

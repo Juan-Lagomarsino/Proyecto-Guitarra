@@ -29,6 +29,19 @@ analysis = [
 # pesado y opcional: sin él el análisis anda igual y la separación falla con un mensaje claro.
 # Usa el torch CPU que instala install.ps1.
 separation = ["demucs>=4.0.1"]
+# Transcripción de riffs (ADR 0017). Son las dependencias livianas de basic-pitch; el paquete en
+# sí se instala aparte con `--no-deps` (declara tensorflow<2.15.1, que no existe para 3.12):
+# `pip install basic-pitch==0.4.0 --no-deps` (lo hace install.ps1). Usa el modelo ONNX del paquete.
+riffs = [
+    "onnxruntime>=1.16",
+    "pretty_midi>=0.2.10",
+    "mir_eval>=0.7",
+    "resampy>=0.4",
+    "scikit-learn>=1.3",
+    "mido>=1.3",
+    "six",
+    "importlib_resources",
+]
 
 [build-system]
 requires = ["setuptools>=68"]
