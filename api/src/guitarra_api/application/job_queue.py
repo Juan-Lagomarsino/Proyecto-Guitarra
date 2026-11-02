@@ -1,7 +1,7 @@
 """Cola de análisis: claim con lease, heartbeat, resultado y fallo. El worker no toca la base."""
 
 import datetime as dt
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 from sqlalchemy import exists, select
@@ -10,6 +10,8 @@ from sqlalchemy.orm import Session
 
 from guitarra_api.application.clock import Clock, utc_now
 from guitarra_api.domain.analysis_result import AnalysisResult
+from guitarra_api.domain.chart_riffs import accept_riff, carry_over_riffs, with_riffs
+from guitarra_api.domain.song_chart import SongChartContent
 from guitarra_api.infra.db.models import AnalysisJob, Exercise, Song, SongSection
 from guitarra_api.infra.db.repositories.chord_preferences import ChordShapePreferenceRepository
 from guitarra_api.infra.db.repositories.jobs import ANALYZE_JOB, SEPARATION_JOB, JobRepository
@@ -51,6 +53,7 @@ class ClaimedJob:
     max_attempts: int
     lease_until: dt.datetime
     chord_shape_preferences: dict[str, Any]
+    chart: dict[str, Any] | None = None  # solo en separaciones
 
 
 class JobQueue:
@@ -79,9 +82,34 @@ class JobQueue:
             if job.type == ANALYZE_JOB:
                 song.analysis_status = "processing"
             self._session.commit()
-            return self._claimed(job, song, self._chord_preferences.load().to_json())
+            claimed = self._claimed(job, song, self._chord_preferences.load().to_json())
+            if job.type == SEPARATION_JOB:
+                claimed = replace(claimed, chart=self._chart_for_separation(song.id))
+            return claimed
         self._session.rollback()
         return None
+
+    def _chart_for_separation(self, song_id: int) -> dict[str, Any] | None:
+        """Estructura de la última versión auto (eléctrica, o la primera que haya)."""
+        instruments = self._songs.instruments_with_chart(song_id)
+        if not instruments:
+            return None
+        instrument = "electric" if "electric" in instruments else sorted(instruments)[0]
+        chart = self._songs.latest_auto_chart(song_id, instrument)
+        if chart is None:
+            return None
+        content = chart.content
+        grid = content.get("beat_grid")
+        return {
+            "bpm": content["bpm"],
+            "time_signature": content["time_signature"],
+            "capo": content["capo"],
+            "beat_grid": grid
+            and {"beats_s": grid["beats_s"], "downbeats_s": grid.get("downbeats_s", [])},
+            "sections": [
+                {k: s[k] for k in ("id", "name", "start_s", "end_s")} for s in content["sections"]
+            ],
+        }
 
     def heartbeat(self, job_id: int, worker_id: str, current_step: str | None) -> AnalysisJob:
         job = self._lock_owned(job_id, worker_id)
@@ -90,10 +118,16 @@ class JobQueue:
         self._session.commit()
         return job
 
-    def complete(self, job_id: int, worker_id: str, result: AnalysisResult | None) -> AnalysisJob:
-        """`result` es el análisis, o `None` para un trabajo de separación (sin chart)."""
+    def complete(
+        self,
+        job_id: int,
+        worker_id: str,
+        result: AnalysisResult | None,
+        riffs: dict[str, Any] | None = None,
+    ) -> AnalysisJob:
+        """`result` es el análisis, o `None` para una separación, que puede traer `riffs`."""
         job = self._lock_owned(job_id, worker_id)
-        if (job.type == ANALYZE_JOB) != (result is not None):
+        if (job.type == ANALYZE_JOB) != (result is not None) or (riffs and result is not None):
             self._session.rollback()
             raise ResultTypeMismatch(f"El cuerpo no corresponde a un trabajo '{job.type}'")
         try:
@@ -101,6 +135,8 @@ class JobQueue:
             if result is not None:
                 self._store_analysis(song, result)
                 self._enqueue_separation_if_needed(song)
+            elif riffs:
+                self._store_riffs(song, riffs)
             job.status = "done"
             job.error = None
             job.finished_at = self._clock()
@@ -120,8 +156,29 @@ class JobQueue:
         self._apply_metadata(song, result)
         self._sync_sections(song, result)
         for chart in result.charts:
-            self._songs.stage_chart(song.id, AUTO_ORIGIN, chart)
+            previous = self._songs.latest_auto_chart(song.id, chart.instrument)
+            content = carry_over_riffs(
+                previous.content if previous else None, chart.model_dump(mode="json")
+            )
+            self._songs.stage_chart(song.id, AUTO_ORIGIN, SongChartContent.model_validate(content))
         song.analysis_status = "ready"
+
+    def _store_riffs(self, song: Song, riffs: dict[str, Any]) -> None:
+        """Una versión `auto` nueva por instrumento = la última auto + los riffs que sirven."""
+        for instrument in self._songs.instruments_with_chart(song.id):
+            base = self._songs.latest_auto_chart(song.id, instrument)
+            if base is None:
+                continue
+            accepted = {
+                section_id: riff
+                for section_id, raw in riffs.items()
+                if (riff := accept_riff(base.content, section_id, raw)) is not None
+            }
+            if accepted:
+                content = with_riffs(base.content, accepted)
+                self._songs.stage_chart(
+                    song.id, AUTO_ORIGIN, SongChartContent.model_validate(content)
+                )
 
     def _enqueue_separation_if_needed(self, song: Song) -> None:
         if self._songs.has_audio_asset(song.id, NO_GUITAR_KIND):

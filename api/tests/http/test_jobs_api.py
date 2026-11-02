@@ -165,6 +165,7 @@ def test_claim_entrega_el_trabajo_mas_viejo_y_marca_la_cancion(client, songs, jo
         "cifra_text": None,
         "lease_until": "2026-10-01T12:05:00Z",
         "chord_shape_preferences": {},
+        "chart": None,
     }
     job = session.get(AnalysisJob, 1)
     assert (job.status, job.claimed_by, job.attempts) == ("running", "w1", 1)

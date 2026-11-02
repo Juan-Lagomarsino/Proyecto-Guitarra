@@ -16,6 +16,28 @@ class ClaimRequest(_Strict):
     worker_id: WorkerId
 
 
+class ClaimSectionOut(BaseModel):
+    id: str
+    name: str
+    start_s: float
+    end_s: float
+
+
+class ClaimBeatGridOut(BaseModel):
+    beats_s: list[float]
+    downbeats_s: list[float]
+
+
+class ClaimChartOut(BaseModel):
+    """Estructura del chart auto vigente, para que la separación transcriba riffs por sección."""
+
+    bpm: float
+    time_signature: str
+    capo: int
+    beat_grid: ClaimBeatGridOut | None
+    sections: list[ClaimSectionOut]
+
+
 class ClaimedJobOut(BaseModel):
     job_id: int
     job_type: Literal["analyze", "separation"]
@@ -32,6 +54,7 @@ class ClaimedJobOut(BaseModel):
     lease_until: dt.datetime
     # {instrumento: {acorde: {forma: peso}}}; la forma son 6 trastes absolutos (core)
     chord_shape_preferences: dict[str, Any] = Field(default_factory=dict)
+    chart: ClaimChartOut | None = None
 
 
 class HeartbeatRequest(_Strict):
@@ -53,6 +76,11 @@ class SeparationResultRequest(_Strict):
     """Resultado de una separación: los audios ya se subieron por `assets`, no hay chart."""
 
     worker_id: WorkerId
+    riffs: dict[str, Any] | None = Field(
+        default=None,
+        description="Riffs por id de sección (Notation con el bpm del chart). Se validan uno "
+        "por uno: los inválidos o de secciones inexistentes se descartan sin fallar el resto.",
+    )
 
 
 class FailRequest(_Strict):

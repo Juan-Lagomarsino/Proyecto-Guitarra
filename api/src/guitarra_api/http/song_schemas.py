@@ -107,6 +107,11 @@ class SongChartOut(BaseModel):
     confidence: float | None
     content: dict[str, Any] = Field(description="SongChartContent (schemas/song_chart.schema.json)")
     created_at: dt.datetime
+    riff_sources: dict[str, Literal["auto", "usuario"] | None] = Field(
+        default_factory=dict,
+        description="De dónde viene el riff de cada sección (por id): la automática, la del "
+        "usuario, o null si no tiene riff",
+    )
 
 
 class SectionExerciseIn(BaseModel):

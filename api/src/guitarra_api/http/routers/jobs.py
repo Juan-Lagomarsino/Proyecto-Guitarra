@@ -68,7 +68,8 @@ def submit_result(
     job_id: int, body: ResultRequest | SeparationResultRequest, queue: Queue
 ) -> JobStatusOut:
     analysis = body if isinstance(body, ResultRequest) else None
-    job = _guard(queue.complete, job_id, body.worker_id, analysis)
+    riffs = body.riffs if isinstance(body, SeparationResultRequest) else None
+    job = _guard(queue.complete, job_id, body.worker_id, analysis, riffs)
     return JobStatusOut(job_id=job.id, status=job.status)
 
 
