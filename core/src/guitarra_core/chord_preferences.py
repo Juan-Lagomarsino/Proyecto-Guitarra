@@ -37,6 +37,23 @@ def shape_key(shape: Sequence[int | str], capo: int) -> str:
     return ",".join(MUTED if fret == MUTED else str(int(fret) + capo) for fret in shape)
 
 
+def to_relative(key: str, capo: int) -> tuple[int | str, ...] | None:
+    """Inversa de `shape_key`: la forma para ese capo, o None si no se puede tocar con él.
+
+    Una cuerda al aire absoluta (0) con capo > 0 no es aplicable: el capo la subiría.
+    """
+    frets: list[int | str] = []
+    for part in key.split(","):
+        if part == MUTED:
+            frets.append(MUTED)
+            continue
+        fret = int(part) - capo
+        if fret < 0:
+            return None
+        frets.append(fret)
+    return tuple(frets)
+
+
 def canonical_chord_name(name: str) -> str | None:
     """Nombre normalizado del acorde (`A:min` y `Am` coinciden); None si no es un acorde."""
     try:

@@ -152,11 +152,25 @@ export interface ChordShapeOption {
   barre: Barre | null
 }
 
-export const fetchChordShapes = (name: string, signal?: AbortSignal) =>
+/** Con `capo`, `name` es el acorde que suena y las formas son las que se tocan con esa cejilla. */
+export const fetchChordShapes = (
+  name: string,
+  capo = 0,
+  signal?: AbortSignal,
+) =>
   apiFetch<ChordShapeOption[]>(
-    `/chords/shapes?name=${encodeURIComponent(name)}`,
+    `/chords/shapes?name=${encodeURIComponent(name)}${capo ? `&capo=${capo}` : ''}`,
     { signal },
   )
+
+/** Formas preferidas aprendidas: `{instrumento: {acorde: {trastes absolutos: peso}}}`. */
+export type ChordShapePreferences = Record<
+  string,
+  Record<string, Record<string, number>>
+>
+
+export const fetchChordShapePreferences = (signal?: AbortSignal) =>
+  apiFetch<ChordShapePreferences>('/preferences/chord-shapes', { signal })
 
 export const reanalyzeSong = (id: number) =>
   apiFetch<unknown>(`/songs/${id}/reanalyze`, { method: 'POST' })

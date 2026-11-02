@@ -1,5 +1,6 @@
 import pytest
 
+from guitarra_core.chord_preferences import ChordShapePreferences
 from guitarra_core.chord_shapes import lowest_pitch_class, shape_pitch_classes, shape_position
 from guitarra_core.instrument import best_capo, capo_cost, voicings_for
 from guitarra_core.theory import NOTE_NAMES, parse_chord, parse_note, pitch_classes
@@ -168,3 +169,53 @@ class TestElectricPowerChords:
         voicing = voicings_for(["A"], "electric", 2, True)[0]
         assert voicing.form == "G5"
         assert voicing.chord == "A"
+
+
+def prefs_for(instrument, chord, weights):
+    return ChordShapePreferences({instrument: {chord: weights}})
+
+
+def first_shape(progression, instrument, capo, preferences=None):
+    return voicings_for(progression, instrument, capo, False, preferences)[0].shape.shape
+
+
+class TestPreferredShapes:
+    def test_sin_preferencias_igual_que_siempre(self):
+        base = voicings_for(["G", "C"], "electric", 0, False)
+        assert voicings_for(["G", "C"], "electric", 0, False, ChordShapePreferences()) == base
+
+    def test_usa_la_forma_preferida_aunque_no_sea_la_mas_facil(self):
+        prefs = prefs_for("electric", "G", {"3,5,5,4,3,3": 0.3})
+        assert first_shape(["G"], "electric", 0, prefs) == (3, 5, 5, 4, 3, 3)
+
+    def test_elige_la_de_mayor_peso(self):
+        prefs = prefs_for("electric", "G", {"3,2,0,0,0,3": 0.2, "3,5,5,4,3,3": 0.6})
+        assert first_shape(["G"], "electric", 0, prefs) == (3, 5, 5, 4, 3, 3)
+
+    def test_ignora_la_preferencia_de_otro_instrumento(self):
+        prefs = prefs_for("electric", "G", {"3,5,5,4,3,3": 0.9})
+        assert first_shape(["G"], "classical", 0, prefs) == first_shape(["G"], "classical", 0)
+
+    def test_con_capo_resta_el_capo_a_la_forma_absoluta(self):
+        # A con capo 2 se toca con forma de G abierto: absoluta 5,4,2,2,2,5
+        prefs = prefs_for("classical", "A", {"5,4,2,2,2,5": 0.5})
+        assert first_shape(["A"], "classical", 2, prefs) == (3, 2, 0, 0, 0, 3)
+
+    def test_forma_no_aplicable_al_capo_se_ignora(self):
+        aire = prefs_for("classical", "A", {"x,0,2,2,2,0": 0.9})
+        assert first_shape(["A"], "classical", 2, aire) == first_shape(["A"], "classical", 2)
+
+    def test_forma_que_no_esta_en_el_diccionario_se_ignora(self):
+        prefs = prefs_for("electric", "G", {"1,1,1,1,1,1": 0.9})
+        assert first_shape(["G"], "electric", 0, prefs) == first_shape(["G"], "electric", 0)
+
+    def test_clave_por_nombre_canonico(self):
+        prefs = prefs_for("electric", "Am", {"x,0,2,2,1,0": 0.5})
+        assert first_shape(["A:min"], "electric", 0, prefs) == ("x", 0, 2, 2, 1, 0)
+
+
+def test_shapes_with_capo_ofrece_las_formas_del_acorde_transpuesto():
+    from guitarra_core.instrument import shapes_with_capo
+
+    assert shapes_with_capo("A", 2)[0].name == "G"
+    assert shapes_with_capo("A", 0)[0].name == "A"

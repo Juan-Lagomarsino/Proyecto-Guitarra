@@ -15,11 +15,15 @@ Decisiones:
 - La confianza de la estructura ("baja"/"media") no tiene campo en el chart: no se vuelca.
 """
 
+import hashlib
+import json
 from typing import Any
 
+from guitarra_core.chord_preferences import ChordShapePreferences
 from guitarra_core.chord_shapes import ChordShape
 from guitarra_core.instrument import Instrument, best_capo, voicings_for
 
+from guitarra_worker.api_client import Job
 from guitarra_worker.domain.chart_assembly import (
     TIME_DECIMALS,
     CifraMatch,
@@ -32,6 +36,7 @@ from guitarra_worker.domain.chart_assembly import (
 )
 from guitarra_worker.pipeline.step import PermanentStepError, PipelineContext
 
+TOKEN_LENGTH = 12
 MAX_CAPO = 12
 INSTRUMENTS: tuple[Instrument, ...] = ("classical", "electric")
 TOOLS = {
@@ -57,6 +62,13 @@ class AssembleStep:
     def __init__(self, step_versions: dict[str, str] | None = None) -> None:
         self._versions = step_versions or {}
 
+    def cache_token(self, job: Job) -> str:
+        """Hash de las formas preferidas; vacío si no hay (así sin ellas la clave no cambia)."""
+        if not job.chord_shape_preferences:
+            return ""
+        raw = json.dumps(job.chord_shape_preferences, sort_keys=True)
+        return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:TOKEN_LENGTH]
+
     def run(self, ctx: PipelineContext) -> dict[str, Any]:
         outputs = ctx.outputs
         tempo = outputs.get("tempo") or {}
@@ -75,11 +87,13 @@ class AssembleStep:
         match = match_with_cifra(outputs.get("cifraclub"), detected, drafts)
         plans = plan_sections(drafts, detected, match)
         ids = [section_id(plan.name, index) for index, plan in enumerate(plans)]
+        preferences = ChordShapePreferences.from_json(ctx.job.chord_shape_preferences)
         return {
             "metadata": self._metadata(ctx),
             "sections": [_section_result(plan, ids[i], i) for i, plan in enumerate(plans)],
             "charts": [
-                self._chart(instrument, plans, ids, outputs, match) for instrument in INSTRUMENTS
+                self._chart(instrument, plans, ids, outputs, match, preferences)
+                for instrument in INSTRUMENTS
             ],
         }
 
@@ -107,10 +121,11 @@ class AssembleStep:
         ids: list[str],
         outputs: dict[str, dict[str, Any]],
         match: CifraMatch | None,
+        preferences: ChordShapePreferences,
     ) -> dict[str, Any]:
         tempo = outputs["tempo"]
         capo = _capo_for(instrument, plans, outputs.get("cifraclub"), match)
-        shaped = _shaped_chords(instrument, plans, capo)
+        shaped = _shaped_chords(instrument, plans, capo, preferences)
         strum, arpeggio = _strum_parts(outputs.get("strum"), instrument)
         sections = [
             _chart_section(plan, ids[i], i, shaped[i], strum, arpeggio)
@@ -181,11 +196,11 @@ def _capo_for(
 
 
 def _shaped_chords(
-    instrument: Instrument, plans: list[SectionPlan], capo: int
+    instrument: Instrument, plans: list[SectionPlan], capo: int, preferences: ChordShapePreferences
 ) -> list[list[tuple[Any, ChordShape]]]:
     """Por sección, los acordes con forma; los que no tienen forma posible se omiten."""
     flat = [chord for plan in plans for chord in plan.chords]
-    voicings = iter(voicings_for([c.name for c in flat], instrument, capo, False))
+    voicings = iter(voicings_for([c.name for c in flat], instrument, capo, False, preferences))
     shaped: list[list[tuple[Any, ChordShape]]] = []
     for plan in plans:
         pairs = [(chord, next(voicings)) for chord in plan.chords]

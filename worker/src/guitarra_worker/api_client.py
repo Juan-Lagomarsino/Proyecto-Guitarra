@@ -42,6 +42,8 @@ class Job(BaseModel):
     max_attempts: int | None = None
     lease_until: str | None = None
     cifra_text: str | None = None  # cifra de Cifra Club pegada a mano (ADR 0012)
+    # {instrumento: {acorde: {forma: peso}}} aprendido de las elecciones del usuario (F5-T12)
+    chord_shape_preferences: dict[str, Any] = {}
     job_type: str = "analyze"  # "analyze" | "separation"; sin el campo (claim viejo) = análisis
 
 

@@ -5,6 +5,7 @@ from guitarra_core.chord_preferences import (
     canonical_chord_name,
     chosen_shapes,
     shape_key,
+    to_relative,
 )
 
 
@@ -112,3 +113,21 @@ def test_json_ida_y_vuelta():
     assert prefs.to_json() == {"electric": {"G": {"a": EMA_ALPHA}}}
     assert ChordShapePreferences.from_json(prefs.to_json()) == prefs
     assert ChordShapePreferences.from_json(None) == ChordShapePreferences()
+
+
+class TestToRelative:
+    def test_resta_el_capo_y_conserva_las_mudas(self):
+        assert to_relative("x,5,4,2,3,2", capo=2) == ("x", 3, 2, 0, 1, 0)
+
+    def test_sin_capo_es_la_misma_forma(self):
+        assert to_relative("x,3,2,0,1,0", capo=0) == ("x", 3, 2, 0, 1, 0)
+
+    def test_none_si_un_traste_pisado_queda_negativo(self):
+        assert to_relative("x,1,2,2,2,1", capo=2) is None
+
+    def test_none_si_hay_cuerda_al_aire_con_capo(self):
+        assert to_relative("3,2,0,0,0,3", capo=2) is None
+
+    def test_ida_y_vuelta_con_shape_key(self):
+        shape = ("x", 3, 2, 0, 1, 0)
+        assert to_relative(shape_key(shape, 3), 3) == shape
