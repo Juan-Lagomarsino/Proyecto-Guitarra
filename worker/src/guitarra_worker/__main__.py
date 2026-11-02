@@ -41,7 +41,7 @@ def main(argv: list[str] | None = None) -> int:
     client = ApiClient(settings.api_url, settings.worker_token, settings.worker_id)
     log.info("Worker %s contra %s", settings.worker_id, settings.api_url)
     try:
-        run_loop(client, settings, default_steps(settings), assemble_result, once=args.once)
+        run_loop(client, settings, default_steps(settings, client), assemble_result, once=args.once)
     except KeyboardInterrupt:
         log.info("Cortado con Ctrl+C")
     finally:

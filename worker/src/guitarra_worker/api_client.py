@@ -2,7 +2,8 @@
 
 import logging
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -11,6 +12,9 @@ from pydantic import BaseModel
 log = logging.getLogger(__name__)
 
 MAX_ERROR_LENGTH = 4000  # límite del campo en la API
+AUDIO_CONTENT_TYPE = "audio/mp4"
+UPLOAD_CHUNK_BYTES = 256 * 1024
+UPLOAD_TIMEOUT = httpx.Timeout(30.0, connect=5.0, write=300.0)
 
 
 class LeaseLostError(Exception):
@@ -19,6 +23,10 @@ class LeaseLostError(Exception):
 
 class ApiError(Exception):
     """Falla de red o respuesta inesperada de la API, después de los reintentos."""
+
+    def __init__(self, message: str, status_code: int | None = None) -> None:
+        super().__init__(message)
+        self.status_code = status_code
 
 
 class Job(BaseModel):
@@ -84,6 +92,32 @@ class ApiClient:
         }
         self._post_job(job_id, "fail", body)
 
+    def upload_asset(self, job_id: int | str, kind: str, path: Path) -> None:
+        """Sube un audio `.m4a` como cuerpo crudo, por streaming (nunca entero a memoria)."""
+        url = f"/api/v1/jobs/{job_id}/assets/{kind}"
+        headers = {"Content-Type": AUDIO_CONTENT_TYPE, "Content-Length": str(path.stat().st_size)}
+        last_error: Exception | None = None
+        for attempt in range(self._retries + 1):
+            if attempt:
+                self._sleep(self._retry_delay_s * 2 ** (attempt - 1))
+            try:
+                response = self._http.post(
+                    url, content=_read_chunks(path), headers=headers, timeout=UPLOAD_TIMEOUT
+                )
+            except (httpx.TransportError, OSError) as exc:
+                last_error = exc
+                log.warning("Error subiendo %s (intento %d): %s", url, attempt + 1, exc)
+                continue
+            if response.status_code >= 500:
+                last_error = ApiError(f"{url} respondió {response.status_code}")
+                log.warning("%s (intento %d)", last_error, attempt + 1)
+                continue
+            if response.status_code == 409:  # hoy el router de audio no lo devuelve; por contrato
+                raise LeaseLostError(f"El trabajo {job_id} ya no es de este worker")
+            self._expect_ok(response)
+            return
+        raise ApiError(f"{url} falló tras {self._retries + 1} intentos: {last_error}")
+
     def _post_job(self, job_id: int | str, action: str, body: dict[str, Any]) -> None:
         response = self._post(f"/api/v1/jobs/{job_id}/{action}", body)
         if response.status_code == 409:
@@ -112,4 +146,13 @@ class ApiClient:
     @staticmethod
     def _expect_ok(response: httpx.Response) -> None:
         if response.status_code >= 400:
-            raise ApiError(f"{response.request.url.path} respondió {response.status_code}")
+            raise ApiError(
+                f"{response.request.url.path} respondió {response.status_code}",
+                response.status_code,
+            )
+
+
+def _read_chunks(path: Path) -> Iterator[bytes]:
+    with path.open("rb") as handle:
+        while chunk := handle.read(UPLOAD_CHUNK_BYTES):
+            yield chunk

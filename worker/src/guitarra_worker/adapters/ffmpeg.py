@@ -4,6 +4,7 @@ import os
 import shutil
 import subprocess
 import wave
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -13,6 +14,7 @@ SAMPLE_RATE = 48_000
 # Mensajes de ffmpeg que reintentar no arregla: formato o códec que no soporta.
 UNSUPPORTED_MARKERS = ("unsupported", "unknown decoder", "unknown encoder", "could not find codec")
 CHANNELS = 2  # estéreo: Demucs trabaja en estéreo; el mono se deriva en los pasos que lo necesiten
+M4A_BITRATE = "160k"  # AAC estéreo: suficiente para estudiar y liviano (ADR 0013)
 
 
 @dataclass(frozen=True)
@@ -60,6 +62,37 @@ def convert_to_wav(ffmpeg: str, source: Path, dest: Path) -> None:
             raise PermanentStepError(message)
         # Entrada truncada o error de I/O: una nueva descarga puede salir bien.
         raise RetryableStepError(message)
+    os.replace(partial, dest)
+
+
+def _m4a_command(ffmpeg: str, source: Path, partial: Path) -> list[str]:
+    return [
+        *(ffmpeg, "-y", "-hide_banner", "-loglevel", "error", "-i", str(source)),
+        *("-vn", "-ac", str(CHANNELS), "-ar", str(SAMPLE_RATE)),
+        *("-c:a", "aac", "-b:a", M4A_BITRATE, "-movflags", "+faststart"),
+        *("-f", "ipod", str(partial)),
+    ]
+
+
+def convert_to_m4a(
+    ffmpeg: str,
+    source: Path,
+    dest: Path,
+    run: Callable[..., subprocess.CompletedProcess[str]] = subprocess.run,
+) -> None:
+    """Convierte a .m4a (AAC 160 kb/s estéreo) para el navegador. Escritura atómica."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    partial = dest.with_name(dest.name + ".part")
+    try:
+        result = run(
+            _m4a_command(ffmpeg, source, partial), capture_output=True, text=True, check=False
+        )
+    except OSError as exc:
+        raise PermanentStepError(f"No pude ejecutar ffmpeg ({ffmpeg}): {exc}") from exc
+    if result.returncode != 0:
+        partial.unlink(missing_ok=True)
+        detail = result.stderr.strip()[-500:]
+        raise RetryableStepError(f"ffmpeg no pudo convertir a m4a: {detail}")
     os.replace(partial, dest)
 
 

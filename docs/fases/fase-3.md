@@ -46,7 +46,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F3-T02 | 0 | UI: transporte de acompañamiento (`BackingSource`) sobre `<audio>` con velocidad sin cambio de tono y loop A-B | — | hecha |
 | F3-T03 | 0 | UI: generador puro del arreglo (chart → eventos de batería, bajo y acordes por beat) | — | hecha |
 | F3-T04 | 1 | API: tipo de trabajo `separation` (se encola tras el análisis, claim con tipo, result sin chart) | T01 | pendiente |
-| F3-T05 | 1 | Worker: paso que convierte el original a `.m4a` y lo sube | T01 | pendiente |
+| F3-T05 | 1 | Worker: paso que convierte el original a `.m4a` y lo sube | T01 | hecha |
 | F3-T06 | 1 | UI: sintetizador Web Audio y fuentes metrónomo / batería / backing generado | T02, T03 | pendiente |
 | F3-T07 | 2 | Worker: separación con Demucs, mezcla sin guitarra, caché y subida; `install.ps1` | T04, T05 | pendiente |
 | F3-T08 | 2 | UI: panel de acompañamiento en la vista de canción (selector, velocidad, loop por sección) | T01, T02, T06 | pendiente |
