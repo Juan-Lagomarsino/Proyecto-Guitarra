@@ -25,6 +25,10 @@ analysis = [
     "mir_eval>=0.7",
     "pyyaml>=6",
 ]
+# Separación de pistas (acompañamiento sin guitarra, ADR 0015). Aparte de `analysis` porque es
+# pesado y opcional: sin él el análisis anda igual y la separación falla con un mensaje claro.
+# Usa el torch CPU que instala install.ps1.
+separation = ["demucs>=4.0.1"]
 
 [build-system]
 requires = ["setuptools>=68"]

@@ -41,6 +41,9 @@ class Settings(BaseSettings):
         "https://huggingface.co/safe-models/beat-this-final0/resolve/main/model.safetensors"
     )
 
+    # Demucs (separación de pistas); vacío = <models_dir>/demucs
+    demucs_model_dir: Path | None = None  # GUITAR_DEMUCS_MODEL_DIR
+
     # Ollama (elección de rasgueo del catálogo); GUITAR_OLLAMA_URL vacío = solo reglas
     ollama_url: str = "http://localhost:11434"
     ollama_model: str = "qwen2.5:3b"
@@ -53,6 +56,10 @@ class Settings(BaseSettings):
     @property
     def beat_this_checkpoint_path(self) -> Path:
         return self.beat_this_checkpoint or self.models_dir / "beat_this-final0.ckpt"
+
+    @property
+    def demucs_model_path(self) -> Path:
+        return self.demucs_model_dir or self.models_dir / "demucs"
 
     @property
     def btc_path(self) -> Path:

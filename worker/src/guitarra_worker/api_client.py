@@ -42,6 +42,7 @@ class Job(BaseModel):
     max_attempts: int | None = None
     lease_until: str | None = None
     cifra_text: str | None = None  # cifra de Cifra Club pegada a mano (ADR 0012)
+    job_type: str = "analyze"  # "analyze" | "separation"; sin el campo (claim viejo) = análisis
 
 
 class ApiClient:

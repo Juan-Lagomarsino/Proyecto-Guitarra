@@ -26,6 +26,15 @@ function Install-BeatThisWeights {
     if ($LASTEXITCODE -ne 0) { throw 'No se pudieron bajar los pesos de beat_this (ni del host oficial ni del espejo)' }
 }
 
+function Install-DemucsWeights {
+    # Pesos de htdemucs_6s (separación de pistas, ADR 0015) con reintentos, en
+    # GUITAR_DEMUCS_MODEL_DIR (por defecto GuitarApp\models\demucs). Idempotente. Si falla no
+    # bloquea: el worker sigue y los trabajos de separación fallan diciendo cómo instalarlo.
+    Write-Host 'Preparando los pesos de Demucs (htdemucs_6s, ~55 MB) ...'
+    & $venvPython -m guitarra_worker.adapters.demucs
+    if ($LASTEXITCODE -ne 0) { Write-Warning 'No se pudieron bajar los pesos de Demucs; reintentá scripts\install.ps1. La separación (acompañamiento sin guitarra) no va a andar hasta entonces.' }
+}
+
 function Install-WorkerVenv {
     if (-not (Test-Path $venvPython)) {
         Write-Host 'Creando worker\.venv con Python 3.12 ...'
@@ -33,11 +42,11 @@ function Install-WorkerVenv {
         if ($LASTEXITCODE -ne 0) { throw 'No se pudo crear el venv (¿está instalado Python 3.12 y el lanzador py?)' }
     }
     Install-TorchCpu
-    Write-Host 'Instalando worker[dev,analysis] en modo editable ...'
+    Write-Host 'Instalando worker[dev,analysis,separation] en modo editable ...'
     $coreDir = Join-Path (Split-Path -Parent $workerDir) 'core'
     & $venvPython -m pip install --quiet --disable-pip-version-check -e $coreDir
     if ($LASTEXITCODE -ne 0) { throw 'pip install de core falló' }
-    & $venvPython -m pip install --quiet --disable-pip-version-check -e "$workerDir[dev,analysis]"
+    & $venvPython -m pip install --quiet --disable-pip-version-check -e "$workerDir[dev,analysis,separation]"
     if ($LASTEXITCODE -ne 0) { throw 'pip install del worker falló' }
 }
 
@@ -121,6 +130,7 @@ try {
     Update-YtDlp
     New-WorkerFolders
     Install-BeatThisWeights
+    Install-DemucsWeights
     Test-WorkerToken
     Write-Host 'Listo.'
     exit 0

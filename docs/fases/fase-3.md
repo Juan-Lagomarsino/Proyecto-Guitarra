@@ -48,7 +48,7 @@ Leyenda: **Ola** = tareas independientes entre sí, en paralelo (worktree propio
 | F3-T04 | 1 | API: tipo de trabajo `separation` (se encola tras el análisis, claim con tipo, result sin chart) | T01 | hecha |
 | F3-T05 | 1 | Worker: paso que convierte el original a `.m4a` y lo sube | T01 | hecha |
 | F3-T06 | 1 | UI: sintetizador Web Audio y fuentes metrónomo / batería / backing generado | T02, T03 | hecha |
-| F3-T07 | 2 | Worker: separación con Demucs, mezcla sin guitarra, caché y subida; `install.ps1` | T04, T05 | pendiente |
+| F3-T07 | 2 | Worker: separación con Demucs, mezcla sin guitarra, caché y subida; `install.ps1` | T04, T05 | hecha (separación real sin probar: ver tabla) |
 | F3-T08 | 2 | UI: panel de acompañamiento en la vista de canción (selector, velocidad, loop por sección) | T01, T02, T06 | pendiente |
 | F3-T09 | 3 | UI: sincronía de acordes, rasgueo, mástil y tab con el tiempo del acompañamiento | T08 | pendiente |
 | F3-T10 | 4 | Cierre: E2E con audio sintético, README, guía de validación en tu PC | todas | pendiente |

@@ -8,7 +8,7 @@ from logging.handlers import RotatingFileHandler
 from guitarra_worker.api_client import ApiClient
 from guitarra_worker.config import Settings
 from guitarra_worker.loop import run_loop
-from guitarra_worker.pipeline.registry import assemble_result, default_steps
+from guitarra_worker.pipeline.registry import assemble_result, default_steps, separation_steps
 
 
 def configure_logging(settings: Settings) -> None:
@@ -41,7 +41,14 @@ def main(argv: list[str] | None = None) -> int:
     client = ApiClient(settings.api_url, settings.worker_token, settings.worker_id)
     log.info("Worker %s contra %s", settings.worker_id, settings.api_url)
     try:
-        run_loop(client, settings, default_steps(settings, client), assemble_result, once=args.once)
+        run_loop(
+            client,
+            settings,
+            default_steps(settings, client),
+            assemble_result,
+            separation_steps=separation_steps(client, settings),
+            once=args.once,
+        )
     except KeyboardInterrupt:
         log.info("Cortado con Ctrl+C")
     finally:

@@ -49,35 +49,49 @@ def _already_uploaded(marker: Path, fingerprint: dict[str, Any]) -> bool:
 
 
 class PublishAudioStep:
-    name = "publish_audio"
     version = "1"
 
-    def __init__(self, convert: Converter, uploader: AssetUploader) -> None:
+    def __init__(
+        self,
+        convert: Converter,
+        uploader: AssetUploader,
+        *,
+        kind: str = ASSET_KIND,
+        source: tuple[str, str] = ("download", "wav_path"),
+        name: str = "publish_audio",
+    ) -> None:
+        """`source` = (paso, clave) donde está el WAV a convertir; `kind` = tipo del asset."""
+        self.name = name
         self._convert = convert
         self._uploader = uploader
+        self._kind = kind
+        self._source = source
+        self._m4a_name = M4A_NAME if kind == ASSET_KIND else f"{kind}.m4a"
+        self._marker_name = f"{self._m4a_name}.uploaded.json"
 
     def cache_token(self, job: Job) -> str:
         """La subida es por canción: si se recrea con otro song_id hay que volver a subir."""
         return str(job.song_id)
 
     def run(self, ctx: PipelineContext) -> dict[str, Any]:
-        wav_path = Path(ctx.outputs["download"]["wav_path"])
-        m4a_path = ctx.song_dir / M4A_NAME
+        step, key = self._source
+        wav_path = Path(ctx.outputs[step][key])
+        m4a_path = ctx.song_dir / self._m4a_name
         if not m4a_path.exists() or m4a_path.stat().st_mtime < wav_path.stat().st_mtime:
             ctx.progress("Convirtiendo el audio a m4a")
             self._convert(wav_path, m4a_path)
         fingerprint = _fingerprint(m4a_path, ctx.job.song_id)
-        marker = ctx.song_dir / UPLOAD_MARKER_NAME
+        marker = ctx.song_dir / self._marker_name
         uploaded = not _already_uploaded(marker, fingerprint)
         if uploaded:
             ctx.progress("Subiendo el audio a la API")
             self._upload(ctx, m4a_path)
             marker.write_text(json.dumps(fingerprint), encoding="utf-8")
-        return {"kind": ASSET_KIND, "m4a_path": str(m4a_path.resolve()), "uploaded": uploaded}
+        return {"kind": self._kind, "m4a_path": str(m4a_path.resolve()), "uploaded": uploaded}
 
     def _upload(self, ctx: PipelineContext, m4a_path: Path) -> None:
         try:
-            self._uploader.upload_asset(ctx.job.job_id, ASSET_KIND, m4a_path)
+            self._uploader.upload_asset(ctx.job.job_id, self._kind, m4a_path)
         except ApiError as exc:
             message = f"No pude subir el audio a la API: {exc}"
             if exc.status_code is not None and 400 <= exc.status_code < 500:
