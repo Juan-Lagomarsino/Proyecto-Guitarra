@@ -1,6 +1,6 @@
 # Fase 3 — Acompañamiento
 
-Estado: **cerrada, pendiente de demo** (plan aprobado por Juan Pedro el 2026-11-02)
+Estado: **cerrada** (plan aprobado por Juan Pedro el 2026-11-02; demo aprobada el 2026-11-02)
 Referencia: `docs/PLAN.md` § Explorar (Acompañamiento), § Pipeline (paso 3, Demucs), § Contratos de API (`GET /songs/{id}/audio/{tipo}`), § Modelo de datos (`AudioAsset`, `AnalysisJob`), § Acompañamiento por el Rig, ADR 0004 (audio en el navegador) y ADR 0007 (Demucs pasa a la Fase 3).
 
 ## Criterios de aceptación de la fase (del plan)

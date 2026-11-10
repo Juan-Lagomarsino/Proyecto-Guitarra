@@ -1,6 +1,6 @@
 # Fase 5 — Riffs y aprendizaje
 
-Estado: **cerrada, pendiente de demo** (plan aprobado por Juan Pedro el 2026-11-02)
+Estado: **cerrada** (plan aprobado por Juan Pedro el 2026-11-02; demo aprobada el 2026-11-10)
 Referencia: `docs/PLAN.md` § Pipeline de análisis (paso 7, Riffs), § Cómo "aprende", § Formato interno de notación, § Modelo de datos (`SongChart`, `Correction`), § UI y diseño (tablatura, confianza en otro color). La Fase 4 (Rig) queda afuera de esta sesión: necesita la PC.
 
 ## Criterios de aceptación de la fase (del plan)
