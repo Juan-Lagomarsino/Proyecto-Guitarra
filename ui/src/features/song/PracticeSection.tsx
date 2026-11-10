@@ -10,6 +10,7 @@ const TYPES: { value: SectionExerciseType; label: string }[] = [
   { value: 'chords', label: 'Cambio de acordes' },
   { value: 'strumming', label: 'Rasgueo' },
 ]
+const RIFF_TYPE = { value: 'riff', label: 'Riff' } as const
 
 interface Props {
   songId: number
@@ -17,6 +18,8 @@ interface Props {
   sectionId: number
   sectionName: string
   instrument: ChartInstrument
+  /** La sección tiene riff: se ofrece también ese tipo de ejercicio. */
+  hasRiff?: boolean
   onCreated: () => void
 }
 
@@ -26,8 +29,10 @@ export function PracticeSection({
   sectionId,
   sectionName,
   instrument,
+  hasRiff = false,
   onCreated,
 }: Props) {
+  const types = hasRiff ? [...TYPES, RIFF_TYPE] : TYPES
   const [open, setOpen] = useState(false)
   const [type, setType] = useState<SectionExerciseType>('chords')
   const [saving, setSaving] = useState(false)
@@ -67,7 +72,7 @@ export function PracticeSection({
         <fieldset className="practice__form">
           <legend>¿Qué querés practicar de {sectionName}?</legend>
           <div className="practice__types" role="group">
-            {TYPES.map(({ value, label }) => (
+            {types.map(({ value, label }) => (
               <button
                 key={value}
                 type="button"

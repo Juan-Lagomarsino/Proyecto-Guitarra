@@ -2,11 +2,11 @@
 
 from typing import Any
 
-from guitarra_core.chord_shapes import shapes_for
+from guitarra_core.instrument import shapes_with_capo
 
 
-def chord_shapes(name: str) -> list[dict[str, Any]]:
-    """Formas del acorde, de la más fácil a la más difícil; vacío si no se puede leer."""
+def chord_shapes(name: str, capo: int = 0) -> list[dict[str, Any]]:
+    """Formas del acorde (según el capo), de la más fácil a la más difícil; vacío si no se lee."""
     return [
         {
             "name": shape.name,
@@ -15,5 +15,5 @@ def chord_shapes(name: str) -> list[dict[str, Any]]:
             "difficulty": shape.difficulty,
             **shape.to_notation(),
         }
-        for shape in shapes_for(name)
+        for shape in shapes_with_capo(name, capo)
     ]

@@ -206,3 +206,19 @@ def test_committed_json_schema_matches_model():
         "schemas/notation.schema.json está viejo: correr "
         "`python api/scripts/export_notation_schema.py`"
     )
+
+
+@pytest.mark.parametrize("confidence", [0, 0.5, 1])
+def test_event_confidence_in_range_is_accepted(confidence):
+    notation = Notation.model_validate(with_event(confidence=confidence))
+    assert notation.events[0].confidence == confidence
+
+
+def test_event_confidence_is_optional():
+    assert Notation.model_validate(with_event()).events[0].confidence is None
+
+
+@pytest.mark.parametrize("confidence", [-0.1, 1.01])
+def test_event_confidence_out_of_range_is_rejected(confidence):
+    with pytest.raises(ValidationError):
+        Notation.model_validate(with_event(confidence=confidence))

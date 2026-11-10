@@ -40,3 +40,18 @@ def require_worker_token(
 ) -> None:
     """Exige `Bearer <GUITAR_WORKER_TOKEN>` (solo /jobs). Sin token configurado, rechaza todo."""
     _check_bearer(credentials, settings.guitar_worker_token)
+
+
+def require_audio_token(
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer)],
+    settings: Annotated[Settings, Depends(get_api_settings)],
+    token: str | None = None,
+) -> None:
+    """Token de la UI por header o, solo para leer audio, por `?token=`.
+
+    `<audio src>` no puede mandar `Authorization`; por eso este endpoint (y solo este) acepta
+    el mismo token de la UI como query param (ADR 0013).
+    """
+    if credentials is None and token is not None:
+        credentials = HTTPAuthorizationCredentials(scheme="Bearer", credentials=token)
+    _check_bearer(credentials, settings.guitar_api_token)

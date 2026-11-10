@@ -4,6 +4,8 @@ from urllib.parse import urlparse
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from guitarra_api.http.audio_schemas import AudioAssetOut
+
 Instrument = Literal["classical", "electric"]
 
 
@@ -91,6 +93,8 @@ class SongDetailOut(SongSummaryOut):
     has_cifra: bool
     cifra_url: str | None
     sections: list[SongSectionOut]
+    audio: list[AudioAssetOut]
+    separation_status: Literal["none", "queued", "running", "done", "error"]
 
 
 class SongChartOut(BaseModel):
@@ -103,8 +107,15 @@ class SongChartOut(BaseModel):
     confidence: float | None
     content: dict[str, Any] = Field(description="SongChartContent (schemas/song_chart.schema.json)")
     created_at: dt.datetime
+    riff_sources: dict[str, Literal["auto", "usuario"] | None] = Field(
+        default_factory=dict,
+        description="De dónde viene el riff de cada sección (por id): la automática, la del "
+        "usuario, o null si no tiene riff",
+    )
 
 
 class SectionExerciseIn(BaseModel):
-    type: Literal["chords", "strumming"] = Field(description="Cambio de acordes o rasgueo")
+    type: Literal["chords", "strumming", "riff"] = Field(
+        description="Cambio de acordes, rasgueo o riff de la sección"
+    )
     instrument: Instrument = Field(description="Chart de qué guitarra se usa de base")

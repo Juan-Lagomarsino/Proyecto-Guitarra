@@ -336,3 +336,29 @@
   padding-left: 18px;
   color: var(--muted);
 }
+
+/* Sincronía con el acompañamiento (F3-T09): lo que suena ahora. */
+.song-timeline__button[data-now='true'] {
+  border-color: var(--note-active);
+  box-shadow: inset 0 -3px 0 var(--note-active);
+}
+
+.song-progression__chord[data-now='true'],
+.song-pattern__cell[data-now='true'] {
+  border-color: var(--note-active);
+  background: var(--note-active);
+  color: var(--bg);
+}
+
+/* Riff de la sección: tab y mástil, con las notas dudosas en el color de advertencia. */
+.song-riff {
+  min-width: 0;
+  margin-top: 16px;
+}
+
+.song-riff__tab,
+.song-riff__board {
+  min-width: 0;
+  max-width: 100%;
+  margin-top: 8px;
+}

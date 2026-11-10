@@ -66,3 +66,10 @@ export async function apiFetchWithStatus<T = unknown>(
     return { status: response.status, data: undefined as T }
   return { status: response.status, data: (await response.json()) as T }
 }
+
+/** Agrega `?token=` a una URL que va en `<audio src>` (no admite headers). */
+export function withToken(url: string): string {
+  const token = import.meta.env.VITE_GUITAR_API_TOKEN ?? ''
+  const separator = url.includes('?') ? '&' : '?'
+  return `${url}${separator}token=${encodeURIComponent(token)}`
+}

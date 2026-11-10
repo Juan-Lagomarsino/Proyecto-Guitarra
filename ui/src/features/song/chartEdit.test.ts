@@ -1,9 +1,11 @@
-import type { StrumPatternEntry } from '../../api/songs'
+import type { ChordShapeOption, StrumPatternEntry } from '../../api/songs'
 import type { ChartSection, SongChartContent } from '../../songs/types'
 import {
   patternOptions,
+  preferredShape,
   replaceSection,
   sectionProblem,
+  shapeKey,
   withPattern,
 } from './chartEdit'
 
@@ -146,5 +148,36 @@ describe('withPattern', () => {
         confidence: 1,
       },
     })
+  })
+})
+
+describe('formas preferidas', () => {
+  const open: ChordShapeOption = {
+    name: 'A',
+    chord: 'A',
+    fallback: null,
+    difficulty: 1,
+    shape: ['x', 0, 2, 2, 2, 0],
+    barre: null,
+  }
+  const barre: ChordShapeOption = { ...open, shape: [5, 7, 7, 6, 5, 5] }
+
+  it('la clave suma el capo y deja las mudas', () => {
+    expect(shapeKey(open.shape, 0)).toBe('x,0,2,2,2,0')
+    expect(shapeKey(['x', 3, 2, 0, 1, 0], 2)).toBe('x,5,4,2,3,2')
+  })
+
+  it('elige la de mayor peso entre las opciones', () => {
+    const prefs = {
+      electric: { A: { '5,7,7,6,5,5': 0.4, 'x,0,2,2,2,0': 0.2 } },
+    }
+    expect(preferredShape(prefs, 'electric', 'A', 0, [open, barre])).toBe(barre)
+  })
+
+  it('compara con el capo sumado y devuelve null si no hay nada', () => {
+    const prefs = { classical: { A: { 'x,2,4,4,4,2': 0.5 } } }
+    expect(preferredShape(prefs, 'classical', 'A', 2, [open, barre])).toBe(open)
+    expect(preferredShape(prefs, 'electric', 'A', 0, [open, barre])).toBeNull()
+    expect(preferredShape({}, 'classical', 'A', 2, [open])).toBeNull()
   })
 })

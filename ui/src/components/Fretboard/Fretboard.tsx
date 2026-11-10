@@ -1,3 +1,4 @@
+import { isLowConfidenceEvent } from '../../notation/confidence'
 import { noteAt, sameNote, STANDARD_TUNING } from '../../notation/pitch'
 import type { Notation } from '../../notation/types'
 import './Fretboard.css'
@@ -18,7 +19,7 @@ import {
   type Position,
 } from './layout'
 
-type NoteState = 'tonic' | 'active' | 'other'
+type NoteState = 'tonic' | 'active' | 'other' | 'low'
 
 const STRING_NAMES = ['e', 'B', 'G', 'D', 'A', 'E'] // índice 0 = cuerda 1
 // Incrustaciones: la referencia (drawBoard) también marca el 15, así que se mantiene.
@@ -32,9 +33,13 @@ const ACTIVE_NOTE_RADIUS = 12.5
 export interface FretboardProps {
   notation: Notation
   /** Índice en `notation.events` del evento que suena ahora. */
-  activeIndex: number | null
+  activeIndex?: number | null
+  /** Índices que suenan a la vez (un acorde); si viene, manda sobre `activeIndex`. */
+  activeIndices?: readonly number[]
   /** Trastes visibles [desde, hasta]. Si falta, se calcula de los eventos. */
   fretRange?: [number, number]
+  /** Las notas con `confidence` menor a esto se dibujan con el color de dato dudoso. */
+  lowConfidenceBelow?: number
   showLegend?: boolean
 }
 
@@ -49,12 +54,16 @@ function boardLabel(range: FretRange, tonic: string | null | undefined) {
 
 function noteState(
   position: Position,
-  active: Position | null,
+  active: readonly Position[],
   tonicMatches: boolean,
+  low: boolean,
 ): NoteState {
-  if (active?.string === position.string && active.fret === position.fret) {
+  if (
+    active.some((a) => a.string === position.string && a.fret === position.fret)
+  ) {
     return 'active'
   }
+  if (low) return 'low'
   return tonicMatches ? 'tonic' : 'other'
 }
 
@@ -168,17 +177,27 @@ function Legend() {
 
 export function Fretboard({
   notation,
-  activeIndex,
+  activeIndex = null,
+  activeIndices,
   fretRange,
+  lowConfidenceBelow,
   showLegend = true,
 }: FretboardProps) {
   const events = notation.events ?? []
   const tuning = notation.tuning ?? STANDARD_TUNING
   const range = fretRange ?? computeFretRange(events)
-  const activeEvent = activeIndex === null ? null : events[activeIndex]
-  const active = activeEvent
-    ? { string: activeEvent.string, fret: activeEvent.fret }
-    : null
+  const indices = activeIndices ?? (activeIndex === null ? [] : [activeIndex])
+  const active = indices.flatMap((index) => {
+    const event = events[index]
+    return event ? [{ string: event.string, fret: event.fret }] : []
+  })
+
+  // Una posición es dudosa si alguna de las notas que caen ahí lo es.
+  const lowPositions = new Set(
+    events
+      .filter((event) => isLowConfidenceEvent(event, lowConfidenceBelow))
+      .map((event) => `${event.string}-${event.fret}`),
+  )
 
   return (
     <div className="fretboard">
@@ -199,13 +218,18 @@ export function Fretboard({
                 noteAt(tuning, position.string, position.fret),
                 notation.tonic,
               )
-            const state = noteState(position, active, tonicMatches)
+            const low = lowPositions.has(`${position.string}-${position.fret}`)
+            const state = noteState(position, active, tonicMatches, low)
             return (
               <circle
                 key={`${position.string}-${position.fret}`}
                 className={`fretboard__note--${state}`}
                 data-testid="note"
                 data-state={state}
+                data-confidence={low ? 'low' : undefined}
+                stroke={state === 'low' ? 'var(--warn)' : undefined}
+                strokeDasharray={state === 'low' ? '3 2' : undefined}
+                strokeWidth={state === 'low' ? 2 : undefined}
                 data-string={position.string}
                 data-fret={position.fret}
                 cx={fretX(position.fret, range)}

@@ -42,3 +42,10 @@ export function sameNote(pitch: number, name: string): boolean {
     return false
   }
 }
+
+/** Altura absoluta (número MIDI, C4 = 60) de un nombre de nota con octava, p. ej. `E2` = 40. */
+export function midiOf(name: string): number {
+  const match = /^([A-G][#b]?)(-?\d+)$/.exec(name)
+  if (!match) throw new Error(`Nota con octava inválida: ${name}`)
+  return pitchClass(match[1]) + (Number(match[2]) + 1) * 12
+}

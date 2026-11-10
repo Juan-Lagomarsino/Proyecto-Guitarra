@@ -1,4 +1,8 @@
-import type { StrumPatternEntry } from '../../api/songs'
+import type {
+  ChordShapeOption,
+  ChordShapePreferences,
+  StrumPatternEntry,
+} from '../../api/songs'
 import type { ChartSection, SongChartContent } from '../../songs/types'
 
 export interface SectionBounds {
@@ -80,4 +84,28 @@ export function withPattern(
       confidence: 1,
     },
   }
+}
+
+/** Trastes absolutos (con el capo sumado) de una forma; es la clave de las preferencias. */
+export function shapeKey(shape: ChordShapeOption['shape'], capo: number) {
+  return shape.map((fret) => (fret === 'x' ? 'x' : fret + capo)).join(',')
+}
+
+/** La forma de mayor peso en las preferencias que está entre las opciones, o null. */
+export function preferredShape(
+  preferences: ChordShapePreferences,
+  instrument: string,
+  chordName: string,
+  capo: number,
+  options: ChordShapeOption[],
+): ChordShapeOption | null {
+  const weights = preferences[instrument]?.[chordName] ?? {}
+  const ranked = options
+    .map((option) => ({
+      option,
+      weight: weights[shapeKey(option.shape, capo)] ?? 0,
+    }))
+    .filter(({ weight }) => weight > 0)
+    .sort((a, b) => b.weight - a.weight)
+  return ranked[0]?.option ?? null
 }

@@ -5,8 +5,10 @@ from fastapi import FastAPI
 from guitarra_api.config import Settings
 from guitarra_api.http import health
 from guitarra_api.http.routers import (
+    audio,
     catalogs,
     jobs,
+    preferences,
     progress,
     reminders,
     sessions,
@@ -26,8 +28,11 @@ def create_app(ui_dist: Path | None = None) -> FastAPI:
     app.include_router(sessions.router, prefix="/api/v1")
     app.include_router(reminders.router, prefix="/api/v1")
     app.include_router(jobs.router, prefix="/api/v1")
+    app.include_router(audio.upload_router, prefix="/api/v1")
+    app.include_router(audio.download_router, prefix="/api/v1")
     app.include_router(songs.router, prefix="/api/v1")
     app.include_router(catalogs.router, prefix="/api/v1")
+    app.include_router(preferences.router, prefix="/api/v1")
     mount_ui(app, ui_dist if ui_dist is not None else Settings().guitar_ui_dist)
     return app
 

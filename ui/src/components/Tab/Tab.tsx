@@ -1,3 +1,4 @@
+import { isLowConfidenceEvent } from '../../notation/confidence'
 import type { Notation } from '../../notation/types'
 import { beatsPerBar, buildColumns, stringName } from './columns'
 import type { Tuning } from './columns'
@@ -18,7 +19,11 @@ import { useContainerWidth } from './useContainerWidth'
 export interface TabProps {
   notation: Notation
   /** Índice en `notation.events` del evento que suena; resalta toda su columna. */
-  activeIndex: number | null
+  activeIndex?: number | null
+  /** Índices que suenan a la vez (un acorde); si viene, manda sobre `activeIndex`. */
+  activeIndices?: readonly number[]
+  /** Las notas con `confidence` menor a esto se dibujan con el color de dato dudoso. */
+  lowConfidenceBelow?: number
   /** Ancho en px. Si falta, se mide el contenedor. */
   width?: number
 }
@@ -81,14 +86,21 @@ function StringsAndNames({
   )
 }
 
+function noteColor(active: boolean, low: boolean): string {
+  if (active) return 'var(--accent-ink)'
+  return low ? 'var(--warn)' : 'var(--text)'
+}
+
 function ColumnView({
   layout,
   positioned,
   active,
+  lowIndices,
 }: {
   layout: SystemLayout
   positioned: PositionedColumn
   active: boolean
+  lowIndices: ReadonlySet<number>
 }) {
   const { column, cx } = positioned
   return (
@@ -111,8 +123,14 @@ function ColumnView({
       {column.notes.map((note) => {
         const y = stringY(note.string)
         const boxWidth = note.label.length > 1 ? 22 : 15
+        const low = lowIndices.has(note.index)
         return (
-          <g key={note.index} data-role="note" data-active={active}>
+          <g
+            key={note.index}
+            data-role="note"
+            data-active={active}
+            data-confidence={low ? 'low' : undefined}
+          >
             <rect
               x={cx - boxWidth / 2}
               y={y - NOTE_BOX_HEIGHT / 2}
@@ -120,6 +138,8 @@ function ColumnView({
               height={NOTE_BOX_HEIGHT}
               rx={4}
               fill={active ? 'var(--accent)' : 'var(--bg)'}
+              stroke={low ? 'var(--warn)' : undefined}
+              strokeDasharray={low ? '3 2' : undefined}
             />
             <text
               data-role="fret"
@@ -128,7 +148,7 @@ function ColumnView({
               textAnchor="middle"
               fontSize={12.5}
               fontWeight={600}
-              fill={active ? 'var(--accent-ink)' : 'var(--text)'}
+              fill={noteColor(active, low)}
               style={FONT}
             >
               {note.label}
@@ -140,10 +160,22 @@ function ColumnView({
   )
 }
 
-export function Tab({ notation, activeIndex, width }: TabProps) {
+export function Tab({
+  notation,
+  activeIndex = null,
+  activeIndices,
+  lowConfidenceBelow,
+  width,
+}: TabProps) {
+  const indices = activeIndices ?? (activeIndex === null ? [] : [activeIndex])
   const [ref, measured] = useContainerWidth<HTMLDivElement>(width)
   const totalWidth = measured > 0 ? measured : FALLBACK_WIDTH
   const tuning = notation.tuning ?? STANDARD_TUNING
+  const lowIndices = new Set(
+    (notation.events ?? []).flatMap((event, index) =>
+      isLowConfidenceEvent(event, lowConfidenceBelow) ? [index] : [],
+    ),
+  )
 
   const columns = buildColumns(
     notation.events ?? [],
@@ -183,8 +215,9 @@ export function Tab({ notation, activeIndex, width }: TabProps) {
               key={positioned.column.t}
               layout={layout}
               positioned={positioned}
-              active={positioned.column.notes.some(
-                (n) => n.index === activeIndex,
+              lowIndices={lowIndices}
+              active={positioned.column.notes.some((n) =>
+                indices.includes(n.index),
               )}
             />
           ))}

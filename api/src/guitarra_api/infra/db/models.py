@@ -233,6 +233,9 @@ class Song(Base):
     sections: Mapped[list["SongSection"]] = relationship(
         back_populates="song", order_by="SongSection.position"
     )
+    audio_assets: Mapped[list["AudioAsset"]] = relationship(
+        order_by="AudioAsset.kind", passive_deletes=True
+    )
 
 
 class SongSection(Base):
@@ -293,7 +296,10 @@ class SongChart(Base):
 
 class AudioAsset(Base):
     __tablename__ = "audio_assets"
-    __table_args__ = (CheckConstraint(_in_list("kind", AUDIO_ASSET_KINDS), name="kind_valid"),)
+    __table_args__ = (
+        CheckConstraint(_in_list("kind", AUDIO_ASSET_KINDS), name="kind_valid"),
+        UniqueConstraint("song_id", "kind", name="uq_audio_assets_song_kind"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     song_id: Mapped[int] = mapped_column(ForeignKey("songs.id", ondelete="CASCADE"), index=True)
@@ -344,4 +350,32 @@ class Correction(Base):
     diff: Mapped[dict[str, Any]] = mapped_column(JSONB)
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
+    )
+
+
+class ChordShapePreference(Base):
+    """Formas de acorde que el usuario prefiere en un instrumento: `{acorde: {forma: peso}}`."""
+
+    __tablename__ = "chord_shape_preferences"
+    __table_args__ = (
+        CheckConstraint(_in_list("instrument", INSTRUMENTS), name="instrument_valid"),
+    )
+
+    instrument: Mapped[str] = mapped_column(String(20), primary_key=True)
+    weights: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class FingeringPreference(Base):
+    """Preferencias de digitación (fila única, id = 1): `{"positions": ..., "zones": ...}`."""
+
+    __tablename__ = "fingering_preferences"
+    __table_args__ = (CheckConstraint("id = 1", name="single_row"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    weights: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )

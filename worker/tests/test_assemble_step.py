@@ -276,3 +276,36 @@ def test_fuentes_con_la_version_de_cada_paso(job, tmp_path):
     assert by_step["tempo"]["version"] == "3" and by_step["chords"]["version"] == "2"
     assert by_step["chords"]["tool"] == "btc"
     assert "cifraclub" not in by_step
+
+
+G_BARRE_ABSOLUTE = "3,5,5,4,3,3"
+
+
+def chord_named(result, instrument, name):
+    chart = chart_of(result, instrument)
+    return next(c for s in chart["sections"] for c in s["chords"] if c["name"] == name)
+
+
+def test_sin_preferencias_la_forma_es_la_de_siempre(job, tmp_path):
+    base = assemble(job, tmp_path, base_outputs(job))
+    empty = job.model_copy(update={"chord_shape_preferences": {}})
+    assert assemble(empty, tmp_path, base_outputs(job)) == base
+
+
+def test_con_preferencia_usa_la_forma_preferida(job, tmp_path):
+    prefs = {"electric": {"G": {G_BARRE_ABSOLUTE: 0.6}}}
+    preferring = job.model_copy(update={"chord_shape_preferences": prefs})
+    result = assemble(preferring, tmp_path, base_outputs(job))
+    assert chord_named(result, "electric", "G")["shape"] == [3, 5, 5, 4, 3, 3]
+    assert chord_named(result, "electric", "G")["barre"] is not None
+    base = assemble(job, tmp_path, base_outputs(job))
+    assert chord_named(result, "classical", "G") == chord_named(base, "classical", "G")
+    validate_result(result)
+
+
+def test_la_preferencia_invalida_la_cache_del_paso(job):
+    prefs = {"electric": {"G": {G_BARRE_ABSOLUTE: 1}}}
+    other = job.model_copy(update={"chord_shape_preferences": prefs})
+    step = AssembleStep()
+    assert step.cache_token(job) == ""
+    assert step.cache_token(other) != ""

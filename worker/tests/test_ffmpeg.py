@@ -64,3 +64,53 @@ def test_formato_no_soportado_es_permanente(tmp_path, monkeypatch):
     source = make_wav(tmp_path / "in.wav")
     with pytest.raises(PermanentStepError):
         convert_to_wav("ffmpeg", source, tmp_path / "o.wav")
+
+
+def test_convert_to_m4a_arma_el_comando(tmp_path):
+    from guitarra_worker.adapters.ffmpeg import convert_to_m4a
+
+    calls = []
+
+    def fake_run(cmd, **kwargs):
+        calls.append(cmd)
+        (tmp_path / "o.m4a.part").write_bytes(b"aac")
+        return subprocess.CompletedProcess(cmd, 0, "", "")
+
+    source = make_wav(tmp_path / "in.wav")
+    convert_to_m4a("ff", source, tmp_path / "o.m4a", run=fake_run)
+    cmd = calls[0]
+    assert cmd[0] == "ff" and str(source) in cmd
+    assert cmd[cmd.index("-c:a") + 1] == "aac"
+    assert cmd[cmd.index("-b:a") + 1] == "160k"
+    assert cmd[cmd.index("-ac") + 1] == "2"
+    assert cmd[cmd.index("-f") + 1] == "ipod" and cmd[-1] == str(tmp_path / "o.m4a.part")
+    assert (tmp_path / "o.m4a").read_bytes() == b"aac"
+    assert not (tmp_path / "o.m4a.part").exists()
+
+
+def test_convert_to_m4a_error_de_ffmpeg_falla_claro(tmp_path):
+    from guitarra_worker.adapters.ffmpeg import convert_to_m4a
+
+    def fake_run(cmd, **kwargs):
+        return subprocess.CompletedProcess(cmd, 1, "", "boom")
+
+    with pytest.raises(RetryableStepError, match="boom"):
+        convert_to_m4a("ff", make_wav(tmp_path / "in.wav"), tmp_path / "o.m4a", run=fake_run)
+    assert not (tmp_path / "o.m4a").exists()
+
+
+@pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="ffmpeg no está en el PATH")
+def test_convert_to_m4a_real(tmp_path):
+    from guitarra_worker.adapters.ffmpeg import convert_to_m4a
+
+    source = make_wav(tmp_path / "in.wav", seconds=1.0, rate=48_000, channels=2)
+    dest = tmp_path / "out" / "original.m4a"
+    convert_to_m4a(shutil.which("ffmpeg"), source, dest)
+    assert dest.stat().st_size > 0
+    probe = subprocess.run(
+        [shutil.which("ffmpeg"), "-hide_banner", "-i", str(dest), "-f", "null", "-"],
+        capture_output=True,
+        text=True,
+    )
+    assert probe.returncode == 0
+    assert "aac" in probe.stderr and "mov,mp4,m4a" in probe.stderr

@@ -1,12 +1,13 @@
 import datetime as dt
 import unicodedata
 
-from sqlalchemy import func, select
+from sqlalchemy import exists, func, select
 from sqlalchemy.orm import Session
 
 from guitarra_api.domain.song_chart import SongChartContent, overall_confidence
 from guitarra_api.infra.db.models import (
     AnalysisJob,
+    AudioAsset,
     Correction,
     Exercise,
     Song,
@@ -119,6 +120,46 @@ class SongRepository:
             base.where(SongChart.origin != USER_ORIGIN).order_by(latest).limit(1)
         )
 
+    def latest_auto_chart(self, song_id: int, instrument: str) -> SongChart | None:
+        """La última versión no editada por el usuario (auto o cifraclub)."""
+        return self._session.scalar(
+            select(SongChart)
+            .where(
+                SongChart.song_id == song_id,
+                SongChart.instrument == instrument,
+                SongChart.origin != USER_ORIGIN,
+            )
+            .order_by(SongChart.version.desc())
+            .limit(1)
+        )
+
+    def instruments_with_chart(self, song_id: int) -> list[str]:
+        return list(
+            self._session.scalars(
+                select(SongChart.instrument).where(SongChart.song_id == song_id).distinct()
+            )
+        )
+
+    def touched_riff_sections(self, song_id: int, instrument: str) -> set[str]:
+        """Secciones cuyo riff cambió el usuario en alguna de sus versiones vigentes (no
+        descartadas), según el historial de correcciones."""
+        diffs = self._session.scalars(
+            select(Correction.diff)
+            .join(SongChart, Correction.song_chart_id == SongChart.id)
+            .where(
+                SongChart.song_id == song_id,
+                SongChart.instrument == instrument,
+                SongChart.origin == USER_ORIGIN,
+                SongChart.discarded_at.is_(None),
+            )
+        )
+        return {
+            section_id
+            for diff in diffs
+            for section_id, fields in diff.get("sections", {}).items()
+            if "riff" in fields
+        }
+
     def get_section(self, song_id: int, section_id: int) -> SongSection | None:
         """La sección solo si pertenece a esa canción."""
         return self._session.scalar(
@@ -163,19 +204,28 @@ class SongRepository:
         self._session.flush()
         return len(charts)
 
-    def active_job(self, song_id: int) -> AnalysisJob | None:
-        """El trabajo `queued` o `running` de la canción, si hay."""
+    def active_job(self, song_id: int, job_type: str = "analyze") -> AnalysisJob | None:
+        """El trabajo `queued` o `running` de ese tipo para la canción, si hay."""
         return self._session.scalar(
             select(AnalysisJob)
-            .where(AnalysisJob.song_id == song_id, AnalysisJob.status.in_(ACTIVE_JOB_STATUSES))
+            .where(
+                AnalysisJob.song_id == song_id,
+                AnalysisJob.type == job_type,
+                AnalysisJob.status.in_(ACTIVE_JOB_STATUSES),
+            )
             .order_by(AnalysisJob.id.desc())
             .limit(1)
         )
 
-    def latest_job(self, song_id: int) -> AnalysisJob | None:
+    def has_audio_asset(self, song_id: int, kind: str) -> bool:
+        return self._session.scalar(
+            select(exists().where(AudioAsset.song_id == song_id, AudioAsset.kind == kind))
+        )
+
+    def latest_job(self, song_id: int, job_type: str = "analyze") -> AnalysisJob | None:
         return self._session.scalar(
             select(AnalysisJob)
-            .where(AnalysisJob.song_id == song_id)
+            .where(AnalysisJob.song_id == song_id, AnalysisJob.type == job_type)
             .order_by(AnalysisJob.id.desc())
             .limit(1)
         )

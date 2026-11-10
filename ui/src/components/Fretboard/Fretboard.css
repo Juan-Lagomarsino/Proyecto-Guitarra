@@ -51,6 +51,10 @@
   fill: var(--note-other);
 }
 
+.fretboard__note--low {
+  fill: var(--warn);
+}
+
 .fretboard__note--active {
   fill: var(--note-active);
   stroke: var(--accent);

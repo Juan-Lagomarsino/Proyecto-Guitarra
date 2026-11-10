@@ -9,6 +9,7 @@ from guitarra_api.application.job_queue import (
     JobNotFound,
     JobNotOwned,
     JobQueue,
+    ResultTypeMismatch,
     YoutubeIdConflict,
 )
 from guitarra_api.config import Settings
@@ -22,6 +23,7 @@ from guitarra_api.http.job_schemas import (
     HeartbeatRequest,
     JobStatusOut,
     ResultRequest,
+    SeparationResultRequest,
 )
 from guitarra_api.infra.db.session import get_session
 
@@ -62,8 +64,12 @@ def heartbeat(job_id: int, body: HeartbeatRequest, queue: Queue) -> HeartbeatOut
 
 
 @router.post("/{job_id}/result")
-def submit_result(job_id: int, body: ResultRequest, queue: Queue) -> JobStatusOut:
-    job = _guard(queue.complete, job_id, body.worker_id, body)
+def submit_result(
+    job_id: int, body: ResultRequest | SeparationResultRequest, queue: Queue
+) -> JobStatusOut:
+    analysis = body if isinstance(body, ResultRequest) else None
+    riffs = body.riffs if isinstance(body, SeparationResultRequest) else None
+    job = _guard(queue.complete, job_id, body.worker_id, analysis, riffs)
     return JobStatusOut(job_id=job.id, status=job.status)
 
 
@@ -79,5 +85,7 @@ def _guard[T](operation: Callable[..., T], *args: Any) -> T:
         return operation(*args)
     except JobNotFound as error:
         raise HTTPException(status.HTTP_404_NOT_FOUND, str(error)) from error
+    except ResultTypeMismatch as error:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(error)) from error
     except (JobNotOwned, YoutubeIdConflict) as error:
         raise HTTPException(status.HTTP_409_CONFLICT, str(error)) from error

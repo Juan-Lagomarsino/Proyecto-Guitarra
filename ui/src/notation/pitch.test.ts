@@ -1,4 +1,4 @@
-import { noteAt, pitchClass, sameNote, STANDARD_TUNING } from './pitch'
+import { midiOf, noteAt, pitchClass, sameNote, STANDARD_TUNING } from './pitch'
 
 describe('pitchClass', () => {
   it('resuelve naturales, sostenidos y bemoles', () => {
@@ -58,5 +58,18 @@ describe('sameNote', () => {
     expect(sameNote(10, 'Bb')).toBe(true)
     expect(sameNote(10, 'A#')).toBe(true)
     expect(sameNote(10, 'B')).toBe(false)
+  })
+})
+
+describe('midiOf', () => {
+  it('da la altura absoluta de las cuerdas al aire', () => {
+    expect(STANDARD_TUNING.map(midiOf)).toEqual([40, 45, 50, 55, 59, 64])
+  })
+  it('entiende bemoles y sostenidos', () => {
+    expect(midiOf('Bb3')).toBe(58)
+    expect(midiOf('F#2')).toBe(42)
+  })
+  it('rechaza nombres sin octava', () => {
+    expect(() => midiOf('E')).toThrow()
   })
 })

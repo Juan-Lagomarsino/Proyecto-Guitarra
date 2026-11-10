@@ -13,6 +13,7 @@ import type {
   SongChartContent,
 } from '../../songs/types'
 import { useAsyncData } from '../study/useAsyncData'
+import { ChordShapePicker } from './ChordShapePicker'
 import {
   patternOptions,
   replaceSection,
@@ -36,10 +37,11 @@ const messageOf = (error: unknown) =>
 async function chordFromName(
   previous: ChartChord,
   name: string,
+  capo: number,
 ): Promise<ChartChord> {
   let shapes: ChordShapeOption[]
   try {
-    shapes = await fetchChordShapes(name)
+    shapes = await fetchChordShapes(name, capo)
   } catch {
     shapes = []
   }
@@ -54,14 +56,21 @@ async function chordFromName(
   }
 }
 
+/** Con otro nombre se recalcula la forma; con el mismo, se respeta la forma elegida (si hay). */
 async function editedChords(
   chords: ChartChord[],
   names: string[],
+  picked: Record<number, ChordShapeOption>,
+  capo: number,
 ): Promise<ChartChord[]> {
   return Promise.all(
     chords.map((chord, index) => {
       const name = (names[index] ?? chord.name).trim()
-      return name === chord.name ? chord : chordFromName(chord, name)
+      if (name !== chord.name) return chordFromName(chord, name, capo)
+      const choice = picked[index]
+      return choice
+        ? { ...chord, shape: choice.shape, barre: choice.barre }
+        : chord
     }),
   )
 }
@@ -104,6 +113,7 @@ export function SectionEditor({
   const [start, setStart] = useState(String(section.start_s))
   const [end, setEnd] = useState(String(section.end_s))
   const [chordNames, setChordNames] = useState(chords.map((c) => c.name))
+  const [picked, setPicked] = useState<Record<number, ChordShapeOption>>({})
   const [patternId, setPatternId] = useState('')
   const [problem, setProblem] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -141,7 +151,12 @@ export function SectionEditor({
     setSaving(true)
     setProblem(null)
     try {
-      const next = await editedChords(chords, chordNames)
+      const next = await editedChords(
+        chords,
+        chordNames,
+        picked,
+        content.capo ?? 0,
+      )
       const changedChords = next.some((chord, i) => chord !== chords[i])
       const chosen = options.find((option) => option.id === patternId)
       const edited = replaceSection(content, section.id, {
@@ -199,19 +214,33 @@ export function SectionEditor({
       {chords.length > 0 && (
         <fieldset className="chart-edit__chords">
           <legend>Acordes</legend>
-          {chords.map((_, index) => (
-            <label key={index} className="chart-edit__field chart-edit__chord">
-              <span>Acorde {index + 1}</span>
-              <input
-                type="text"
-                value={chordNames[index] ?? ''}
-                onChange={(e) =>
-                  setChordNames((names) =>
-                    names.map((n, i) => (i === index ? e.target.value : n)),
-                  )
-                }
-              />
-            </label>
+          {chords.map((chord, index) => (
+            <div key={index} className="chart-edit__chord">
+              <label className="chart-edit__field">
+                <span>Acorde {index + 1}</span>
+                <input
+                  type="text"
+                  value={chordNames[index] ?? ''}
+                  onChange={(e) =>
+                    setChordNames((names) =>
+                      names.map((n, i) => (i === index ? e.target.value : n)),
+                    )
+                  }
+                />
+              </label>
+              {(chordNames[index] ?? chord.name).trim() === chord.name && (
+                <ChordShapePicker
+                  position={index + 1}
+                  name={chord.name}
+                  instrument={content.instrument}
+                  capo={content.capo ?? 0}
+                  current={picked[index] ?? chord}
+                  onSelect={(option) =>
+                    setPicked((all) => ({ ...all, [index]: option }))
+                  }
+                />
+              )}
+            </div>
           ))}
         </fieldset>
       )}

@@ -6,6 +6,7 @@ from guitarra_api.domain.song_exercise import (
     SectionNotFoundInChartError,
     SectionNotPlayableError,
     build_section_exercise,
+    complete_with_events,
 )
 
 AM = ["x", 0, 2, 2, 1, 0]
@@ -33,7 +34,7 @@ def content(section=None, bpm=120, **extra) -> SongChartContent:
     )
 
 
-def test_cambio_de_acordes_usa_beats_desde_el_primer_acorde():
+def test_cambio_de_acordes_usa_beats_desde_el_inicio_de_la_seccion():
     notation = build_section_exercise(content(), "verso", "chords").notation
     assert [(c.t, c.name) for c in notation.chords] == [(0, "Am"), (4, "F"), (8, "Am"), (12, "F")]
     assert notation.strum == []
@@ -122,10 +123,12 @@ def test_en_tres_cuartos_el_ciclo_dura_tres_beats():
     assert result.notation.time_signature == "3/4"
 
 
-def test_primer_acorde_que_no_arranca_con_la_seccion_marca_el_cero():
+def test_el_origen_de_los_beats_es_el_inicio_de_la_seccion_igual_que_en_la_ui():
+    # La UI (useBackingSync) cuenta desde section.start_s: si esto cambia se desalinea.
     chords = [chord(12), chord(14, "F", F)]
     result = build_section_exercise(content({"chords": chords}), "verso", "chords")
-    assert [(c.t, c.name) for c in result.notation.chords] == [(0, "Am"), (4, "F")]
+    assert [(c.t, c.name) for c in result.notation.chords] == [(4, "Am"), (8, "F")]
+    assert min(e.t for e in result.notation.events) == 4
 
 
 def test_seccion_de_menos_de_un_beat_da_un_ciclo():
@@ -133,3 +136,106 @@ def test_seccion_de_menos_de_un_beat_da_un_ciclo():
     result = build_section_exercise(content(section), "verso", "strumming")
     assert [s.t for s in result.notation.strum] == [0]
     assert [c.name for c in result.notation.chords] == ["Am"]
+
+
+def test_acordes_como_notas_una_por_cuerda_que_suena():
+    chords = [chord(10), chord(12, "F", F)]
+    notation = build_section_exercise(content({"chords": chords}), "verso", "chords").notation
+    first = [e for e in notation.events if e.t == 0]
+    assert [(e.string, e.fret) for e in first] == [(5, 0), (4, 2), (3, 2), (2, 1), (1, 0)]
+    assert all(e.dur == 4 for e in first)  # hasta el próximo acorde
+    assert len([e for e in notation.events if e.t == 4]) == 6
+    assert Notation.model_validate(notation.model_dump())
+
+
+def test_rasgueo_repite_el_acorde_en_cada_golpe_y_el_guion_no_suena():
+    chords = [chord(10), chord(12, "F", F)]
+    section = {"chords": chords, "end_s": 14}
+    notation = build_section_exercise(content(section), "verso", "strumming").notation
+    times = sorted({e.t for e in notation.events})
+    # 'D-DU-UDU' en 4 beats: celdas de 0,5 beats; el '-' (celdas 1 y 4) no suena
+    assert times[:6] == [0, 1, 1.5, 2.5, 3, 3.5]
+    assert {e.t for e in notation.events if e.t >= 4} == {4, 5, 5.5, 6.5, 7, 7.5}
+    assert {e.fret for e in notation.events if e.t == 0 and e.string == 6} == set()
+    assert {e.string for e in notation.events if e.t == 5} == {6, 5, 4, 3, 2, 1}
+
+
+def test_seis_octavos_son_dos_beats_de_grilla_por_compas():
+    section = {"strum": {"pattern": "DUDU", "pattern_id": "p", "confidence": 0.8}}
+    result = build_section_exercise(content(section, time_signature="6/8"), "verso", "strumming")
+    assert [s.t for s in result.notation.strum[:3]] == [0, 2, 4]
+
+
+def test_ejercicio_guardado_sin_events_se_completa():
+    legacy = {
+        "bpm": 80,
+        "chords": [{"t": 0, "name": "Am", "shape": AM}],
+        "strum": [{"t": 0, "pattern": "DUDU"}, {"t": 4, "pattern": "DUDU"}],
+    }
+    done = complete_with_events(Notation.model_validate(legacy))
+    assert len(done.events) == 5 * 4 * 2
+    assert complete_with_events(done) == done
+
+
+def _stored(section_id, notation):
+    return {
+        "id": 1,
+        "lesson_id": None if section_id else 1,
+        "song_section_id": section_id,
+        "slug": "x",
+        "title": "x",
+        "type": "chords",
+        "instrument": "electric",
+        "category": "technique",
+        "bpm_start": 60,
+        "bpm_target": 80,
+        "duration_min": 5,
+        "description": None,
+        "notation": notation,
+    }
+
+
+def test_al_leer_se_completan_los_ejercicios_de_cancion_sin_events():
+    from guitarra_api.http.study_schemas import ExerciseOut
+
+    legacy = {"bpm": 80, "chords": [{"t": 0, "name": "Am", "shape": AM}]}
+    assert ExerciseOut.model_validate(_stored(5, legacy)).notation["events"]
+    assert not ExerciseOut.model_validate(_stored(None, legacy)).notation.get("events")
+
+
+RIFF = {
+    "bpm": 120,
+    "events": [
+        {"t": 0, "dur": 1, "string": 5, "fret": 3, "confidence": 0.4},
+        {"t": 1, "dur": 1, "string": 4, "fret": 5},
+    ],
+}
+
+
+def test_riff_usa_la_notacion_del_riff_de_la_seccion():
+    exercise = build_section_exercise(content({"riff": RIFF}), "verso", "riff")
+    assert [(e.t, e.string, e.fret) for e in exercise.notation.events] == [(0, 5, 3), (1, 4, 5)]
+    assert exercise.notation.events[0].confidence == 0.4
+    assert exercise.notation.bpm == exercise.bpm_start == 84
+    assert not exercise.notation.chords and "riff" in exercise.title_suffix
+
+
+def test_riff_no_exige_acordes_pero_si_riff():
+    ok = content({"riff": RIFF, "chords": []})
+    assert build_section_exercise(ok, "verso", "riff").notation.events
+    with pytest.raises(SectionNotPlayableError, match="riff"):
+        build_section_exercise(content(), "verso", "riff")
+
+
+def test_riff_se_acota_a_32_beats():
+    long_riff = {
+        "bpm": 120,
+        "events": [
+            {"t": 0, "dur": 1, "string": 5, "fret": 3},
+            {"t": 31, "dur": 4, "string": 4, "fret": 5},
+            {"t": 40, "dur": 1, "string": 3, "fret": 7},
+        ],
+    }
+    section = {"riff": long_riff, "end_s": 60}
+    exercise = build_section_exercise(content(section), "verso", "riff")
+    assert [(e.t, e.dur) for e in exercise.notation.events] == [(0, 1), (31, 1)]

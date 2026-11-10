@@ -4,7 +4,7 @@ import secrets
 
 from sqlalchemy.orm import Session
 
-from guitarra_api.application.song_service import ChartNotFoundError, SongNotFoundError
+from guitarra_api.application.song_service import SongNotFoundError, SongService
 from guitarra_api.domain.song_chart import SongChartContent
 from guitarra_api.domain.song_exercise import SectionExerciseKind, build_section_exercise
 from guitarra_api.infra.db.models import Exercise, SongSection
@@ -22,6 +22,7 @@ class SongExerciseService:
     def __init__(self, session: Session) -> None:
         self._session = session
         self._repo = SongRepository(session)
+        self._songs = SongService(session)
 
     def create(
         self, song_id: int, section_id: int, kind: SectionExerciseKind, instrument: str
@@ -34,9 +35,8 @@ class SongExerciseService:
         section = self._repo.get_section(song_id, section_id)
         if section is None:
             raise SectionNotFoundError(song_id, section_id)
-        chart = self._repo.current_chart(song_id, instrument)
-        if chart is None:
-            raise ChartNotFoundError(song_id, instrument)
+        # Vista mezclada: trae también el riff de la sección (auto si el usuario no lo tocó).
+        chart = self._songs.current_chart(song_id, instrument)
 
         content = SongChartContent.model_validate(chart.content)
         built = build_section_exercise(content, section.slug, kind)

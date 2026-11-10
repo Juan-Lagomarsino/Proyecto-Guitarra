@@ -26,6 +26,15 @@ function Install-BeatThisWeights {
     if ($LASTEXITCODE -ne 0) { throw 'No se pudieron bajar los pesos de beat_this (ni del host oficial ni del espejo)' }
 }
 
+function Install-DemucsWeights {
+    # Pesos de htdemucs_6s (separación de pistas, ADR 0015) con reintentos, en
+    # GUITAR_DEMUCS_MODEL_DIR (por defecto GuitarApp\models\demucs). Idempotente. Si falla no
+    # bloquea: el worker sigue y los trabajos de separación fallan diciendo cómo instalarlo.
+    Write-Host 'Preparando los pesos de Demucs (htdemucs_6s, ~55 MB) ...'
+    & $venvPython -m guitarra_worker.adapters.demucs
+    if ($LASTEXITCODE -ne 0) { Write-Warning 'No se pudieron bajar los pesos de Demucs; reintentá scripts\install.ps1. La separación (acompañamiento sin guitarra) no va a andar hasta entonces.' }
+}
+
 function Install-WorkerVenv {
     if (-not (Test-Path $venvPython)) {
         Write-Host 'Creando worker\.venv con Python 3.12 ...'
@@ -33,12 +42,24 @@ function Install-WorkerVenv {
         if ($LASTEXITCODE -ne 0) { throw 'No se pudo crear el venv (¿está instalado Python 3.12 y el lanzador py?)' }
     }
     Install-TorchCpu
-    Write-Host 'Instalando worker[dev,analysis] en modo editable ...'
+    Write-Host 'Instalando worker[dev,analysis,separation] en modo editable ...'
     $coreDir = Join-Path (Split-Path -Parent $workerDir) 'core'
     & $venvPython -m pip install --quiet --disable-pip-version-check -e $coreDir
     if ($LASTEXITCODE -ne 0) { throw 'pip install de core falló' }
-    & $venvPython -m pip install --quiet --disable-pip-version-check -e "$workerDir[dev,analysis]"
+    & $venvPython -m pip install --quiet --disable-pip-version-check -e "$workerDir[dev,analysis,separation]"
     if ($LASTEXITCODE -ne 0) { throw 'pip install del worker falló' }
+}
+
+function Install-Riffs {
+    # Transcripcion de riffs (ADR 0017): basic-pitch 0.4.0 SIN dependencias (declara tensorflow, que
+    # no existe para Python 3.12) y sus dependencias livianas (extra riffs: onnxruntime, etc.).
+    # Idempotente. Si falla no bloquea: el worker sigue y la etapa de riffs se saltea.
+    $workerDir = Join-Path $root 'worker'
+    & $venvPython -m pip install --quiet --disable-pip-version-check -e "$workerDir[riffs]"
+    if ($LASTEXITCODE -eq 0) {
+        & $venvPython -m pip install --quiet --disable-pip-version-check basic-pitch==0.4.0 --no-deps
+    }
+    if ($LASTEXITCODE -ne 0) { Write-Warning 'No se pudo instalar basic-pitch; reintenta scripts\install.ps1. Los riffs se saltean hasta entonces.' }
 }
 
 function Install-Btc {
@@ -116,11 +137,13 @@ function Test-WorkerToken {
 
 try {
     Install-WorkerVenv
+    Install-Riffs
     Install-Btc
     Install-Ffmpeg
     Update-YtDlp
     New-WorkerFolders
     Install-BeatThisWeights
+    Install-DemucsWeights
     Test-WorkerToken
     Write-Host 'Listo.'
     exit 0

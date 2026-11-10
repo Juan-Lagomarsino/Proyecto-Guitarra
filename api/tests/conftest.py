@@ -22,6 +22,12 @@ def alembic_config() -> Config:
 
 @pytest.fixture(scope="session")
 def database_url() -> Iterator[str]:
+    """Postgres de testcontainers, o la base vacía de `GUITAR_TEST_DATABASE_URL` si está."""
+    external_url = os.environ.get("GUITAR_TEST_DATABASE_URL")
+    if external_url:
+        os.environ["DATABASE_URL"] = external_url
+        yield external_url
+        return
     with PostgresContainer("postgres:16", driver="psycopg") as postgres:
         url = postgres.get_connection_url()
         os.environ["DATABASE_URL"] = url  # lo lee alembic/env.py
@@ -47,6 +53,7 @@ def session(migrated_engine: Engine) -> Iterator[Session]:
             text(
                 "TRUNCATE exercise_completions, practice_sessions, exercises, lessons, levels, "
                 "settings, reminder_rules, songs, song_sections, song_charts, audio_assets, "
-                "analysis_jobs, corrections RESTART IDENTITY CASCADE"
+                "analysis_jobs, corrections, chord_shape_preferences, fingering_preferences "
+                "RESTART IDENTITY CASCADE"
             )
         )

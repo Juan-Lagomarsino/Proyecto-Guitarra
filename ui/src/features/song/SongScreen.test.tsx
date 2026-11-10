@@ -27,6 +27,8 @@ const song: SongDetail = {
   year: 1969,
   has_cifra: false,
   cifra_url: null,
+  audio: [],
+  separation_status: 'none',
   sections: [
     {
       id: 3,
@@ -151,8 +153,10 @@ describe('SongScreen', () => {
     ).toBeInTheDocument()
     expect(screen.getByText('The Beatles')).toBeInTheDocument()
     expect(await screen.findByText('82')).toBeInTheDocument()
-    expect(screen.getByText('D menor')).toBeInTheDocument()
-    expect(screen.getByText('Capo en 2')).toBeInTheDocument()
+    // Tonalidad y capo salen del chart, que llega en un segundo fetch después del detalle:
+    // hay que esperarlos (un getBy síncrono competía con ese fetch bajo carga).
+    expect(await screen.findByText('D menor')).toBeInTheDocument()
+    expect(await screen.findByText('Capo en 2')).toBeInTheDocument()
   })
 
   it('arranca en clásica y pide el chart de ese instrumento', async () => {

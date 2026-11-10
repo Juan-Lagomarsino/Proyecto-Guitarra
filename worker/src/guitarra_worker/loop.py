@@ -4,6 +4,7 @@ import logging
 import time
 from collections.abc import Callable, Sequence
 from pathlib import Path
+from typing import Any
 
 from guitarra_worker.api_client import ApiClient, ApiError, Job, LeaseLostError
 from guitarra_worker.config import Settings
@@ -11,6 +12,15 @@ from guitarra_worker.pipeline.runner import AssembleFn, Heartbeat, run_pipeline
 from guitarra_worker.pipeline.step import PermanentStepError, RetryableStepError, Step
 
 log = logging.getLogger(__name__)
+
+
+SEPARATION = "separation"
+
+
+def separation_result(outputs: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """El audio ya se subió como asset: el result solo suma los riffs, si hay."""
+    riffs = (outputs.get("build_riffs") or {}).get("riffs")
+    return {"riffs": riffs} if riffs else {}
 
 
 def next_backoff(current_s: float, max_s: float) -> float:
@@ -50,12 +60,31 @@ def _report_failure(client: ApiClient, job: Job, exc: Exception, *, retryable: b
         log.error("No se pudo informar el fallo del trabajo %s: %s", job.job_id, report_error)
 
 
+def _dispatch(
+    client: ApiClient,
+    job: Job,
+    settings: Settings,
+    steps: Sequence[Step],
+    assemble: AssembleFn,
+    separation_steps: Sequence[Step],
+) -> None:
+    """Elige el pipeline por `job_type`: análisis (el de siempre) o separación."""
+    if job.job_type == SEPARATION:
+        if not separation_steps:
+            error = PermanentStepError("Este worker no sabe separar pistas")
+            _report_failure(client, job, error, retryable=False)
+            return
+        steps, assemble = separation_steps, separation_result
+    process_job(client, job, steps, assemble, settings.cache_dir, settings.heartbeat_interval_s)
+
+
 def run_loop(
     client: ApiClient,
     settings: Settings,
     steps: Sequence[Step],
     assemble: AssembleFn,
     *,
+    separation_steps: Sequence[Step] = (),
     once: bool = False,
     sleep: Callable[[float], None] = time.sleep,
 ) -> None:
@@ -68,9 +97,7 @@ def run_loop(
             job = None
         if job is not None:
             log.info("Trabajo %s reclamado (canción %s)", job.job_id, job.song_id)
-            process_job(
-                client, job, steps, assemble, settings.cache_dir, settings.heartbeat_interval_s
-            )
+            _dispatch(client, job, settings, steps, assemble, separation_steps)
             delay = settings.poll_interval_s
             if once:
                 return

@@ -20,6 +20,7 @@ export interface NoteEvent {
   fret: number
   technique?: ('h' | 'p' | '/' | '\\' | 'b' | 'r' | '~' | 'pm' | 'x') | null
   bend?: number | null
+  confidence?: number | null
 }
 export interface Chord {
   t: number

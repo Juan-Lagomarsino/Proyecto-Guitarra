@@ -11,6 +11,7 @@ from guitarra_api.http.auth import get_api_settings
 from guitarra_api.http.clock import get_clock
 from guitarra_api.infra.db.models import (
     AnalysisJob,
+    AudioAsset,
     Exercise,
     ExerciseCompletion,
     Song,
@@ -151,6 +152,7 @@ def test_claim_entrega_el_trabajo_mas_viejo_y_marca_la_cancion(client, songs, jo
     data = response.json()
     assert data == {
         "job_id": 1,
+        "job_type": "analyze",
         "song_id": first.id,
         "title": "Primera",
         "artist": "Calamaro",
@@ -162,6 +164,9 @@ def test_claim_entrega_el_trabajo_mas_viejo_y_marca_la_cancion(client, songs, jo
         "max_attempts": 3,
         "cifra_text": None,
         "lease_until": "2026-10-01T12:05:00Z",
+        "chord_shape_preferences": {},
+        "fingering_preferences": {"positions": {}, "zones": {}},
+        "chart": None,
     }
     job = session.get(AnalysisJob, 1)
     assert (job.status, job.claimed_by, job.attempts) == ("running", "w1", 1)
@@ -462,7 +467,7 @@ def test_reanalisis_actualiza_secciones_y_conserva_las_que_tienen_ejercicios(
     jobs.add_job(song.id)
     claim(client)
     again = result_body(ids=("intro", "puente"), bpm=120.0)
-    assert client.post("/api/v1/jobs/2/result", json=again, headers=WORKER).status_code == 200
+    assert client.post("/api/v1/jobs/3/result", json=again, headers=WORKER).status_code == 200
 
     session.expire_all()
     by_slug = {s.slug: s for s in session.scalars(select(SongSection))}
@@ -475,3 +480,194 @@ def test_reanalisis_actualiza_secciones_y_conserva_las_que_tienen_ejercicios(
     )
     assert by_slug["puente"].position == 1
     assert session.scalar(select(func.count()).select_from(ExerciseCompletion)) == 1
+
+
+# --- separación (F3-T04) -----------------------------------------------------------------
+
+UI = {"Authorization": f"Bearer {UI_TOKEN}"}
+
+
+def separation_jobs(session) -> list[AnalysisJob]:
+    session.expire_all()
+    return list(
+        session.scalars(
+            select(AnalysisJob).where(AnalysisJob.type == "separation").order_by(AnalysisJob.id)
+        )
+    )
+
+
+def finish_analysis(client, songs, jobs, worker="w1"):
+    song = new_song(songs)
+    jobs.add_job(song.id)
+    claimed = claim(client, worker).json()
+    response = client.post(
+        f"/api/v1/jobs/{claimed['job_id']}/result", json=result_body(worker), headers=WORKER
+    )
+    assert response.status_code == 200
+    return song
+
+
+def separation_status(client, song_id) -> str:
+    return client.get(f"/api/v1/songs/{song_id}", headers=UI).json()["separation_status"]
+
+
+def post_result(client, job_id, body):
+    return client.post(f"/api/v1/jobs/{job_id}/result", json=body, headers=WORKER)
+
+
+def test_el_resultado_de_un_analisis_encola_una_separacion(client, songs, jobs, session):
+    song = finish_analysis(client, songs, jobs)
+
+    queued = separation_jobs(session)
+
+    assert [(j.song_id, j.status, j.max_attempts) for j in queued] == [(song.id, "queued", 3)]
+    session.refresh(song)
+    assert song.analysis_status == "ready"  # la separación no toca el estado del análisis
+
+
+def test_un_reanalisis_con_separacion_activa_no_encola_otra(client, songs, jobs, session):
+    song = finish_analysis(client, songs, jobs)
+    jobs.add_job(song.id)  # reanálisis; la separación sigue en cola
+    first = claim(client, "w1").json()
+    assert first["job_type"] == "analyze"
+    post_result(client, first["job_id"], result_body())
+
+    assert len(separation_jobs(session)) == 1
+
+
+def test_con_pista_sin_guitarra_no_se_encola_separacion(client, songs, jobs, session):
+    song = new_song(songs)
+    session.add(AudioAsset(song_id=song.id, kind="no_guitar", path="x.m4a", format="m4a"))
+    session.commit()
+    jobs.add_job(song.id)
+    claimed = claim(client).json()
+
+    post_result(client, claimed["job_id"], result_body())
+
+    assert separation_jobs(session) == []
+    assert separation_status(client, song.id) == "done"
+
+
+def test_reanalisis_tras_separar_no_re_encola(client, songs, jobs, session):
+    song = finish_analysis(client, songs, jobs)
+    sep = claim(client).json()
+    assert sep["job_type"] == "separation"
+    session.add(AudioAsset(song_id=song.id, kind="no_guitar", path="x.m4a", format="m4a"))
+    session.commit()
+    post_result(client, sep["job_id"], {"worker_id": "w1"})
+    jobs.add_job(song.id)
+    again = claim(client).json()
+    post_result(client, again["job_id"], result_body())
+
+    assert len(separation_jobs(session)) == 1
+
+
+def test_claim_devuelve_el_tipo_y_los_datos_de_la_separacion(client, songs, jobs):
+    song = finish_analysis(client, songs, jobs)
+
+    data = claim(client, "w2").json()
+
+    assert data["job_type"] == "separation"
+    assert (data["song_id"], data["youtube_id"], data["title"], data["artist"]) == (
+        song.id,
+        "abc123",
+        "Flaca",
+        "Calamaro",
+    )
+    assert data["attempt"] == 1
+
+
+def test_claim_de_un_analisis_dice_analyze(client, songs, jobs):
+    jobs.add_job(new_song(songs).id)
+    assert claim(client).json()["job_type"] == "analyze"
+
+
+def test_claim_prioriza_el_analisis_sobre_la_separacion(client, songs, jobs, clock):
+    finish_analysis(client, songs, jobs)  # deja una separación en cola
+    clock.advance(10)
+    jobs.add_job(new_song(songs, youtube_id="otro", title="Otra").id)
+
+    assert claim(client).json()["job_type"] == "analyze"
+    assert claim(client).json()["job_type"] == "separation"
+
+
+def test_result_de_separacion_sin_chart_la_marca_hecha(client, songs, jobs, session):
+    song = finish_analysis(client, songs, jobs)
+    sep = claim(client).json()
+
+    response = post_result(client, sep["job_id"], {"worker_id": "w1"})
+
+    assert response.json() == {"job_id": sep["job_id"], "status": "done"}
+    assert separation_jobs(session)[0].status == "done"
+    assert separation_status(client, song.id) == "done"
+
+
+def test_result_con_cuerpo_de_otro_tipo_da_422(client, songs, jobs):
+    finish_analysis(client, songs, jobs)
+    sep = claim(client).json()
+    assert post_result(client, sep["job_id"], result_body()).status_code == 422
+
+    jobs.add_job(new_song(songs, "otro", "Otra").id)
+    analysis = claim(client).json()
+    assert analysis["job_type"] == "analyze"
+    assert post_result(client, analysis["job_id"], {"worker_id": "w1"}).status_code == 422
+
+
+def test_separacion_no_cambia_el_estado_de_analisis_de_la_cancion(client, songs, jobs, session):
+    song = finish_analysis(client, songs, jobs)
+    sep = claim(client).json()
+    session.refresh(song)
+    assert song.analysis_status == "ready"
+    client.post(
+        f"/api/v1/jobs/{sep['job_id']}/fail",
+        json={"worker_id": "w1", "error": "boom"},
+        headers=WORKER,
+    )
+    session.refresh(song)
+    assert song.analysis_status == "ready"
+
+
+def test_separacion_reintenta_hasta_el_tope_y_queda_en_error(client, songs, jobs):
+    song = finish_analysis(client, songs, jobs)
+    for attempt in (1, 2, 3):
+        data = claim(client).json()
+        assert (data["job_type"], data["attempt"]) == ("separation", attempt)
+        assert separation_status(client, song.id) == "running"
+        response = client.post(
+            f"/api/v1/jobs/{data['job_id']}/fail",
+            json={"worker_id": "w1", "error": "demucs"},
+            headers=WORKER,
+        )
+    assert response.json()["status"] == "error"
+    assert claim(client).status_code == 204
+    assert separation_status(client, song.id) == "error"
+    # el error de la separación no se mezcla con el del análisis
+    detail = client.get(f"/api/v1/songs/{song.id}", headers=UI).json()
+    assert detail["error"] is None
+    assert detail["analysis_status"] == "ready"
+
+
+def test_separacion_con_lease_vencido_se_reclama_y_agota_intentos(client, songs, jobs, clock):
+    finish_analysis(client, songs, jobs)
+    for _ in range(3):
+        assert claim(client).json()["job_type"] == "separation"
+        clock.advance(LEASE + 1)
+    assert claim(client).status_code == 204
+
+
+def test_separation_status_none_queued_running(client, songs, jobs):
+    song = new_song(songs)
+    assert separation_status(client, song.id) == "none"
+    jobs.add_job(song.id)
+    claim(client)
+    post_result(client, 1, result_body())
+    assert separation_status(client, song.id) == "queued"
+    claim(client)
+    assert separation_status(client, song.id) == "running"
+
+
+def test_la_separacion_activa_no_bloquea_el_reanalisis(client, songs, jobs):
+    song = finish_analysis(client, songs, jobs)  # separación en cola
+    response = client.post(f"/api/v1/songs/{song.id}/reanalyze", headers=UI)
+    assert response.status_code in (200, 202)
+    assert response.json()["analysis_status"] == "queued"

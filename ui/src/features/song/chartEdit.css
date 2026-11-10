@@ -122,3 +122,57 @@
   color: var(--warn);
   overflow-wrap: anywhere;
 }
+
+.chart-edit__chord {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.chart-edit__picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.chart-edit__shapes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chart-edit__shape {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.chart-edit__shape[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--surface-2);
+}
+
+.chart-edit__shape:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.chart-edit__preferred,
+.chart-edit__hint {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.chart-edit__hint {
+  margin: 0;
+}

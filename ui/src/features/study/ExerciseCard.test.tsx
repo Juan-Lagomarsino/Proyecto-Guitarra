@@ -192,6 +192,22 @@ describe('ExerciseCard', () => {
     await user.click(screen.getByRole('button', { name: /pausar/i }))
   })
 
+  it('sin motor en marcha marca la nota del acompañamiento; con el motor en marcha manda el motor', async () => {
+    const user = userEvent.setup()
+    apiFetchMock.mockResolvedValue(detail(null))
+    const { container } = renderCard({ backingActiveIndices: [0] })
+    await screen.findByText(/sin marca/i)
+    expect(activeTabNotes(container)[0]).toHaveTextContent('5')
+
+    await user.click(screen.getByRole('button', { name: /reproducir/i }))
+    audio.clock.advance(1.05) // el motor propio llega a la segunda nota
+    await waitFor(() =>
+      expect(activeTabNotes(container)[0]).toHaveTextContent('7'),
+    )
+    expect(activeTabNotes(container)).toHaveLength(1)
+    await user.click(screen.getByRole('button', { name: /pausar/i }))
+  })
+
   it('en modo nota por nota, siguiente y anterior mueven la nota activa', async () => {
     const user = userEvent.setup()
     apiFetchMock.mockResolvedValue(detail(null))
@@ -208,5 +224,38 @@ describe('ExerciseCard', () => {
     await user.click(screen.getByRole('button', { name: /anterior/i }))
     expect(activeTabNotes(container)[0]).toHaveTextContent('5')
     expect(activeBoardNotes(container)[0]).toHaveAttribute('data-fret', '5')
+  })
+})
+
+describe('ExerciseCard con notas poco seguras', () => {
+  const riff: Exercise = {
+    ...exercise,
+    notation: {
+      bpm: 60,
+      events: [
+        { t: 0, dur: 1, string: 6, fret: 5, confidence: 0.3 },
+        { t: 1, dur: 1, string: 5, fret: 7 },
+      ],
+    },
+  }
+
+  beforeEach(() => {
+    apiFetchMock.mockResolvedValue(detail(null))
+  })
+
+  it('marca las dudosas en tab y mástil y muestra la leyenda', () => {
+    const { container } = renderCard({ exercise: riff })
+    expect(
+      container.querySelectorAll('[data-role="note"][data-confidence="low"]'),
+    ).toHaveLength(1)
+    expect(
+      container.querySelectorAll('[data-testid="note"][data-confidence="low"]'),
+    ).toHaveLength(1)
+    expect(screen.getByText(/poco seguro/i)).toBeInTheDocument()
+  })
+
+  it('sin notas dudosas no hay leyenda', () => {
+    renderCard()
+    expect(screen.queryByText(/poco seguro/i)).toBeNull()
   })
 })

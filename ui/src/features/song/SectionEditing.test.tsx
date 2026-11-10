@@ -32,6 +32,8 @@ const song: SongDetail = {
   year: 1969,
   has_cifra: false,
   cifra_url: null,
+  audio: [],
+  separation_status: 'none',
   sections: [],
 }
 
@@ -114,6 +116,24 @@ const dm: ChordShapeOption = {
   barre: null,
 }
 
+const amOpen: ChordShapeOption = {
+  name: 'Am',
+  chord: 'Am',
+  fallback: null,
+  difficulty: 1,
+  shape: ['x', 0, 2, 2, 1, 0],
+  barre: null,
+}
+
+const amBarre: ChordShapeOption = {
+  name: 'Am',
+  chord: 'Am',
+  fallback: null,
+  difficulty: 3,
+  shape: [5, 7, 7, 5, 5, 5],
+  barre: { fret: 5, from_string: 6, to_string: 1 },
+}
+
 interface Call {
   method: string
   path: string
@@ -122,7 +142,7 @@ interface Call {
 
 function mockApi(
   initial: SongChartResponse,
-  opts: { putStatus?: number } = {},
+  opts: { putStatus?: number; preferences?: unknown } = {},
 ) {
   const calls: Call[] = []
   vi.stubGlobal(
@@ -137,6 +157,10 @@ function mockApi(
       if (path === '/songs/7') return json(song)
       if (path === '/strum-patterns') return json(catalog)
       if (path.startsWith('/chords/shapes?name=Dm')) return json([dm])
+      if (path.startsWith('/chords/shapes?name=Am'))
+        return json([amOpen, amBarre])
+      if (path === '/preferences/chord-shapes')
+        return json(opts.preferences ?? {})
       if (path.startsWith('/chords/shapes')) return json([], 422)
       if (path === '/songs/7/chart?instrument=electric' && method === 'GET')
         return json(initial)
@@ -223,6 +247,54 @@ describe('edición de una sección', () => {
     expect(sent?.chords?.[1]?.name).toBe('F')
     expect(sent?.chord_source).toBe('user')
     expect(calls.map((c) => c.path)).toContain('/chords/shapes?name=Dm')
+  })
+
+  it('elige otra forma del acorde y guarda la forma nueva', async () => {
+    const calls = mockApi(response('auto', content()))
+    const { user, form } = await openEditor()
+    await user.click(
+      within(form).getByRole('button', { name: 'Elegir forma del acorde 1' }),
+    )
+    const picker = await within(form).findByRole('group', {
+      name: 'Formas del acorde 1',
+    })
+    await user.click(
+      within(picker).getByRole('button', { name: /Forma 5 7 7 5 5 5/ }),
+    )
+    await user.click(within(form).getByRole('button', { name: 'Guardar' }))
+
+    await screen.findByText('Editado por vos')
+    const sent = calls.find((c) => c.method === 'PUT')?.body?.sections[0]
+    expect(sent?.chords?.[0]).toMatchObject({
+      t_s: 0,
+      name: 'Am',
+      shape: [5, 7, 7, 5, 5, 5],
+      barre: { fret: 5, from_string: 6, to_string: 1 },
+    })
+    expect(sent?.chords?.[1]?.shape).toEqual([1, 3, 3, 2, 1, 1])
+    expect(sent?.chord_source).toBe('user')
+  })
+
+  it('marca la forma preferida según lo aprendido', async () => {
+    mockApi(response('auto', content()), {
+      preferences: { electric: { Am: { '5,7,7,5,5,5': 0.6 } } },
+    })
+    const { user, form } = await openEditor()
+    await user.click(
+      within(form).getByRole('button', { name: 'Elegir forma del acorde 1' }),
+    )
+    const picker = await within(form).findByRole('group', {
+      name: 'Formas del acorde 1',
+    })
+    const preferred = await within(picker).findByRole('button', {
+      name: /Forma 5 7 7 5 5 5.*preferida/i,
+    })
+    expect(preferred).toBeInTheDocument()
+    expect(
+      within(picker).queryByRole('button', {
+        name: /Forma x 0 2 2 1 0.*preferida/i,
+      }),
+    ).not.toBeInTheDocument()
   })
 
   it('avisa si el acorde no existe y no guarda', async () => {

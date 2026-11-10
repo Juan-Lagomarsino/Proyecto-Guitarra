@@ -30,6 +30,15 @@ export interface SongSectionInfo {
   stale: boolean
 }
 
+/** Asset de audio de la canción; `url` es relativa y sin token (ver `withToken`). */
+export interface SongAudio {
+  kind: 'original' | 'no_guitar' | (string & {})
+  format: string
+  url: string
+}
+
+export type SeparationStatus = 'none' | 'queued' | 'running' | 'done' | 'error'
+
 export interface SongDetail extends SongSummary {
   duration_s: number | null
   year: number | null
@@ -37,6 +46,8 @@ export interface SongDetail extends SongSummary {
   has_cifra: boolean
   cifra_url: string | null
   sections: SongSectionInfo[]
+  audio: SongAudio[]
+  separation_status: SeparationStatus
 }
 
 export interface CifraInput {
@@ -58,6 +69,8 @@ export interface SongChartResponse {
   origin: 'auto' | 'cifraclub' | 'user'
   confidence: number | null
   content: SongChartContent
+  /** De dónde viene el riff de cada sección (id de sección); null si no tiene. */
+  riff_sources?: Record<string, 'auto' | 'usuario' | null>
   created_at: string
 }
 
@@ -141,16 +154,30 @@ export interface ChordShapeOption {
   barre: Barre | null
 }
 
-export const fetchChordShapes = (name: string, signal?: AbortSignal) =>
+/** Con `capo`, `name` es el acorde que suena y las formas son las que se tocan con esa cejilla. */
+export const fetchChordShapes = (
+  name: string,
+  capo = 0,
+  signal?: AbortSignal,
+) =>
   apiFetch<ChordShapeOption[]>(
-    `/chords/shapes?name=${encodeURIComponent(name)}`,
+    `/chords/shapes?name=${encodeURIComponent(name)}${capo ? `&capo=${capo}` : ''}`,
     { signal },
   )
+
+/** Formas preferidas aprendidas: `{instrumento: {acorde: {trastes absolutos: peso}}}`. */
+export type ChordShapePreferences = Record<
+  string,
+  Record<string, Record<string, number>>
+>
+
+export const fetchChordShapePreferences = (signal?: AbortSignal) =>
+  apiFetch<ChordShapePreferences>('/preferences/chord-shapes', { signal })
 
 export const reanalyzeSong = (id: number) =>
   apiFetch<unknown>(`/songs/${id}/reanalyze`, { method: 'POST' })
 
-export type SectionExerciseType = 'chords' | 'strumming'
+export type SectionExerciseType = 'chords' | 'strumming' | 'riff'
 
 export const fetchSongExercises = (id: number, signal?: AbortSignal) =>
   apiFetch<Exercise[]>(`/songs/${id}/exercises`, { signal })

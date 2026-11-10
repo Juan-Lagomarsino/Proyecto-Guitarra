@@ -1,9 +1,14 @@
 """Adaptación de una progresión al instrumento: capo (clásica) y power chords (eléctrica)."""
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Literal
 
+from guitarra_core.chord_preferences import (
+    ChordShapePreferences,
+    canonical_chord_name,
+    to_relative,
+)
 from guitarra_core.chord_shapes import ChordShape, shape_position, shapes_for
 from guitarra_core.theory import (
     Chord,
@@ -82,25 +87,55 @@ def capo_cost(progression: Sequence[str], capo: int) -> float:
 
 
 def voicings_for(
-    progression: Sequence[str], instrument: Instrument, capo: int, power_chords: bool
+    progression: Sequence[str],
+    instrument: Instrument,
+    capo: int,
+    power_chords: bool,
+    preferences: ChordShapePreferences | None = None,
 ) -> list[Voicing]:
-    """Elige una forma por acorde, cuidando que la mano no salte lejos entre acordes."""
+    """Elige una forma por acorde, cuidando que la mano no salte lejos entre acordes.
+
+    Si hay `preferences` para (instrumento, acorde) y alguna forma es aplicable al capo, esa forma
+    manda (la de mayor peso); se aplica después de decidido el capo, que no se toca.
+    """
     if instrument not in INSTRUMENTS:
         raise ValueError(f"instrumento desconocido: {instrument!r}")
     use_power = instrument == "electric" and power_chords
-    entries = [_entry(name, capo, use_power) for name in progression]
+    liked = (preferences.weights.get(instrument, {}) if preferences else {}).get
+    entries = [
+        _entry(name, capo, use_power, liked(canonical_chord_name(name) or "") or {})
+        for name in progression
+    ]
     chosen = _choose_coherent([candidates for _, _, candidates in entries])
     return [
         Voicing(chord, form, shape) for (chord, form, _), shape in zip(entries, chosen, strict=True)
     ]
 
 
-def _entry(name: str, capo: int, use_power: bool) -> tuple[str, str, tuple[ChordShape, ...]]:
+def _entry(
+    name: str, capo: int, use_power: bool, weights: Mapping[str, float]
+) -> tuple[str, str, tuple[ChordShape, ...]]:
     written = _canonical_name(name)
     form = _transposed_name(name, -capo)
     if use_power:
         form = _as_power_chord(form)
-    return written, form, shapes_for(form)
+    return written, form, _preferred_or_all(shapes_for(form), weights, capo)
+
+
+def _preferred_or_all(
+    candidates: tuple[ChordShape, ...], weights: Mapping[str, float], capo: int
+) -> tuple[ChordShape, ...]:
+    by_shape = {shape.shape: shape for shape in candidates}
+    for key in sorted(weights, key=weights.__getitem__, reverse=True):
+        shape = by_shape.get(to_relative(key, capo))
+        if shape is not None:
+            return (shape,)
+    return candidates
+
+
+def shapes_with_capo(name: str, capo: int) -> tuple[ChordShape, ...]:
+    """Formas que se tocan para que suene `name` con cejilla en ese traste."""
+    return shapes_for(_transposed_name(name, -capo))
 
 
 def _canonical_name(name: str) -> str:

@@ -31,6 +31,8 @@ const detail = (over: Partial<SongDetail> = {}): SongDetail => ({
   year: null,
   has_cifra: false,
   cifra_url: null,
+  audio: [],
+  separation_status: 'none',
   sections: [],
   ...over,
 })
